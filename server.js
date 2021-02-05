@@ -4,7 +4,7 @@ const http = require("http");
 var cors = require("cors");
 const server = http.createServer(app);
 require("./database/connection").connectDB();
-
+require("./database/association");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/user_router");
 app.use(bodyParser.urlencoded({ extended: true }));

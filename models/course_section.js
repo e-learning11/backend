@@ -1,20 +1,20 @@
 const { DataTypes } = require("sequelize");
 
-module.exports = function (sequelize) {
-  const CourseSection = sequelize.define("CourseSection", {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    start: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    end: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-  });
+const sequelize = require("../database/connection").sequelize;
 
-  return CourseSection;
-};
+const CourseSection = sequelize.define("CourseSection", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  start: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  end: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+
+module.exports = CourseSection;

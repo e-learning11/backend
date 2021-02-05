@@ -39,6 +39,10 @@ const User = sequelize.define("User", {
     type: DataTypes.BLOB,
     allowNull: true,
   },
+  approved: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  },
 });
 
 module.exports = User;
