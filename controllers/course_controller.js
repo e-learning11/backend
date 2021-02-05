@@ -5,6 +5,7 @@ const CourseSectionComponent = require("../models/course_section_component");
 const UserCourse = require("../models/user_course");
 const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
+const { sum } = require("../models/user");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -75,8 +76,65 @@ async function getRandomCourses(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * createCourse
+ * @param {Request} req
+ * @param {Response} res
+ * teacher create course
+ */
+async function createCourse(req, res) {
+  try {
+    const userId = req.user.id;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (user.type != CONSTANTS.TEACHER) throw new Error("not teacher");
+    const {
+      name,
+      summary,
+      description,
+      instructor,
+      prequisites,
+      language,
+      date,
+      sections,
+    } = req.body;
+    let courseObj = await Course.create({
+      name: name,
+      summary: summary,
+      description: description,
+      language: language,
+      date: date,
+      image: req.file.buffer,
+      approved: false,
+    });
+    for (let section of sections) {
+      let sectionObj = await CourseSection.create({
+        name: section.name,
+        start: section.start,
+        end: section.end,
+        CourseId: courseObj.id,
+      });
+      for (let component of section.components) {
+        await CourseSectionComponent.create({
+          number: component.number,
+          videoID: component.videoID,
+          name: component.name,
+          type: component.type,
+          CourseSectionId: sectionObj.id,
+        });
+      }
+    }
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
   getRandomCourses,
+  createCourse,
 };

@@ -18,6 +18,10 @@ const CourseSectionComponent = sequelize.define("CourseSectionComponent", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  file: {
+    type: DataTypes.BLOB("long"),
+    allowNull: true,
+  },
 });
 
 module.exports = CourseSectionComponent;

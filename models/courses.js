@@ -10,7 +10,7 @@ const Course = sequelize.define("Course", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  decription: {
+  description: {
     type: DataTypes.STRING,
     allowNull: false,
   },
