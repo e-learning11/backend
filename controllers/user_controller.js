@@ -30,6 +30,7 @@ async function login(req, res) {
 async function signup(req, res) {
   try {
     const { email, password, phone, firstName, lastName, type } = req.body;
+    console.log(req.body, req.file);
 
     const hashedPassword = await hashModule.hashString(password);
     const user = await User.create({
@@ -39,11 +40,14 @@ async function signup(req, res) {
       password: hashedPassword,
       phone: phone,
       type: type,
+      image: req.file.buffer,
     });
 
     const token = authenticationModule.createToken(user.id);
     res.status(200).send(token).end();
-  } catch (ex) {}
+  } catch (ex) {
+    console.log(ex);
+  }
 }
 
 module.exports = {
