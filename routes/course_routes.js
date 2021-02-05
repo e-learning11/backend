@@ -7,4 +7,9 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getEnrolledCoursesByUser
 );
+router.get(
+  "/courses/created",
+  authenticationModule.checkAuth,
+  CourseController.getCoursesCreatedByuser
+);
 module.exports = router;

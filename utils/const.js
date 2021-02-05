@@ -5,4 +5,5 @@ module.exports = {
   ENGLISH: "english",
   ARABIC: "arabic",
   ENROLLED: "enrolled",
+  CREATED: "created",
 };
