@@ -45,3 +45,8 @@ async function signup(req, res) {
     res.status(200).send(token).end();
   } catch (ex) {}
 }
+
+module.exports = {
+  login,
+  signup,
+};
