@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../database/connection").sequelize;
 
 const Answer = sequelize.define("Answer", {
-  text: {
+  A: {
     type: DataTypes.STRING,
     allowNull: false,
   },

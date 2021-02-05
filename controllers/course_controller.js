@@ -5,7 +5,8 @@ const CourseSectionComponent = require("../models/course_section_component");
 const UserCourse = require("../models/user_course");
 const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
-const { sum } = require("../models/user");
+const Question = require("../models/question");
+const Answer = require("../models/answer");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -107,7 +108,6 @@ async function createCourse(req, res) {
       description: description,
       language: language,
       date: date,
-      image: req.file.buffer,
       approved: false,
     });
     for (let section of sections) {
@@ -118,15 +118,33 @@ async function createCourse(req, res) {
         CourseId: courseObj.id,
       });
       for (let component of section.components) {
-        await CourseSectionComponent.create({
+        let courseSelectionComponentObj = await CourseSectionComponent.create({
           number: component.number,
           videoID: component.videoID,
           name: component.name,
           type: component.type,
           CourseSectionId: sectionObj.id,
         });
+        if (component.test) {
+          for (let question of component.test) {
+            let questionObj = await Question.create({
+              CourseSectionComponentId: courseSelectionComponentObj.id,
+              Q: question.Q,
+              type: question.type,
+            });
+            if (question.A) {
+              for (let answer of question.A) {
+                let answerObj = await Answer.create({
+                  A: answer,
+                  QuestionId: questionObj.id,
+                });
+              }
+            }
+          }
+        }
       }
     }
+    res.status(200).send(courseObj).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);

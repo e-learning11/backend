@@ -12,7 +12,7 @@ const CourseSectionComponent = sequelize.define("CourseSectionComponent", {
   },
   videoID: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   type: {
     type: DataTypes.STRING,
