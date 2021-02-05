@@ -6,4 +6,9 @@ const upload = multer();
 
 router.post("/login", userController.login);
 router.post("/signup", upload.single("image"), userController.signup);
+router.get(
+  "/user/profile",
+  authenticationModule.checkAuth,
+  userController.getProfile
+);
 module.exports = router;
