@@ -181,10 +181,76 @@ async function getCourseFullInfo(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getUserCourseState
+ * @param {Request} req
+ * @param {Response} res
+ * get user course state and info
+ */
+async function getUserCourseState(req, res) {
+  try {
+    const userId = await req.user.id;
+    const courseId = Number(req.query.courseId);
+    const course = await Course.findOne({
+      include: [
+        {
+          model: UserCourse,
+          where: {
+            UserId: userId,
+            type: CONSTANTS.ENROLLED,
+            CourseId: courseId,
+          },
+        },
+      ],
+    });
+    res.status(200).send(course).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * enrollUserInCourse
+ * @param {Request} req
+ * @param {Response} res
+ *enroll user in course
+ */
+async function enrollUserInCourse(req, res) {
+  try {
+    const userId = await req.user.id;
+    const courseId = Number(req.query.courseId);
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    const course = await Course.findOne({
+      where: {
+        id: courseId,
+      },
+    });
+    if (course.gender != CONSTANTS.BOTH && course.gender != user.gender)
+      throw new Error("gender difference");
+    const enrolledCourseState = await UserCourse.create({
+      UserId: userId,
+      CourseId: courseId,
+      type: CONSTANTS.ENROLLED,
+
+      currentComponent: 0,
+    });
+    res.status(200).send(enrolledCourseState).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
   getRandomCourses,
   createCourse,
   getCourseFullInfo,
+  getUserCourseState,
+  enrollUserInCourse,
 };

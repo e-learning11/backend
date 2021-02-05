@@ -30,6 +30,15 @@ const Course = sequelize.define("Course", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
   },
+  private: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  gender: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Course;

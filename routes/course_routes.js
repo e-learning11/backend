@@ -22,4 +22,14 @@ router.post(
   CourseController.createCourse
 );
 router.get("/course/get", CourseController.getCourseFullInfo);
+router.get(
+  "/course/user-state",
+  authenticationModule.checkAuth,
+  CourseController.getUserCourseState
+);
+router.post(
+  "/course/enroll",
+  authenticationModule.checkAuth,
+  CourseController.enrollUserInCourse
+);
 module.exports = router;
