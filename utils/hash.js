@@ -2,7 +2,7 @@
 const bcrypt = require("bcrypt");
 const saltRounds = Number(process.env.BCRYPT_SALT);
 
-async function hasString(string) {
+async function hashString(string) {
   const salt = await bcrypt.genSalt(saltRounds);
   const hash = await bcrypt.hash(string, salt);
   return hash;
@@ -11,3 +11,8 @@ async function hasString(string) {
 async function compareStringWithHash(plain, hashed) {
   return await bcrypt.compare(plain, hashed);
 }
+
+module.exports = {
+  hashString,
+  compareStringWithHash,
+};
