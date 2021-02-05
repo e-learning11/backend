@@ -21,4 +21,5 @@ router.post(
   upload.single("image"),
   CourseController.createCourse
 );
+router.get("/course/get", CourseController.getCourseFullInfo);
 module.exports = router;

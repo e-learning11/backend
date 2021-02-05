@@ -8,7 +8,7 @@ const Question = sequelize.define("Question", {
   },
   type: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 });
 

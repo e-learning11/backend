@@ -150,9 +150,41 @@ async function createCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getCourseFullInfo
+ * @param {Request} req
+ * @param {Response} res
+ * get all information about course
+ */
+async function getCourseFullInfo(req, res) {
+  try {
+    const courseId = Number(req.query.courseId);
+    const course = await Course.findOne({
+      where: {
+        id: courseId,
+      },
+      include: [
+        {
+          model: CourseSection,
+          include: [
+            {
+              model: CourseSectionComponent,
+              include: [{ model: Question, include: [{ model: Answer }] }],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).send(course).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
   getRandomCourses,
   createCourse,
+  getCourseFullInfo,
 };
