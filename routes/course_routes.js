@@ -12,4 +12,5 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getCoursesCreatedByuser
 );
+router.get("/courses/random", CourseController.getRandomCourses);
 module.exports = router;

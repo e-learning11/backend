@@ -57,7 +57,26 @@ async function getCoursesCreatedByuser(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getRandomCourses
+ * @param {Request} req
+ * @param {Response} res
+ * get random courses
+ */
+async function getRandomCourses(req, res) {
+  try {
+    const count = Number(req.query.count);
+    const courses = await Course.findAll({
+      limit: count,
+    });
+    res.status(200).send(courses).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
+  getRandomCourses,
 };
