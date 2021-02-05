@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-module.exports = async function (sequelize) {
+module.exports = function (sequelize) {
   const CourseSection = sequelize.define("CourseSection", {
     name: {
       type: DataTypes.STRING,
@@ -16,6 +16,5 @@ module.exports = async function (sequelize) {
     },
   });
 
-  await CourseSection.sync({ alter: true });
   return CourseSection;
 };

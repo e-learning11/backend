@@ -12,9 +12,11 @@ const sequelize = new Sequelize(
   }
 );
 
-module.exports = async function () {
+module.exports.sequelize = sequelize;
+module.exports.connectDB = async function () {
   try {
     await sequelize.authenticate();
+    await sequelize.sync({ alter: true });
     console.log("Connection has been established successfully.");
     return sequelize;
   } catch (error) {

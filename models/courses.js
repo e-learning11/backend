@@ -1,33 +1,31 @@
 const { DataTypes } = require("sequelize");
+const sequelize = require("../database/connection").sequelize;
 
-module.exports = async function (sequelize) {
-  const Course = sequelize.define("Course", {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    summary: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    decription: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    language: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    image: {
-      type: DataTypes.BLOB,
-      allowNull: true,
-    },
-  });
+const Course = sequelize.define("Course", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  summary: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  decription: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  language: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  image: {
+    type: DataTypes.BLOB,
+    allowNull: true,
+  },
+});
 
-  await Course.sync({ alter: true });
-  return Course;
-};
+module.exports = Course;
