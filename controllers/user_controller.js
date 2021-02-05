@@ -79,9 +79,63 @@ async function getProfile(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * editProfile
+ * @param {Request} req
+ * @param {Response} res
+ * edit user profile
+ */
+async function editProfile(req, res) {
+  try {
+    const userId = req.user.id;
+    const {
+      password,
+      gender,
+      firstName,
+      lastName,
+      email,
+      phone,
+      type,
+    } = req.body;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    let hashedPassword = null;
+    if (password) hashedPassword = hashModule.hashString(password);
+    await User.update(
+      {
+        firstName: firstName || user.firstName,
+        lastName: lastName || user.lastName,
+        gender: gender || user.gender,
+        email: email || user.email,
+        phone: phone || user.phone,
+        password: hashedPassword || user.password,
+      },
+      {
+        where: {
+          id: userId,
+        },
+      }
+    );
+    const updatedUser = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    updatedUser.password = null;
+    updatedUser.image = null;
+    res.status(200).send(updatedUser).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 
 module.exports = {
   login,
   signup,
   getProfile,
+  editProfile,
 };

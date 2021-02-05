@@ -11,4 +11,9 @@ router.get(
   authenticationModule.checkAuth,
   userController.getProfile
 );
+router.put(
+  "/user/profile/edit",
+  authenticationModule.checkAuth,
+  userController.editProfile
+);
 module.exports = router;
