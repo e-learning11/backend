@@ -49,8 +49,35 @@ async function signup(req, res) {
     console.log(ex);
   }
 }
+/**
+ * getProfile
+ * @param {Request} req
+ * @param {Response} res
+ *  get user profile info
+ */
+async function getProfile(req, res) {
+  try {
+    const userId = req.user.id;
+    const user = await User.findOne({
+      id: userId,
+    });
+    res
+      .status(200)
+      .json({
+        email: user.email,
+        data: {
+          type: user.type,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+        },
+      })
+      .end();
+  } catch (ex) {}
+}
 
 module.exports = {
   login,
   signup,
+  getProfile,
 };

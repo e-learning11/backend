@@ -18,7 +18,7 @@ function checkAuth(req, res, next) {
 }
 // create jwt token from payload
 function createToken(userId) {
-  const token = jwt.sign({ _id: userId }, secretKey, {
+  const token = jwt.sign({ id: userId }, secretKey, {
     expiresIn: process.env.TOKEN_EXPIRE,
   });
   return token;
