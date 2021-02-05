@@ -4,4 +4,5 @@ module.exports = {
   ADMIN: "admin",
   ENGLISH: "english",
   ARABIC: "arabic",
+  ENROLLED: "enrolled",
 };

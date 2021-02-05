@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const hashModule = require("../utils/hash");
 const authenticationModule = require("../utils/authentication");
-
+const errorHandler = require("../utils/error");
 /**
  * login
  * @param {Request} req
@@ -18,7 +18,9 @@ async function login(req, res) {
       const token = authenticationModule.createToken(user.id);
       res.status(200).send(token).end();
     }
-  } catch (ex) {}
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
 }
 
 /**
@@ -46,7 +48,7 @@ async function signup(req, res) {
     const token = authenticationModule.createToken(user.id);
     res.status(200).send(token).end();
   } catch (ex) {
-    console.log(ex);
+    errorHandler(req, res, ex);
   }
 }
 /**
@@ -73,7 +75,9 @@ async function getProfile(req, res) {
         },
       })
       .end();
-  } catch (ex) {}
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
 }
 
 module.exports = {
