@@ -34,6 +34,10 @@ module.exports = async function (sequelize) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    image: {
+      type: DataTypes.BLOB,
+      allowNull: true,
+    },
   });
 
   await User.sync({ alter: true });
