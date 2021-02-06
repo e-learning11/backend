@@ -36,7 +36,7 @@ const User = sequelize.define("User", {
     allowNull: false,
   },
   image: {
-    type: DataTypes.BLOB,
+    type: DataTypes.BLOB("long"),
     allowNull: true,
   },
   approved: {

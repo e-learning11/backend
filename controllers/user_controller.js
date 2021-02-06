@@ -31,7 +31,15 @@ async function login(req, res) {
  */
 async function signup(req, res) {
   try {
-    const { email, password, phone, firstName, lastName, type } = req.body;
+    const {
+      email,
+      password,
+      phone,
+      firstName,
+      lastName,
+      type,
+      gender,
+    } = req.body;
     console.log(req.body, req.file);
 
     const hashedPassword = await hashModule.hashString(password);
@@ -43,11 +51,14 @@ async function signup(req, res) {
       phone: phone,
       type: type,
       image: req.file.buffer,
+      approved: false,
+      gender: gender,
     });
 
     const token = authenticationModule.createToken(user.id);
     res.status(200).send(token).end();
   } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
@@ -72,6 +83,7 @@ async function getProfile(req, res) {
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
+          gender: user.gender,
         },
       })
       .end();

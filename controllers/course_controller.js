@@ -27,7 +27,20 @@ async function getEnrolledCoursesByUser(req, res) {
         },
       ],
     });
-    res.status(200).send(userCourses).end();
+    const coursesToSendBack = [];
+    for (let course of userCourses) {
+      coursesToSendBack.push({
+        id: course.id,
+        name: course.name,
+        summary: course.summary,
+        description: course.summary,
+        date: course.date,
+        gender: course.gender,
+        age: course.age,
+        private: course.private,
+      });
+    }
+    res.status(200).send(coursesToSendBack).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
@@ -53,7 +66,20 @@ async function getCoursesCreatedByuser(req, res) {
         },
       ],
     });
-    res.status(200).send(userCourses).end();
+    const coursesToSendBack = [];
+    for (let course of userCourses) {
+      coursesToSendBack.push({
+        id: course.id,
+        name: course.name,
+        summary: course.summary,
+        description: course.summary,
+        date: course.date,
+        gender: course.gender,
+        age: course.age,
+        private: course.private,
+      });
+    }
+    res.status(200).send(coursesToSendBack).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
@@ -71,7 +97,20 @@ async function getRandomCourses(req, res) {
     const courses = await Course.findAll({
       limit: count,
     });
-    res.status(200).send(courses).end();
+    const coursesToSendBack = [];
+    for (let course of courses) {
+      coursesToSendBack.push({
+        id: course.id,
+        name: course.name,
+        summary: course.summary,
+        description: course.summary,
+        date: course.date,
+        gender: course.gender,
+        age: course.age,
+        private: course.private,
+      });
+    }
+    res.status(200).send(coursesToSendBack).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
@@ -235,6 +274,7 @@ async function getUserCourseState(req, res) {
         },
       ],
     });
+    course.image = null;
     res.status(200).send(course).end();
   } catch (ex) {
     console.log(ex);
