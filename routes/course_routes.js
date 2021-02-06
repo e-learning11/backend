@@ -18,7 +18,11 @@ router.get("/courses/random", CourseController.getRandomCourses);
 router.post(
   "/course/create",
   authenticationModule.checkAuth,
-  upload.single("image"),
+  upload.fields([
+    { name: "image" },
+    { name: "vidoeFile" },
+    { name: "assignmentFile" },
+  ]),
   CourseController.createCourse
 );
 router.get("/course/get", CourseController.getCourseFullInfo);

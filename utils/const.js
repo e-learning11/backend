@@ -12,4 +12,6 @@ module.exports = {
   USER: "user",
   COURSE: "course",
   FINISHED: "finished",
+  VIDEO: "Video",
+  ASSIGNMENT: "Assignment",
 };

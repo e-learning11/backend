@@ -96,7 +96,6 @@ async function createCourse(req, res) {
       name,
       summary,
       description,
-      instructor,
       prequisites,
       language,
       date,
@@ -114,7 +113,7 @@ async function createCourse(req, res) {
       approved: false,
       age: age,
       gender: gender,
-      image: req.file.buffer,
+      image: req.files["image"][0].buffer,
       private: private,
     });
     await UserCourse.create({
@@ -129,13 +128,30 @@ async function createCourse(req, res) {
         end: section.end,
         CourseId: courseObj.id,
       });
+      let videoFileIndex = 0;
+      let assignmentFileIndex = 0;
       for (let component of section.components) {
+        let file = null;
+        if (
+          component.File &&
+          (component.type == CONSTANTS.VIDEO ||
+            component.type == CONSTANTS.ASSIGNMENT)
+        ) {
+          if (component.type == CONSTANTS.VIDEO) {
+            file = req.files["vidoeFile"][videoFileIndex].buffer;
+            videoFileIndex++;
+          } else {
+            file = req.files["assignmentFile"][assignmentFileIndex].buffer;
+            assignmentFileIndex++;
+          }
+        }
         let courseSelectionComponentObj = await CourseSectionComponent.create({
           number: component.number,
           videoID: component.videoID,
           name: component.name,
           type: component.type,
           CourseSectionId: sectionObj.id,
+          file: file,
         });
         if (component.test) {
           for (let question of component.test) {
@@ -160,6 +176,7 @@ async function createCourse(req, res) {
     courseObj.image = null;
     res.status(200).send(courseObj).end();
   } catch (ex) {
+    //console.log(req.files["image"][0]);
     console.log(ex);
     errorHandler(req, res, ex);
   }
