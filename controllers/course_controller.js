@@ -297,7 +297,9 @@ async function getAllCourses(req, res) {
   try {
     const { offset, limit } = req.query;
     // check for filters
-    const where = {};
+    const where = {
+      private: false,
+    };
     if (req.query.language) where.language = req.query.language;
     if (req.query.name) where.name = req.query.name;
     if (req.query.date) where.date = req.query.date;
