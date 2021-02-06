@@ -117,6 +117,11 @@ async function createCourse(req, res) {
       image: req.file.buffer,
       private: private,
     });
+    await UserCourse.create({
+      CourseId: courseObj.id,
+      UserId: userId,
+      type: CONSTANTS.CREATED,
+    });
     for (let section of sections) {
       let sectionObj = await CourseSection.create({
         name: section.name,
@@ -282,6 +287,57 @@ async function autoGradeTest(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getAllCourses
+ * @param {Request} req
+ * @param {Response} res
+ * get all courses using pagnition for front and home page
+ */
+async function getAllCourses(req, res) {
+  try {
+    const { offset, limit } = req.query;
+    // check for filters
+    const where = {};
+    if (req.query.language) where.language = req.query.language;
+    if (req.query.name) where.name = req.query.name;
+    if (req.query.date) where.date = req.query.date;
+    if (req.query.gender) where.gender = Number(req.query.gender);
+    if (req.query.age) where.gender = Number(req.query.age);
+    const courses = await Course.findAll({
+      where: where,
+      limit: Number(limit),
+      offset: Number(offset),
+      include: [
+        {
+          model: UserCourse,
+          where: {
+            type: CONSTANTS.CREATED,
+          },
+        },
+        {
+          model: User,
+        },
+      ],
+    });
+    const coursesToSendBack = [];
+    for (let course of courses) {
+      coursesToSendBack.push({
+        courseId: course.id,
+        teacherId: course.Users[0].id,
+        name: course.name,
+        summary: course.summary,
+        instructor: {
+          firstName: course.Users[0].firstName,
+          lastName: course.Users[0].lastName,
+        },
+      });
+    }
+    res.send(coursesToSendBack).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 
 module.exports = {
   getEnrolledCoursesByUser,
@@ -292,4 +348,5 @@ module.exports = {
   getUserCourseState,
   enrollUserInCourse,
   autoGradeTest,
+  getAllCourses,
 };

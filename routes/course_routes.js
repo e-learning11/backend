@@ -37,4 +37,5 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.autoGradeTest
 );
+router.get("/courses/", CourseController.getAllCourses);
 module.exports = router;
