@@ -9,4 +9,6 @@ module.exports = {
   MALE: 1,
   FEMALE: 2,
   BOTH: 3,
+  USER: "user",
+  COURSE: "course",
 };
