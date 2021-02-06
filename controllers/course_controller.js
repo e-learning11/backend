@@ -101,7 +101,10 @@ async function createCourse(req, res) {
       language,
       date,
       sections,
-    } = req.body;
+      age,
+      gender,
+      private,
+    } = JSON.parse(req.body.json);
     let courseObj = await Course.create({
       name: name,
       summary: summary,
@@ -109,6 +112,10 @@ async function createCourse(req, res) {
       language: language,
       date: date,
       approved: false,
+      age: age,
+      gender: gender,
+      image: req.file.buffer,
+      private: private,
     });
     for (let section of sections) {
       let sectionObj = await CourseSection.create({
@@ -145,6 +152,7 @@ async function createCourse(req, res) {
         }
       }
     }
+    courseObj.image = null;
     res.status(200).send(courseObj).end();
   } catch (ex) {
     console.log(ex);
@@ -246,6 +254,33 @@ async function enrollUserInCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * autoGradeTest
+ * @param {Request} req
+ * @param {Response} res
+ * auto grade MCQ and true and false tests and return the result as array of 1 for correct answers and 0 for wrong answers
+ */
+async function autoGradeTest(req, res) {
+  try {
+    const testId = Number(req.query.testId);
+    const answers = req.body.answers;
+    const results = [];
+    const courseSectionComponent = await CourseSectionComponent.findOne({
+      where: {
+        id: testId,
+      },
+      include: [{ model: Question, include: [{ model: Answer }] }],
+    });
+    for (let [i, question] of courseSectionComponent.Questions.entries()) {
+      if (question.correctAnswer == answers[i]) results.push(1);
+      else results.push(0);
+    }
+    res.status(200).send(results).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,

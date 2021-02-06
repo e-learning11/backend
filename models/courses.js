@@ -23,7 +23,7 @@ const Course = sequelize.define("Course", {
     allowNull: false,
   },
   image: {
-    type: DataTypes.BLOB,
+    type: DataTypes.BLOB("long"),
     allowNull: true,
   },
   approved: {
@@ -38,6 +38,10 @@ const Course = sequelize.define("Course", {
   gender: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
 });
 
