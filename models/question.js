@@ -10,6 +10,9 @@ const Question = sequelize.define("Question", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  correctAnswer: {
+    type: DataTypes.STRING,
+  },
 });
 
 module.exports = Question;

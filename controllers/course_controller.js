@@ -131,6 +131,7 @@ async function createCourse(req, res) {
               CourseSectionComponentId: courseSelectionComponentObj.id,
               Q: question.Q,
               type: question.type,
+              correctAnswer: question.correctAnswer,
             });
             if (question.A) {
               for (let answer of question.A) {
