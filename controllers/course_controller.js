@@ -184,6 +184,7 @@ async function getCourseFullInfo(req, res) {
         },
       ],
     });
+    course.image = null;
     res.status(200).send(course).end();
   } catch (ex) {
     console.log(ex);
@@ -275,6 +276,7 @@ async function autoGradeTest(req, res) {
       if (question.correctAnswer == answers[i]) results.push(1);
       else results.push(0);
     }
+
     res.status(200).send(results).end();
   } catch (ex) {
     errorHandler(req, res, ex);
@@ -289,4 +291,5 @@ module.exports = {
   getCourseFullInfo,
   getUserCourseState,
   enrollUserInCourse,
+  autoGradeTest,
 };

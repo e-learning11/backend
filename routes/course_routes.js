@@ -32,4 +32,9 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.enrollUserInCourse
 );
+router.post(
+  "/course/test/grade",
+  authenticationModule.checkAuth,
+  CourseController.autoGradeTest
+);
 module.exports = router;
