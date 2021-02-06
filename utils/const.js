@@ -11,4 +11,5 @@ module.exports = {
   BOTH: 3,
   USER: "user",
   COURSE: "course",
+  FINISHED: "finished",
 };

@@ -365,6 +365,31 @@ async function markComponentAsDone(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * markCourseAsComplete
+ * @param {Request} req
+ * @param {Response} res
+ * mark course as done for a student
+ */
+async function markCourseAsComplete(req, res) {
+  try {
+    const userId = req.user.id;
+    const courseId = Number(req.query.courseId);
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: courseId,
+        UserId: userId,
+        type: CONSTANTS.ENROLLED,
+      },
+    });
+    userCourse.type = CONSTANTS.FINISHED;
+    await userCourse.save();
+    res.status(200).send("done").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -376,4 +401,5 @@ module.exports = {
   autoGradeTest,
   getAllCourses,
   markComponentAsDone,
+  markCourseAsComplete,
 };

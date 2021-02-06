@@ -37,10 +37,15 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.autoGradeTest
 );
-router.get("/courses/", CourseController.getAllCourses);
+router.get("/courses", CourseController.getAllCourses);
 router.post(
   "/course/mark-as-done",
   authenticationModule.checkAuth,
   CourseController.markComponentAsDone
+);
+router.post(
+  "/course/finish",
+  authenticationModule.checkAuth,
+  CourseController.markCourseAsComplete
 );
 module.exports = router;
