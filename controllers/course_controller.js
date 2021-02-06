@@ -341,6 +341,30 @@ async function getAllCourses(req, res) {
   }
 }
 
+/**
+ * markComponentAsDone
+ * @param {Request} req
+ * @param {Response} res
+ * mark component as done for a student
+ */
+async function markComponentAsDone(req, res) {
+  try {
+    const userId = req.user.id;
+    const courseId = Number(req.query.courseId);
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: courseId,
+        UserId: userId,
+        type: CONSTANTS.ENROLLED,
+      },
+    });
+    userCourse.currentComponent += 1;
+    await userCourse.save();
+    res.status(200).send(String(userCourse.currentComponent)).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -351,4 +375,5 @@ module.exports = {
   enrollUserInCourse,
   autoGradeTest,
   getAllCourses,
+  markComponentAsDone,
 };

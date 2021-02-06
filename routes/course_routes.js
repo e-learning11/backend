@@ -38,4 +38,9 @@ router.post(
   CourseController.autoGradeTest
 );
 router.get("/courses/", CourseController.getAllCourses);
+router.post(
+  "/course/mark-as-done",
+  authenticationModule.checkAuth,
+  CourseController.markComponentAsDone
+);
 module.exports = router;
