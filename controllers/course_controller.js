@@ -302,7 +302,7 @@ async function getAllCourses(req, res) {
     if (req.query.name) where.name = req.query.name;
     if (req.query.date) where.date = req.query.date;
     if (req.query.gender) where.gender = Number(req.query.gender);
-    if (req.query.age) where.gender = Number(req.query.age);
+    if (req.query.age) where.age = Number(req.query.age);
     const courses = await Course.findAll({
       where: where,
       limit: Number(limit),
