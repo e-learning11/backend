@@ -46,6 +46,46 @@ async function getEnrolledCoursesByUser(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * getFinishedCoursesByUser
+ * @param {Request} req
+ * @param {Response} res
+ * get courses that user enroll in
+ */
+async function getFinishedCoursesByUser(req, res) {
+  try {
+    const userId = req.user.id;
+    const userCourses = await Course.findAll({
+      include: [
+        {
+          model: UserCourse,
+          where: {
+            UserId: userId,
+            type: CONSTANTS.FINISHED,
+          },
+        },
+      ],
+    });
+    const coursesToSendBack = [];
+    for (let course of userCourses) {
+      coursesToSendBack.push({
+        id: course.id,
+        name: course.name,
+        summary: course.summary,
+        description: course.summary,
+        date: course.date,
+        gender: course.gender,
+        age: course.age,
+        private: course.private,
+      });
+    }
+    res.status(200).send(coursesToSendBack).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 /**
  * getCoursesCreatedByuser
  * @param {Request} req
@@ -459,4 +499,5 @@ module.exports = {
   getAllCourses,
   markComponentAsDone,
   markCourseAsComplete,
+  getFinishedCoursesByUser,
 };

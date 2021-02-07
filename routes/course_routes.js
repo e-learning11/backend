@@ -14,6 +14,11 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getCoursesCreatedByuser
 );
+router.get(
+  "/courses/finished",
+  authenticationModule.checkAuth,
+  CourseController.getFinishedCoursesByUser
+);
 router.get("/courses/random", CourseController.getRandomCourses);
 router.post(
   "/course/create",

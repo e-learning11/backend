@@ -11,7 +11,6 @@ const sequelize = new Sequelize(
     port: process.env.DB_PORT,
   }
 );
-
 module.exports.sequelize = sequelize;
 module.exports.connectDB = async function () {
   try {
