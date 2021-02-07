@@ -39,6 +39,7 @@ async function signup(req, res) {
       lastName,
       type,
       gender,
+      age,
     } = req.body;
     console.log(req.body, req.file);
 
@@ -53,6 +54,7 @@ async function signup(req, res) {
       image: req.file.buffer,
       approved: false,
       gender: gender,
+      age: age,
     });
 
     const token = authenticationModule.createToken(user.id);

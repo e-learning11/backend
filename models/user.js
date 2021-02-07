@@ -50,6 +50,10 @@ const User = sequelize.define("User", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = User;
