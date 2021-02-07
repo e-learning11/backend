@@ -60,7 +60,7 @@ async function signup(req, res) {
     const token = authenticationModule.createToken(user.id);
     res.status(200).send(token).end();
   } catch (ex) {
-    console.log(ex);
+    // console.log(ex);
     errorHandler(req, res, ex);
   }
 }

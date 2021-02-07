@@ -28,7 +28,7 @@ async function getImage(req, res) {
         break;
       }
       default:
-        throw new Error("not valid owner");
+        throw new Error({ errors: [{ message: "not valid owner or id" }] });
     }
   } catch (ex) {
     console.log(ex);
