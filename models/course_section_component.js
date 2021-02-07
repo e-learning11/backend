@@ -37,6 +37,10 @@ const CourseSectionComponent = sequelize.define("CourseSectionComponent", {
     type: DataTypes.BLOB("long"),
     allowNull: true,
   },
+  passingGrade: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });
 
 module.exports = CourseSectionComponent;

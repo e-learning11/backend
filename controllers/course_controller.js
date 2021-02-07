@@ -255,6 +255,7 @@ async function createCourse(req, res) {
             type: component.type,
             CourseSectionId: sectionObj.id,
             file: file,
+            passingGrade: component.passingGrade,
           },
           { transaction: t }
         );
@@ -284,6 +285,7 @@ async function createCourse(req, res) {
         }
       }
     }
+    await t.commit();
     courseObj.image = null;
     res.status(200).send(courseObj).end();
   } catch (ex) {
