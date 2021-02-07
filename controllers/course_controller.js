@@ -7,6 +7,7 @@ const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
 const Question = require("../models/question");
 const Answer = require("../models/answer");
+const Prequisite = require("../models/course_prequisite");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -175,7 +176,7 @@ async function createCourse(req, res) {
       name,
       summary,
       description,
-      prequisites,
+      prerequisites,
       language,
       date,
       sections,
@@ -195,6 +196,12 @@ async function createCourse(req, res) {
       image: req.files["image"][0].buffer,
       private: private,
     });
+    for (let prequisiteId of prerequisites) {
+      await Prequisite.create({
+        CourseId: courseObj.id,
+        prequisiteId: Number(prequisiteId),
+      });
+    }
     await UserCourse.create({
       CourseId: courseObj.id,
       UserId: userId,
