@@ -1,3 +1,4 @@
+const sequelize = require("../database/connection").sequelize;
 const User = require("../models/user");
 const Course = require("../models/courses");
 const CourseSection = require("../models/course_section");
@@ -8,6 +9,7 @@ const CONSTANTS = require("../utils/const");
 const Question = require("../models/question");
 const Answer = require("../models/answer");
 const Prequisite = require("../models/course_prequisite");
+
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -164,6 +166,8 @@ async function getRandomCourses(req, res) {
  * teacher create course
  */
 async function createCourse(req, res) {
+  const t = await sequelize.transaction();
+
   try {
     const userId = req.user.id;
     const user = await User.findOne({
@@ -184,36 +188,48 @@ async function createCourse(req, res) {
       gender,
       private,
     } = JSON.parse(req.body.json);
-    let courseObj = await Course.create({
-      name: name,
-      summary: summary,
-      description: description,
-      language: language,
-      date: date,
-      approved: false,
-      age: age,
-      gender: gender,
-      image: req.files["image"][0].buffer,
-      private: private,
-    });
+    let courseObj = await Course.create(
+      {
+        name: name,
+        summary: summary,
+        description: description,
+        language: language,
+        date: date,
+        approved: false,
+        age: age,
+        gender: gender,
+        image: req.files["image"][0].buffer,
+        private: private,
+      },
+      { transaction: t }
+    );
     for (let prequisiteId of prerequisites) {
-      await Prequisite.create({
-        CourseId: courseObj.id,
-        prequisiteId: Number(prequisiteId),
-      });
+      await Prequisite.create(
+        {
+          CourseId: courseObj.id,
+          prequisiteId: Number(prequisiteId),
+        },
+        { transaction: t }
+      );
     }
-    await UserCourse.create({
-      CourseId: courseObj.id,
-      UserId: userId,
-      type: CONSTANTS.CREATED,
-    });
-    for (let section of sections) {
-      let sectionObj = await CourseSection.create({
-        name: section.name,
-        start: section.start,
-        end: section.end,
+    await UserCourse.create(
+      {
         CourseId: courseObj.id,
-      });
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+      { transaction: t }
+    );
+    for (let section of sections) {
+      let sectionObj = await CourseSection.create(
+        {
+          name: section.name,
+          start: section.start,
+          end: section.end,
+          CourseId: courseObj.id,
+        },
+        { transaction: t }
+      );
       let videoFileIndex = 0;
       let assignmentFileIndex = 0;
       for (let component of section.components) {
@@ -231,28 +247,37 @@ async function createCourse(req, res) {
             assignmentFileIndex++;
           }
         }
-        let courseSelectionComponentObj = await CourseSectionComponent.create({
-          number: component.number,
-          videoID: component.videoID,
-          name: component.name,
-          type: component.type,
-          CourseSectionId: sectionObj.id,
-          file: file,
-        });
+        let courseSelectionComponentObj = await CourseSectionComponent.create(
+          {
+            number: component.number,
+            videoID: component.videoID,
+            name: component.name,
+            type: component.type,
+            CourseSectionId: sectionObj.id,
+            file: file,
+          },
+          { transaction: t }
+        );
         if (component.test) {
           for (let question of component.test) {
-            let questionObj = await Question.create({
-              CourseSectionComponentId: courseSelectionComponentObj.id,
-              Q: question.Q,
-              type: question.type,
-              correctAnswer: question.correctAnswer,
-            });
+            let questionObj = await Question.create(
+              {
+                CourseSectionComponentId: courseSelectionComponentObj.id,
+                Q: question.Q,
+                type: question.type,
+                correctAnswer: question.correctAnswer,
+              },
+              { transaction: t }
+            );
             if (question.A) {
               for (let answer of question.A) {
-                let answerObj = await Answer.create({
-                  A: answer,
-                  QuestionId: questionObj.id,
-                });
+                let answerObj = await Answer.create(
+                  {
+                    A: answer,
+                    QuestionId: questionObj.id,
+                  },
+                  { transaction: t }
+                );
               }
             }
           }
@@ -264,6 +289,7 @@ async function createCourse(req, res) {
   } catch (ex) {
     //console.log(req.files["image"][0]);
     console.log(ex);
+    t.rollback();
     errorHandler(req, res, ex);
   }
 }
