@@ -377,6 +377,27 @@ async function enrollUserInCourse(req, res) {
     });
     if (course.gender != CONSTANTS.BOTH && course.gender != user.gender)
       throw new Error("gender difference");
+    // check if user meets the required prequisites
+    const coursePrequisites = await Prequisite.findAll({
+      where: {
+        CourseId: courseId,
+      },
+    });
+    const userFinishedCourses = await UserCourse.findAll({
+      where: {
+        UserId: userId,
+        type: CONSTANTS.FINISHED,
+      },
+    });
+    //console.log(coursePrequisites, userFinishedCourses);
+    for (let prequisite of coursePrequisites) {
+      let found = false;
+      for (let userFinishedCourse of userFinishedCourses) {
+        if (userFinishedCourse.CourseId == prequisite.prequisiteId)
+          found = true;
+      }
+      if (!found) throw new Error("doesn't match the requirements");
+    }
     const enrolledCourseState = await UserCourse.create({
       UserId: userId,
       CourseId: courseId,
