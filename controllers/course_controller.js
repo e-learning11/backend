@@ -9,7 +9,7 @@ const CONSTANTS = require("../utils/const");
 const Question = require("../models/question");
 const Answer = require("../models/answer");
 const Prequisite = require("../models/course_prequisite");
-
+const UserTestGrade = require("../models/user_grades");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -419,6 +419,7 @@ async function enrollUserInCourse(req, res) {
  */
 async function autoGradeTest(req, res) {
   try {
+    const userId = req.user.id;
     const testId = Number(req.query.testId);
     const answers = req.body.answers;
     const results = [];
@@ -428,9 +429,29 @@ async function autoGradeTest(req, res) {
       },
       include: [{ model: Question, include: [{ model: Answer }] }],
     });
+    let grade = 0;
     for (let [i, question] of courseSectionComponent.Questions.entries()) {
-      if (question.correctAnswer == answers[i]) results.push(1);
-      else results.push(0);
+      if (question.correctAnswer == answers[i]) {
+        results.push(1);
+        grade += 1;
+      } else results.push(0);
+    }
+    // check if user solved quiz or test before
+    const userGrade = await UserTestGrade.findOne({
+      UserId: userId,
+      testId: testId,
+    });
+    if (!userGrade) {
+      await UserTestGrade.create({
+        UserId: userId,
+        testId: testId,
+        grade: grade,
+        lastTimeSubmit: Date.now(),
+      });
+    } else {
+      userGrade.lastTimeSubmit = Date.now();
+      userGrade.grade = grade;
+      await userGrade.save();
     }
 
     res.status(200).send(results).end();
