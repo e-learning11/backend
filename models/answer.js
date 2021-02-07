@@ -5,6 +5,11 @@ const Answer = sequelize.define("Answer", {
   A: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notNull: {
+        msg: "please enter answer for the question",
+      },
+    },
   },
 });
 
