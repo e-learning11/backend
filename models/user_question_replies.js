@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/connection").sequelize;
 
-const UserQuestions = sequelize.define("UserQuestions", {
+const UserQuestionsReplies = sequelize.define("UserQuestionsReplies", {
   upvotes: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -16,4 +16,4 @@ const UserQuestions = sequelize.define("UserQuestions", {
   },
 });
 
-module.exports = UserQuestions;
+module.exports = UserQuestionsReplies;
