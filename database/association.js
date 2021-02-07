@@ -5,6 +5,7 @@ const CourseSectionComponent = require("../models/course_section_component");
 const UserCourse = require("../models/user_course");
 const Question = require("../models/question");
 const Answer = require("../models/answer");
+const Prequisite = require("../models/course_prequisite");
 
 CourseSection.hasMany(CourseSectionComponent);
 CourseSectionComponent.belongsTo(CourseSection);
@@ -19,7 +20,6 @@ Question.belongsTo(CourseSectionComponent);
 Course.belongsToMany(User, {
   through: UserCourse,
 });
-
 User.belongsToMany(Course, {
   through: UserCourse,
 });
@@ -27,3 +27,8 @@ User.hasMany(UserCourse);
 UserCourse.belongsTo(User);
 Course.hasMany(UserCourse);
 UserCourse.belongsTo(Course);
+
+Course.belongsToMany(Course, {
+  through: Prequisite,
+  as: "prequisites",
+});
