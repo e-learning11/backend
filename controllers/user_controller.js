@@ -43,7 +43,7 @@ async function signup(req, res) {
       gender,
       age,
     } = req.body;
-    console.log(req.body, req.file);
+    //console.log(req.body, req.file);
 
     const hashedPassword = await hashModule.hashString(password);
     const user = await User.create({
@@ -53,16 +53,16 @@ async function signup(req, res) {
       password: hashedPassword,
       phone: phone,
       type: type,
-      image: req.file.buffer,
+      image: req.file?.buffer,
       approved: false,
       gender: gender,
-      age: age,
+      age: age || -1,
     });
 
     const token = authenticationModule.createToken(user.id);
     res.status(200).send(token).end();
   } catch (ex) {
-    // console.log(ex);
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }

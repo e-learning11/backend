@@ -17,6 +17,10 @@ const User = sequelize.define("User", {
       notNull: {
         msg: "please enter firstname for the user",
       },
+      len: {
+        args: [4, 100],
+        msg: "minimum of 4 charachters for first name",
+      },
     },
   },
   lastName: {
@@ -25,6 +29,10 @@ const User = sequelize.define("User", {
     validate: {
       notNull: {
         msg: "please enter lastname for the user",
+      },
+      len: {
+        args: [4, 100],
+        msg: "minimum of 4 charachters for last name",
       },
     },
   },
@@ -49,6 +57,10 @@ const User = sequelize.define("User", {
       notNull: {
         msg: "please enter password for the user",
       },
+      len: {
+        args: [3, 100],
+        msg: "minimum of 3 charachters for password name",
+      },
     },
   },
   phone: {
@@ -58,6 +70,10 @@ const User = sequelize.define("User", {
       notNull: {
         msg: "please enter phone for the user",
       },
+      len: {
+        args: [8, 100],
+        msg: "minimum of 8 charachters for phone ",
+      },
     },
   },
   type: {
@@ -66,6 +82,10 @@ const User = sequelize.define("User", {
     validate: {
       notNull: {
         msg: "please enter type for the user",
+      },
+      isIn: {
+        args: [["teacher", "student", "admin"]],
+        msg: "type is teacher or student",
       },
     },
   },
@@ -89,6 +109,10 @@ const User = sequelize.define("User", {
       notNull: {
         msg: "please enter gender for the user",
       },
+      isIn: {
+        args: [[1, 2]],
+        msg: "gender is 1 for male and 2 for female",
+      },
     },
   },
   age: {
@@ -97,6 +121,10 @@ const User = sequelize.define("User", {
     validate: {
       notNull: {
         msg: "please enter age for the user",
+      },
+      min: {
+        args: [0],
+        msg: "must enter age",
       },
     },
   },
