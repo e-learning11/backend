@@ -18,8 +18,8 @@ const User = sequelize.define("User", {
         msg: "please enter firstname for the user",
       },
       len: {
-        args: [4, 100],
-        msg: "minimum of 4 charachters for first name",
+        args: [2, 100],
+        msg: "minimum of 2 charachters for first name",
       },
     },
   },
@@ -31,8 +31,8 @@ const User = sequelize.define("User", {
         msg: "please enter lastname for the user",
       },
       len: {
-        args: [4, 100],
-        msg: "minimum of 4 charachters for last name",
+        args: [2, 100],
+        msg: "minimum of 2 charachters for last name",
       },
     },
   },
