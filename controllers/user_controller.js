@@ -75,9 +75,13 @@ async function signup(req, res) {
 async function getProfile(req, res) {
   try {
     const userId = req.user.id;
+    //console.log("userId", userId);
     const user = await User.findOne({
-      id: userId,
+      where: {
+        id: userId,
+      },
     });
+    //console.log(user);
     res
       .status(200)
       .json({
@@ -112,6 +116,7 @@ async function editProfile(req, res) {
       email,
       phone,
       type,
+      age,
     } = req.body;
     const user = await User.findOne({
       where: {
@@ -128,6 +133,7 @@ async function editProfile(req, res) {
         email: email || user.email,
         phone: phone || user.phone,
         password: hashedPassword || user.password,
+        age: age || user.age,
       },
       {
         where: {
