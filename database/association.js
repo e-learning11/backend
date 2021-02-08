@@ -39,3 +39,4 @@ Course.belongsToMany(Course, {
 User.hasMany(UserTestGrade);
 UserQuestions.hasMany(UserQuestionsReplies);
 User.hasMany(UserQuestions);
+User.hasMany(UserQuestionsReplies);

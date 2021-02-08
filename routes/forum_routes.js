@@ -8,5 +8,9 @@ router.post(
   authenticationModule.checkAuth,
   forumController.postQuestion
 );
-
+router.post(
+  "/forum/question/reply",
+  authenticationModule.checkAuth,
+  forumController.postReply
+);
 module.exports = router;

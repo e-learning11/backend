@@ -50,7 +50,28 @@ async function getQuestions(req, res) {
   }
 }
 
+/**
+ * postReply
+ * @param {Request} req
+ * @param {Response} res
+ * reply to specific question
+ */
+async function postReply(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId, text } = req.body;
+    const reply = await UserQuestionsReplies.create({
+      UserQuestionId: Number(questionId),
+      text: text,
+      UserId: userId,
+    });
+    res.status(200).send(reply).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
+  postReply,
 };
