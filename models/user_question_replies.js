@@ -13,7 +13,7 @@ const UserQuestionsReplies = sequelize.define("UserQuestionsReplies", {
     defaultValue: 0,
   },
   text: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       len: {

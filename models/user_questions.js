@@ -13,7 +13,7 @@ const UserQuestions = sequelize.define("UserQuestions", {
     defaultValue: 0,
   },
   text: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       len: {
@@ -21,6 +21,10 @@ const UserQuestions = sequelize.define("UserQuestions", {
         msg: "reply must be at least 1 charachter",
       },
     },
+  },
+  tags: {
+    allowNull: true,
+    type: DataTypes.TEXT,
   },
 });
 
