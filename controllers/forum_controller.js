@@ -70,8 +70,36 @@ async function postReply(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * getReplies
+ * @param {Request} req
+ * @param {Response} res
+ * reply to specific question
+ */
+async function getReplies(req, res) {
+  try {
+    const { limit, offset } = req.query;
+    const where = {};
+    if (req.query.replyId) where.id = Number(req.query.replyId);
+    if (req.query.questionId)
+      where.UserQuestionId = Number(req.query.questionId);
+    if (req.query.responderId) where.UserId = Number(req.query.responderId);
+    if (req.query.upvotes) where.upvotes = Number(req.query.upvotes);
+    if (req.query.downvotes) where.downvotes = Number(req.query.downvotes);
+    const replies = await UserQuestionsReplies.findAll({
+      where: where,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+    res.status(200).send(replies).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
   postReply,
+  getReplies,
 };

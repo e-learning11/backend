@@ -3,6 +3,7 @@ const forumController = require("../controllers/forum_controller");
 const authenticationModule = require("../utils/authentication");
 
 router.get("/forum/questions", forumController.getQuestions);
+router.get("/forum/questions/replies", forumController.getReplies);
 router.post(
   "/forum/question",
   authenticationModule.checkAuth,
