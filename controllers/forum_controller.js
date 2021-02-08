@@ -4,6 +4,7 @@ const UserQuestionsReplies = require("../models/user_question_replies");
 const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
 const UserVote = require("../models/user_votes");
+const sequelize = require("../database/connection").sequelize;
 /**
  * postQuestion
  * @param {Request} req
@@ -105,6 +106,7 @@ async function getReplies(req, res) {
  * add upvote for a question or reply
  */
 async function postUpvote(req, res) {
+  const t = await sequelize.transaction();
   try {
     const userId = req.user.id;
     let { type, typeId, vote } = req.body;
@@ -119,14 +121,9 @@ async function postUpvote(req, res) {
       },
     });
     if (userVote)
-      throw new Error({
-        errors: [
-          {
-            message:
-              "cannot vote for this type again as you have already voted",
-          },
-        ],
-      });
+      throw new Error(
+        "cannot vote for this type again as you have already voted"
+      );
     // check if upvoted and there is downvote then remove downvote and vice versa
     if (vote == CONSTANTS.FORUM_UPVOTE) {
       const votedBefore = await UserVote.findOne({
@@ -142,14 +139,18 @@ async function postUpvote(req, res) {
           where: {
             id: votedBefore.id,
           },
+          transaction: t,
         });
       // add vote
-      await UserVote.create({
-        UserId: userId,
-        type: type,
-        vote: vote,
-        typeId: typeId,
-      });
+      await UserVote.create(
+        {
+          UserId: userId,
+          type: type,
+          vote: vote,
+          typeId: typeId,
+        },
+        { transaction: t }
+      );
     } else {
       const votedBefore = await UserVote.findOne({
         where: {
@@ -164,17 +165,67 @@ async function postUpvote(req, res) {
           where: {
             id: votedBefore.id,
           },
+          transaction: t,
         });
       // add vote
-      await UserVote.create({
-        UserId: userId,
-        type: type,
-        vote: vote,
-        typeId: typeId,
-      });
+      await UserVote.create(
+        {
+          UserId: userId,
+          type: type,
+          vote: vote,
+          typeId: typeId,
+        },
+        { transaction: t }
+      );
     }
-    res.status(200).send("done voting").end();
+    await t.commit();
+    // update up/down votes for entity
+    const noOfUpvotes = await UserVote.count({
+      where: {
+        type: type,
+        typeId: typeId,
+        vote: CONSTANTS.FORUM_UPVOTE,
+      },
+    });
+    const noOfDownvotes = await UserVote.count({
+      where: {
+        type: type,
+        typeId: typeId,
+        vote: CONSTANTS.FORUM_DOWNVOTE,
+      },
+    });
+    if (type == CONSTANTS.FORUM_QUESTION) {
+      await UserQuestions.update(
+        {
+          upvotes: noOfUpvotes,
+          downvotes: noOfDownvotes,
+        },
+        {
+          where: {
+            id: typeId,
+          },
+        }
+      );
+    } else {
+      await UserQuestionsReplies.update(
+        {
+          upvotes: noOfUpvotes,
+          downvotes: noOfDownvotes,
+        },
+        {
+          where: {
+            id: typeId,
+          },
+        }
+      );
+    }
+
+    res
+      .status(200)
+      .json({ upvotes: noOfUpvotes, downvotes: noOfDownvotes })
+      .end();
   } catch (ex) {
+    await t.rollback();
     console.log(ex);
     errorHandler(req, res, ex);
   }
