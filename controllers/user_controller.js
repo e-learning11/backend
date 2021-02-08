@@ -82,13 +82,13 @@ async function getProfile(req, res) {
       .status(200)
       .json({
         email: user.email,
-        data: {
-          type: user.type,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          phone: user.phone,
-          gender: user.gender,
-        },
+
+        type: user.type,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        gender: user.gender,
+        age: user.age,
       })
       .end();
   } catch (ex) {
