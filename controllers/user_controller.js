@@ -12,7 +12,9 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({
-      email: email,
+      where: {
+        email: email,
+      },
     });
     if (await hashModule.compareStringWithHash(password, user.password)) {
       const token = authenticationModule.createToken(user.id);
