@@ -14,4 +14,9 @@ router.post(
   authenticationModule.checkAuth,
   forumController.postReply
 );
+router.post(
+  "/forum/vote",
+  authenticationModule.checkAuth,
+  forumController.postUpvote
+);
 module.exports = router;

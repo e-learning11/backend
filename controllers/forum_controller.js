@@ -1,9 +1,9 @@
 const User = require("../models/user");
 const UserQuestions = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
-const authenticationModule = require("../utils/authentication");
 const errorHandler = require("../utils/error");
-
+const CONSTANTS = require("../utils/const");
+const UserVote = require("../models/user_votes");
 /**
  * postQuestion
  * @param {Request} req
@@ -97,9 +97,92 @@ async function getReplies(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * postUpvote
+ * @param {Request} req
+ * @param {Response} res
+ * add upvote for a question or reply
+ */
+async function postUpvote(req, res) {
+  try {
+    const userId = req.user.id;
+    let { type, typeId, vote } = req.body;
+    typeId = Number(typeId);
+    // check if user has voted this vote before
+    const userVote = await UserVote.findOne({
+      where: {
+        UserId: userId,
+        type: type,
+        vote: vote,
+        typeId: typeId,
+      },
+    });
+    if (userVote)
+      throw new Error({
+        errors: [
+          {
+            message:
+              "cannot vote for this type again as you have already voted",
+          },
+        ],
+      });
+    // check if upvoted and there is downvote then remove downvote and vice versa
+    if (vote == CONSTANTS.FORUM_UPVOTE) {
+      const votedBefore = await UserVote.findOne({
+        where: {
+          UserId: userId,
+          type: type,
+          vote: CONSTANTS.FORUM_DOWNVOTE,
+          typeId: typeId,
+        },
+      });
+      if (votedBefore)
+        await UserVote.destroy({
+          where: {
+            id: votedBefore.id,
+          },
+        });
+      // add vote
+      await UserVote.create({
+        UserId: userId,
+        type: type,
+        vote: vote,
+        typeId: typeId,
+      });
+    } else {
+      const votedBefore = await UserVote.findOne({
+        where: {
+          UserId: userId,
+          type: type,
+          vote: CONSTANTS.FORUM_UPVOTE,
+          typeId: typeId,
+        },
+      });
+      if (votedBefore)
+        await UserVote.destroy({
+          where: {
+            id: votedBefore.id,
+          },
+        });
+      // add vote
+      await UserVote.create({
+        UserId: userId,
+        type: type,
+        vote: vote,
+        typeId: typeId,
+      });
+    }
+    res.status(200).send("done voting").end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
   postReply,
   getReplies,
+  postUpvote,
 };

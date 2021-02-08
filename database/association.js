@@ -9,6 +9,7 @@ const Prequisite = require("../models/course_prequisite");
 const UserTestGrade = require("../models/user_grades");
 const UserQuestions = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
+const UserVote = require("../models/user_votes");
 
 CourseSection.hasMany(CourseSectionComponent);
 CourseSectionComponent.belongsTo(CourseSection);
@@ -40,3 +41,4 @@ User.hasMany(UserTestGrade);
 UserQuestions.hasMany(UserQuestionsReplies);
 User.hasMany(UserQuestions);
 User.hasMany(UserQuestionsReplies);
+User.hasMany(UserVote);
