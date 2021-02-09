@@ -2,7 +2,7 @@ const User = require("../models/user");
 const Course = require("../models/courses");
 const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
-
+const path = require("path");
 /**
  * getImage
  * @param {Request} req
@@ -17,14 +17,17 @@ async function getImage(req, res) {
         const user = await User.findOne({
           where: { id: Number(id) },
         });
-        res.end(user.image, "binary");
+        console.log(user.image, __dirname);
+        if (user.image) res.end(user.image, "binary");
+        else res.sendFile(path.join(__dirname, "../assets/images/user.jpeg"));
         break;
       }
       case CONSTANTS.COURSE: {
         const course = await Course.findOne({
           where: { id: Number(id) },
         });
-        res.end(course.image, "binary");
+        if (course.image) res.end(course.image, "binary");
+        else res.sendFile(path.join(__dirname, "../assets/images/course.jpg"));
         break;
       }
       default:
