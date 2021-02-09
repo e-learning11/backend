@@ -17,7 +17,7 @@ async function getImage(req, res) {
         const user = await User.findOne({
           where: { id: Number(id) },
         });
-        console.log(user.image, __dirname);
+        //console.log(user.image, __dirname);
         if (user.image) res.end(user.image, "binary");
         else res.sendFile(path.join(__dirname, "../assets/images/user.jpeg"));
         break;
