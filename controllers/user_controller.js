@@ -118,11 +118,15 @@ async function editProfile(req, res) {
       type,
       age,
     } = req.body;
+    let imageFile = req.file;
+    if (imageFile && imageFile.buffer) imageFile = imageFile.buffer;
+    else imageFile = null;
     const user = await User.findOne({
       where: {
         id: userId,
       },
     });
+    console.log("user", user);
     let hashedPassword = null;
     if (password) hashedPassword = hashModule.hashString(password);
     await User.update(
@@ -134,6 +138,7 @@ async function editProfile(req, res) {
         phone: phone || user.phone,
         password: hashedPassword || user.password,
         age: age || user.age,
+        image: imageFile || user.image,
       },
       {
         where: {

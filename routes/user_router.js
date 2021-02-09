@@ -14,6 +14,7 @@ router.get(
 router.put(
   "/user/profile/edit",
   authenticationModule.checkAuth,
+  upload.single("image"),
   userController.editProfile
 );
 module.exports = router;
