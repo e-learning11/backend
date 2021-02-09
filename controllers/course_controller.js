@@ -443,8 +443,10 @@ async function autoGradeTest(req, res) {
     }
     // check if user solved quiz or test before
     const userGrade = await UserTestGrade.findOne({
-      UserId: userId,
-      testId: testId,
+      where: {
+        UserId: userId,
+        testId: testId,
+      },
     });
     if (!userGrade) {
       await UserTestGrade.create({
