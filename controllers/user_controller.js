@@ -86,7 +86,7 @@ async function getProfile(req, res) {
       .status(200)
       .json({
         email: user.email,
-
+        id: user.id,
         type: user.type,
         firstName: user.firstName,
         lastName: user.lastName,
