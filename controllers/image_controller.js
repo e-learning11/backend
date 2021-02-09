@@ -15,14 +15,14 @@ async function getImage(req, res) {
     switch (owner) {
       case CONSTANTS.USER: {
         const user = await User.findOne({
-          id: Number(id),
+          where: { id: Number(id) },
         });
         res.end(user.image, "binary");
         break;
       }
       case CONSTANTS.COURSE: {
         const course = await Course.findOne({
-          id: Number(id),
+          where: { id: Number(id) },
         });
         res.end(course.image, "binary");
         break;
