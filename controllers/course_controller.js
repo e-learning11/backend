@@ -39,7 +39,8 @@ async function getEnrolledCoursesByUser(req, res) {
         description: course.summary,
         date: course.date,
         gender: course.gender,
-        age: course.age,
+        ageMin: course.ageMin,
+        ageMax: course.ageMax,
         private: course.private,
       });
     }
@@ -79,7 +80,8 @@ async function getFinishedCoursesByUser(req, res) {
         description: course.summary,
         date: course.date,
         gender: course.gender,
-        age: course.age,
+        ageMin: course.ageMin,
+        ageMax: course.ageMax,
         private: course.private,
       });
     }
@@ -118,7 +120,8 @@ async function getCoursesCreatedByuser(req, res) {
         description: course.summary,
         date: course.date,
         gender: course.gender,
-        age: course.age,
+        ageMin: course.ageMin,
+        ageMax: course.ageMax,
         private: course.private,
       });
     }
@@ -149,7 +152,8 @@ async function getRandomCourses(req, res) {
         description: course.summary,
         date: course.date,
         gender: course.gender,
-        age: course.age,
+        ageMin: course.ageMin,
+        ageMax: course.ageMax,
         private: course.private,
       });
     }
@@ -184,7 +188,7 @@ async function createCourse(req, res) {
       language,
       date,
       sections,
-      age,
+      age, // array of 2 numbers
       gender,
       private,
     } = JSON.parse(req.body.json);
@@ -196,7 +200,8 @@ async function createCourse(req, res) {
         language: language,
         date: date,
         approved: false,
-        age: age,
+        ageMin: age[0],
+        ageMax: age[1],
         gender: gender,
         image: req.files["image"][0].buffer,
         private: private,
@@ -484,7 +489,7 @@ async function getAllCourses(req, res) {
     if (req.query.date) where.date = req.query.date;
     if (req.query.gender) where.gender = Number(req.query.gender);
     if (req.query.courseId) where.id = Number(req.query.courseId);
-    if (req.query.age) where.age = Number(req.query.age);
+    //if (req.query.age) where.age = Number(req.query.age);
     const courses = await Course.findAll({
       where: where,
       limit: Number(limit),

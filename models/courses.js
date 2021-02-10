@@ -79,12 +79,21 @@ const Course = sequelize.define("Course", {
       },
     },
   },
-  age: {
+  ageMin: {
     type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
       notNull: {
-        msg: "please enter age for the course",
+        msg: "please enter min age for the course",
+      },
+    },
+  },
+  ageMax: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: "please enter max age for the course",
       },
     },
   },

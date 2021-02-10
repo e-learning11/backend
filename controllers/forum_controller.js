@@ -179,51 +179,55 @@ async function postUpvote(req, res) {
       );
     }
     await t.commit();
-    // update up/down votes for entity
-    const noOfUpvotes = await UserVote.count({
-      where: {
-        type: type,
-        typeId: typeId,
-        vote: CONSTANTS.FORUM_UPVOTE,
-      },
-    });
-    const noOfDownvotes = await UserVote.count({
-      where: {
-        type: type,
-        typeId: typeId,
-        vote: CONSTANTS.FORUM_DOWNVOTE,
-      },
-    });
-    if (type == CONSTANTS.FORUM_QUESTION) {
-      await UserQuestions.update(
-        {
-          upvotes: noOfUpvotes,
-          downvotes: noOfDownvotes,
+    try {
+      // update up/down votes for entity
+      const noOfUpvotes = await UserVote.count({
+        where: {
+          type: type,
+          typeId: typeId,
+          vote: CONSTANTS.FORUM_UPVOTE,
         },
-        {
-          where: {
-            id: typeId,
-          },
-        }
-      );
-    } else {
-      await UserQuestionsReplies.update(
-        {
-          upvotes: noOfUpvotes,
-          downvotes: noOfDownvotes,
+      });
+      const noOfDownvotes = await UserVote.count({
+        where: {
+          type: type,
+          typeId: typeId,
+          vote: CONSTANTS.FORUM_DOWNVOTE,
         },
-        {
-          where: {
-            id: typeId,
+      });
+      if (type == CONSTANTS.FORUM_QUESTION) {
+        await UserQuestions.update(
+          {
+            upvotes: noOfUpvotes,
+            downvotes: noOfDownvotes,
           },
-        }
-      );
-    }
+          {
+            where: {
+              id: typeId,
+            },
+          }
+        );
+      } else {
+        await UserQuestionsReplies.update(
+          {
+            upvotes: noOfUpvotes,
+            downvotes: noOfDownvotes,
+          },
+          {
+            where: {
+              id: typeId,
+            },
+          }
+        );
+      }
 
-    res
-      .status(200)
-      .json({ upvotes: noOfUpvotes, downvotes: noOfDownvotes })
-      .end();
+      res
+        .status(200)
+        .json({ upvotes: noOfUpvotes, downvotes: noOfDownvotes })
+        .end();
+    } catch (ex) {
+      errorHandler(req, res, ex);
+    }
   } catch (ex) {
     await t.rollback();
     console.log(ex);

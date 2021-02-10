@@ -126,7 +126,7 @@ async function editProfile(req, res) {
         id: userId,
       },
     });
-    console.log("user", user);
+    // console.log("user", user);
     let hashedPassword = null;
     if (password) hashedPassword = hashModule.hashString(password);
     await User.update(
