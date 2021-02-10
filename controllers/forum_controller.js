@@ -79,7 +79,7 @@ async function postReply(req, res) {
  * getReplies
  * @param {Request} req
  * @param {Response} res
- * reply to specific question
+ * get reply to specific question
  */
 async function getReplies(req, res) {
   try {
@@ -105,7 +105,7 @@ async function getReplies(req, res) {
  * postUpvote
  * @param {Request} req
  * @param {Response} res
- * add upvote for a question or reply
+ * add upvote/downvote for a question or reply
  */
 async function postUpvote(req, res) {
   const t = await sequelize.transaction();
@@ -243,7 +243,7 @@ async function postUpvote(req, res) {
  * postComment
  * @param {Request} req
  * @param {Response} res
- * reply to specific question
+ * comment to specific reply
  */
 async function postComment(req, res) {
   try {
@@ -276,7 +276,7 @@ async function postComment(req, res) {
  * getComments
  * @param {Request} req
  * @param {Response} res
- * reply to specific question
+ * get comment to specific reply
  */
 async function getComments(req, res) {
   try {
@@ -294,6 +294,67 @@ async function getComments(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function setReplyAsAnswer(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId, replyId } = req.body;
+    // check that this question belong to this user
+    const userQuestion = await UserQuestions.findOne({
+      where: {
+        id: Number(questionId),
+        UserId: userId,
+      },
+    });
+    if (!userQuestion)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "not question owner" }],
+        })
+      );
+    // check that no answer already marked for this question
+    const replyAnswer = await UserQuestionsReplies.findOne({
+      where: {
+        id: Number(replyId),
+        isAnswer: true,
+        UserQuestionId: Number(questionId),
+      },
+    });
+    if (replyAnswer)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "there is already an answer for this question" }],
+        })
+      );
+    // set reply to true ;
+    const setToIsAnswer = await UserQuestionsReplies.update(
+      {
+        isAnswer: true,
+      },
+      {
+        where: {
+          id: Number(replyId),
+          UserQuestionId: Number(questionId),
+        },
+      }
+    );
+    if (setToIsAnswer[0] == 1)
+      res.status(200).send("set reply to answer successfully").end();
+    else
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "cannot set this reply to answer" }],
+        })
+      );
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -302,4 +363,5 @@ module.exports = {
   postUpvote,
   postComment,
   getComments,
+  setReplyAsAnswer,
 };

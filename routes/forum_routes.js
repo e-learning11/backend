@@ -25,4 +25,9 @@ router.post(
   authenticationModule.checkAuth,
   forumController.postUpvote
 );
+router.post(
+  "/forum/question/reply/set-answer",
+  authenticationModule.checkAuth,
+  forumController.setReplyAsAnswer
+);
 module.exports = router;
