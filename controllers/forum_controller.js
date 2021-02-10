@@ -46,9 +46,11 @@ async function getQuestions(req, res) {
       where: where,
       limit: Number(limit),
       offset: Number(offset),
+      include: [{ model: User, attributes: ["id"] }],
     });
     res.status(200).send(questions).end();
   } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }

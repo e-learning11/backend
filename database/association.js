@@ -36,11 +36,21 @@ Course.belongsToMany(Course, {
   through: Prequisite,
   as: "prequisites",
 });
+
+UserQuestionsRepliesComment.belongsTo(User);
+User.hasMany(UserQuestionsRepliesComment);
+
 UserQuestionsReplies.hasMany(UserQuestionsRepliesComment);
-User.hasMany(UserTestGrade);
+UserQuestionsRepliesComment.belongsTo(UserQuestionsReplies);
+
 UserQuestions.hasMany(UserQuestionsReplies);
+UserQuestionsReplies.belongsTo(UserQuestions);
+
 User.hasMany(UserQuestions);
+UserQuestions.belongsTo(User);
+
 User.hasMany(UserQuestionsReplies);
 User.hasMany(UserVote);
-User.hasMany(UserQuestionsRepliesComment);
 Course.hasMany(UserQuestions);
+
+User.hasMany(UserTestGrade);
