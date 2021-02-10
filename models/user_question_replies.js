@@ -2,16 +2,17 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../database/connection").sequelize;
 
 const UserQuestionsReplies = sequelize.define("UserQuestionsReplies", {
-  upvotes: {
+  votes: {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: 0,
   },
-  downvotes: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 0,
+  isAnswer: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
+
   text: {
     type: DataTypes.TEXT,
     allowNull: false,

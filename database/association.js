@@ -10,7 +10,7 @@ const UserTestGrade = require("../models/user_grades");
 const UserQuestions = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
 const UserVote = require("../models/user_votes");
-
+const UserQuestionsRepliesComment = require("../models/user_questions_reply_comment");
 CourseSection.hasMany(CourseSectionComponent);
 CourseSectionComponent.belongsTo(CourseSection);
 Course.hasMany(CourseSection);
@@ -36,9 +36,11 @@ Course.belongsToMany(Course, {
   through: Prequisite,
   as: "prequisites",
 });
-
+UserQuestionsReplies.hasMany(UserQuestionsRepliesComment);
 User.hasMany(UserTestGrade);
 UserQuestions.hasMany(UserQuestionsReplies);
 User.hasMany(UserQuestions);
 User.hasMany(UserQuestionsReplies);
 User.hasMany(UserVote);
+User.hasMany(UserQuestionsRepliesComment);
+Course.hasMany(UserQuestions);

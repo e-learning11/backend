@@ -2,16 +2,12 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../database/connection").sequelize;
 
 const UserQuestions = sequelize.define("UserQuestions", {
-  upvotes: {
+  votes: {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: 0,
   },
-  downvotes: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 0,
-  },
+
   text: {
     type: DataTypes.TEXT,
     allowNull: false,

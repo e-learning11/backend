@@ -4,6 +4,7 @@ const UserQuestionsReplies = require("../models/user_question_replies");
 const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
 const UserVote = require("../models/user_votes");
+const UserQuestionsRepliesComment = require("../models/user_questions_reply_comment");
 const sequelize = require("../database/connection").sequelize;
 /**
  * postQuestion
@@ -14,11 +15,12 @@ const sequelize = require("../database/connection").sequelize;
 async function postQuestion(req, res) {
   try {
     const userId = req.user.id;
-    const { text, tags } = req.body;
+    const { text, tags, courseId } = req.body;
     const question = await UserQuestions.create({
       UserId: userId,
       text: text,
       tags: tags,
+      CourseId: Number(courseId),
     });
     res.status(200).send(question).end();
   } catch (ex) {
@@ -38,8 +40,8 @@ async function getQuestions(req, res) {
     const where = {};
     if (req.query.questionId) where.id = Number(req.query.questionId);
     if (req.query.askerId) where.UserId = Number(req.query.askerId);
-    if (req.query.upvotes) where.upvotes = Number(req.query.upvotes);
-    if (req.query.downvotes) where.downvotes = Number(req.query.downvotes);
+    if (req.query.votes) where.votes = Number(req.query.votes);
+    if (req.query.courseId) where.CourseId = Number(req.query.courseId);
     const questions = await UserQuestions.findAll({
       where: where,
       limit: Number(limit),
@@ -65,6 +67,7 @@ async function postReply(req, res) {
       UserQuestionId: Number(questionId),
       text: text,
       UserId: userId,
+      isAnswer: false,
     });
     res.status(200).send(reply).end();
   } catch (ex) {
@@ -86,8 +89,7 @@ async function getReplies(req, res) {
     if (req.query.questionId)
       where.UserQuestionId = Number(req.query.questionId);
     if (req.query.responderId) where.UserId = Number(req.query.responderId);
-    if (req.query.upvotes) where.upvotes = Number(req.query.upvotes);
-    if (req.query.downvotes) where.downvotes = Number(req.query.downvotes);
+    if (req.query.votes) where.upvotes = Number(req.query.votes);
     const replies = await UserQuestionsReplies.findAll({
       where: where,
       limit: Number(limit),
@@ -144,15 +146,16 @@ async function postUpvote(req, res) {
           transaction: t,
         });
       // add vote
-      await UserVote.create(
-        {
-          UserId: userId,
-          type: type,
-          vote: vote,
-          typeId: typeId,
-        },
-        { transaction: t }
-      );
+      else
+        await UserVote.create(
+          {
+            UserId: userId,
+            type: type,
+            vote: vote,
+            typeId: typeId,
+          },
+          { transaction: t }
+        );
     } else {
       const votedBefore = await UserVote.findOne({
         where: {
@@ -170,15 +173,16 @@ async function postUpvote(req, res) {
           transaction: t,
         });
       // add vote
-      await UserVote.create(
-        {
-          UserId: userId,
-          type: type,
-          vote: vote,
-          typeId: typeId,
-        },
-        { transaction: t }
-      );
+      else
+        await UserVote.create(
+          {
+            UserId: userId,
+            type: type,
+            vote: vote,
+            typeId: typeId,
+          },
+          { transaction: t }
+        );
     }
     await t.commit();
     try {
@@ -200,8 +204,7 @@ async function postUpvote(req, res) {
       if (type == CONSTANTS.FORUM_QUESTION) {
         await UserQuestions.update(
           {
-            upvotes: noOfUpvotes,
-            downvotes: noOfDownvotes,
+            votes: noOfUpvotes - noOfDownvotes,
           },
           {
             where: {
@@ -212,8 +215,7 @@ async function postUpvote(req, res) {
       } else {
         await UserQuestionsReplies.update(
           {
-            upvotes: noOfUpvotes,
-            downvotes: noOfDownvotes,
+            votes: noOfUpvotes - noOfDownvotes,
           },
           {
             where: {
@@ -236,10 +238,68 @@ async function postUpvote(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * postComment
+ * @param {Request} req
+ * @param {Response} res
+ * reply to specific question
+ */
+async function postComment(req, res) {
+  try {
+    const userId = req.user.id;
+    const { replyId, text } = req.body;
+    // check reply exist
+    const reply = await UserQuestionsReplies.findOne({
+      where: {
+        id: Number(replyId),
+      },
+    });
+    if (!reply)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no reply found with this id" }],
+        })
+      );
+    const comment = await UserQuestionsRepliesComment.create({
+      UserQuestionsReplyId: Number(replyId),
+      text: text,
+      UserId: userId,
+    });
+    res.status(200).send(comment).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getComments
+ * @param {Request} req
+ * @param {Response} res
+ * reply to specific question
+ */
+async function getComments(req, res) {
+  try {
+    const { limit, offset, replyId } = req.query;
+
+    const comments = await UserQuestionsRepliesComment.findAll({
+      where: {
+        UserQuestionsReplyId: Number(replyId),
+      },
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+    res.status(200).send(comments).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
   postReply,
   getReplies,
   postUpvote,
+  postComment,
+  getComments,
 };
