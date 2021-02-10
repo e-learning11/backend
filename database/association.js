@@ -50,6 +50,7 @@ User.hasMany(UserQuestions);
 UserQuestions.belongsTo(User);
 
 User.hasMany(UserQuestionsReplies);
+UserQuestionsReplies.belongsTo(User);
 User.hasMany(UserVote);
 Course.hasMany(UserQuestions);
 

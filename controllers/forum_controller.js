@@ -96,6 +96,7 @@ async function getReplies(req, res) {
       where: where,
       limit: Number(limit),
       offset: Number(offset),
+      include: [{ model: User, attributes: ["id"] }],
     });
     res.status(200).send(replies).end();
   } catch (ex) {
@@ -290,6 +291,7 @@ async function getComments(req, res) {
       },
       limit: Number(limit),
       offset: Number(offset),
+      include: [{ model: User, attributes: ["id"] }],
     });
     res.status(200).send(comments).end();
   } catch (ex) {
