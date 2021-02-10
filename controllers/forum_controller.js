@@ -122,7 +122,9 @@ async function postUpvote(req, res) {
     });
     if (userVote)
       throw new Error(
-        "cannot vote for this type again as you have already voted"
+        JSON.stringify({
+          errors: [{ message: "cannot vote twice" }],
+        })
       );
     // check if upvoted and there is downvote then remove downvote and vice versa
     if (vote == CONSTANTS.FORUM_UPVOTE) {

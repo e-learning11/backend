@@ -179,7 +179,12 @@ async function createCourse(req, res) {
         id: userId,
       },
     });
-    if (user.type != CONSTANTS.TEACHER) throw new Error("not teacher");
+    if (user.type != CONSTANTS.TEACHER)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "not a teacher" }],
+        })
+      );
     const {
       name,
       summary,
@@ -192,6 +197,11 @@ async function createCourse(req, res) {
       gender,
       private,
     } = JSON.parse(req.body.json);
+    let imageReq = req.files["image"];
+    if (imageReq && req.files["image"][0].buffer)
+      imageReq = req.files["image"][0].buffer;
+    else imageReq = null;
+
     let courseObj = await Course.create(
       {
         name: name,
@@ -203,7 +213,7 @@ async function createCourse(req, res) {
         ageMin: age[0],
         ageMax: age[1],
         gender: gender,
-        image: req.files["image"][0].buffer,
+        image: imageReq,
         private: private,
       },
       { transaction: t }
@@ -383,7 +393,14 @@ async function enrollUserInCourse(req, res) {
       },
     });
     if (course.gender != CONSTANTS.BOTH && course.gender != user.gender)
-      throw new Error({ errors: [{ message: "gender difference" }] });
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "gender difference" }] })
+      );
+    //console.log(user.id, course.ageMin, user.age, course.ageMax);
+    if (!(user.age >= course.ageMin && user.age <= course.ageMax))
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "age difference" }] })
+      );
     // check if user meets the required prequisites
     const coursePrequisites = await Prequisite.findAll({
       where: {
@@ -404,9 +421,11 @@ async function enrollUserInCourse(req, res) {
           found = true;
       }
       if (!found)
-        throw new Error({
-          errors: [{ message: "doesnt match course requirements" }],
-        });
+        throw new Error(
+          JSON.stringify({
+            errors: [{ message: "doesnt match course requirements" }],
+          })
+        );
     }
     const enrolledCourseState = await UserCourse.create({
       UserId: userId,
