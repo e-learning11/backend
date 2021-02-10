@@ -198,7 +198,7 @@ async function createCourse(req, res) {
       private,
     } = JSON.parse(req.body.json);
     let imageReq = req.files["image"];
-    if (imageReq && req.files["image"][0].buffer)
+    if (imageReq && req.files["image"][0] && req.files["image"][0].buffer)
       imageReq = req.files["image"][0].buffer;
     else imageReq = null;
 
