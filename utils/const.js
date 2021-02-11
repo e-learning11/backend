@@ -20,4 +20,5 @@ module.exports = {
   FORUM_DOWNVOTE: "downvote",
   COURSE_BY_ID: "course_by_id",
   COURSE_BY_URL: "course_by_url",
+  FORUM_QUESTIONS_SORT_PARAMETERS: ["votes", "createdAt"],
 };

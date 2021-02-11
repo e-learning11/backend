@@ -39,12 +39,22 @@ async function getQuestions(req, res) {
   try {
     const { limit, offset } = req.query;
     const where = {};
+    const order = [];
+    let sortOrder = "DESC";
     if (req.query.questionId) where.id = Number(req.query.questionId);
     if (req.query.askerId) where.UserId = Number(req.query.askerId);
     if (req.query.votes) where.votes = Number(req.query.votes);
     if (req.query.courseId) where.CourseId = Number(req.query.courseId);
+    if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
+      sortOrder = req.query.sortOrder;
+    if (
+      req.query.sort &&
+      CONSTANTS.FORUM_QUESTIONS_SORT_PARAMETERS.includes(req.query.sort)
+    )
+      order.push([req.query.sort, sortOrder]);
     const questions = await UserQuestions.findAll({
       where: where,
+      order: order,
       limit: Number(limit),
       offset: Number(offset),
       include: [{ model: User, attributes: ["id"] }],
