@@ -2,6 +2,9 @@ const User = require("../models/user");
 const hashModule = require("../utils/hash");
 const authenticationModule = require("../utils/authentication");
 const errorHandler = require("../utils/error");
+const UserCourse = require("../models/user_course");
+const CONSTANTS = require("../utils/const");
+const Course = require("../models/courses");
 /**
  * login
  * @param {Request} req
@@ -159,10 +162,41 @@ async function editProfile(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * deleteUser
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteUser(req, res) {
+  try {
+    const userId = req.user.id;
+    const coursesCreated = await UserCourse.findAll({
+      where: {
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    await User.destroy({
+      where: {
+        id: userId,
+      },
+    });
+    for (let course of coursesCreated)
+      await Course.destroy({
+        where: {
+          id: course.CourseId,
+        },
+      });
+    res.status(200).send("deleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 
 module.exports = {
   login,
   signup,
   getProfile,
   editProfile,
+  deleteUser,
 };

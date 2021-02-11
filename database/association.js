@@ -11,14 +11,14 @@ const UserQuestions = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
 const UserVote = require("../models/user_votes");
 const UserQuestionsRepliesComment = require("../models/user_questions_reply_comment");
-CourseSection.hasMany(CourseSectionComponent);
+CourseSection.hasMany(CourseSectionComponent, { onDelete: "CASCADE" });
 CourseSectionComponent.belongsTo(CourseSection);
-Course.hasMany(CourseSection);
+Course.hasMany(CourseSection, { onDelete: "CASCADE" });
 CourseSection.belongsTo(Course);
 
-Question.hasMany(Answer);
+Question.hasMany(Answer, { onDelete: "CASCADE" });
 Answer.belongsTo(Question);
-CourseSectionComponent.hasMany(Question);
+CourseSectionComponent.hasMany(Question, { onDelete: "CASCADE" });
 Question.belongsTo(CourseSectionComponent);
 
 Course.belongsToMany(User, {
@@ -26,10 +26,11 @@ Course.belongsToMany(User, {
 });
 User.belongsToMany(Course, {
   through: UserCourse,
+  onDelete: "CASCADE",
 });
-User.hasMany(UserCourse);
+User.hasMany(UserCourse, { onDelete: "CASCADE" });
 UserCourse.belongsTo(User);
-Course.hasMany(UserCourse);
+Course.hasMany(UserCourse, { onDelete: "CASCADE" });
 UserCourse.belongsTo(Course);
 
 Course.belongsToMany(Course, {
@@ -38,20 +39,22 @@ Course.belongsToMany(Course, {
 });
 
 UserQuestionsRepliesComment.belongsTo(User);
-User.hasMany(UserQuestionsRepliesComment);
+User.hasMany(UserQuestionsRepliesComment, { onDelete: "CASCADE" });
 
-UserQuestionsReplies.hasMany(UserQuestionsRepliesComment);
+UserQuestionsReplies.hasMany(UserQuestionsRepliesComment, {
+  onDelete: "CASCADE",
+});
 UserQuestionsRepliesComment.belongsTo(UserQuestionsReplies);
 
-UserQuestions.hasMany(UserQuestionsReplies);
+UserQuestions.hasMany(UserQuestionsReplies, { onDelete: "CASCADE" });
 UserQuestionsReplies.belongsTo(UserQuestions);
 
-User.hasMany(UserQuestions);
+User.hasMany(UserQuestions, { onDelete: "CASCADE" });
 UserQuestions.belongsTo(User);
 
-User.hasMany(UserQuestionsReplies);
+User.hasMany(UserQuestionsReplies, { onDelete: "CASCADE" });
 UserQuestionsReplies.belongsTo(User);
-User.hasMany(UserVote);
-Course.hasMany(UserQuestions);
+User.hasMany(UserVote, { onDelete: "CASCADE" });
+Course.hasMany(UserQuestions, { onDelete: "CASCADE" });
 
-User.hasMany(UserTestGrade);
+User.hasMany(UserTestGrade, { onDelete: "CASCADE" });

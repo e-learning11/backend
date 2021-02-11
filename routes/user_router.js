@@ -17,4 +17,9 @@ router.put(
   upload.single("image"),
   userController.editProfile
 );
+router.delete(
+  "/user",
+  authenticationModule.checkAuth,
+  userController.deleteUser
+);
 module.exports = router;
