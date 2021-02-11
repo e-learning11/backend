@@ -15,12 +15,13 @@ const sequelize = require("../database/connection").sequelize;
 async function postQuestion(req, res) {
   try {
     const userId = req.user.id;
-    const { text, tags, courseId } = req.body;
+    const { text, tags, courseId, title } = req.body;
     const question = await UserQuestions.create({
       UserId: userId,
       text: text,
       tags: tags,
       CourseId: Number(courseId),
+      title: title,
     });
     res.status(200).send(question).end();
   } catch (ex) {

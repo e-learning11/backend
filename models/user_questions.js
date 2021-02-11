@@ -7,7 +7,17 @@ const UserQuestions = sequelize.define("UserQuestions", {
     allowNull: true,
     defaultValue: 0,
   },
-
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    validate: {
+      len: {
+        args: [1, 500],
+        msg:
+          "title must be at least 1 charachter and less than 500 charachters",
+      },
+    },
+  },
   text: {
     type: DataTypes.TEXT,
     allowNull: false,
