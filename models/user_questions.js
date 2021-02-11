@@ -32,6 +32,11 @@ const UserQuestions = sequelize.define("UserQuestions", {
     allowNull: true,
     type: DataTypes.TEXT,
   },
+  isFeatured: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 module.exports = UserQuestions;

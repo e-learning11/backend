@@ -7,6 +7,7 @@ const UserVote = require("../models/user_votes");
 const UserQuestionsRepliesComment = require("../models/user_questions_reply_comment");
 const sequelize = require("../database/connection").sequelize;
 const Sequelize = require("sequelize");
+const UserCourse = require("../models/user_course");
 /**
  * postQuestion
  * @param {Request} req
@@ -375,6 +376,58 @@ async function setReplyAsAnswer(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * makeQuestionFeatured
+ * @param {Request} req
+ * @param {Response} res
+ * change question feature status
+ */
+async function makeQuestionFeatured(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId, courseId, isFeatured } = req.body;
+    // check that user is teacher
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (user.type != CONSTANTS.TEACHER)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not a teacher" }],
+        })
+      );
+    // check user owns course
+    const course = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: Number(courseId),
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not the owner for the course" }],
+        })
+      );
+    // set question to featured
+    await UserQuestions.update(
+      {
+        isFeatured: isFeatured,
+      },
+      {
+        where: {
+          id: Number(questionId),
+        },
+      }
+    );
+    res.status(200).send("updated question status").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -384,4 +437,5 @@ module.exports = {
   postComment,
   getComments,
   setReplyAsAnswer,
+  makeQuestionFeatured,
 };

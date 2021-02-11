@@ -30,4 +30,9 @@ router.post(
   authenticationModule.checkAuth,
   forumController.setReplyAsAnswer
 );
+router.post(
+  "/forum/question/set-question",
+  authenticationModule.checkAuth,
+  forumController.makeQuestionFeatured
+);
 module.exports = router;
