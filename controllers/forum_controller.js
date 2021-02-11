@@ -47,6 +47,8 @@ async function getQuestions(req, res) {
     if (req.query.askerId) where.UserId = Number(req.query.askerId);
     if (req.query.votes) where.votes = Number(req.query.votes);
     if (req.query.courseId) where.CourseId = Number(req.query.courseId);
+    if (req.query.isFeatured)
+      where.isFeatured = req.query.isFeatured == "true" ? true : false;
     if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
       sortOrder = req.query.sortOrder;
     if (req.query.tag)
