@@ -334,10 +334,33 @@ async function getCourseFullInfo(req, res) {
             },
           ],
         },
+        {
+          model: User,
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "phone",
+            "gender",
+            "age",
+          ],
+        },
       ],
     });
-    course.image = null;
-    res.status(200).send(course).end();
+    if (!course)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no course with this id" }] })
+      );
+    // console.log(course.get());
+    let courseToSendBack = course.get();
+    courseToSendBack.image = null;
+    courseToSendBack.instructor = course.Users[0];
+    //console.log(course.instructor);
+    courseToSendBack.Users = null;
+    delete courseToSendBack.Users;
+    courseToSendBack.instructor.UserCourse = null;
+    res.status(200).send(courseToSendBack).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
