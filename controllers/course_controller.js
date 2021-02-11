@@ -198,6 +198,7 @@ async function createCourse(req, res) {
       private,
     } = JSON.parse(req.body.json);
     let imageReq = req.files["image"];
+    console.log(imageReq);
     if (imageReq && req.files["image"][0] && req.files["image"][0].buffer)
       imageReq = req.files["image"][0].buffer;
     else imageReq = null;
@@ -535,6 +536,7 @@ async function getAllCourses(req, res) {
         instructor: {
           firstName: course.Users[0].firstName,
           lastName: course.Users[0].lastName,
+          id: course.Users[0].id,
         },
       });
     }
