@@ -10,6 +10,7 @@ const Question = require("../models/question");
 const Answer = require("../models/answer");
 const Prequisite = require("../models/course_prequisite");
 const UserTestGrade = require("../models/user_grades");
+const CourseURL = require("../models/course_url");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -185,6 +186,7 @@ async function createCourse(req, res) {
           errors: [{ message: "not a teacher" }],
         })
       );
+
     const {
       name,
       summary,
@@ -196,9 +198,26 @@ async function createCourse(req, res) {
       age, // array of 2 numbers
       gender,
       private,
+      url,
     } = JSON.parse(req.body.json);
+    // check that url is unique
+    if (url) {
+      const urlCourse = await CourseURL.findOne({
+        where: {
+          url: url,
+        },
+      });
+      if (urlCourse) {
+        throw new Error(
+          JSON.stringify({
+            errors: [{ message: "this url already exists please try another" }],
+          })
+        );
+      }
+    }
+
     let imageReq = req.files["image"];
-    console.log(imageReq);
+    //console.log(imageReq);
     if (imageReq && req.files["image"][0] && req.files["image"][0].buffer)
       imageReq = req.files["image"][0].buffer;
     else imageReq = null;
@@ -219,6 +238,16 @@ async function createCourse(req, res) {
       },
       { transaction: t }
     );
+    if (url)
+      await CourseURL.create(
+        {
+          CourseId: courseObj.id,
+          url: url,
+        },
+        {
+          transaction: t,
+        }
+      );
     for (let prequisiteId of prerequisites) {
       await Prequisite.create(
         {

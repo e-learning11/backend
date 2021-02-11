@@ -11,6 +11,8 @@ const UserQuestions = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
 const UserVote = require("../models/user_votes");
 const UserQuestionsRepliesComment = require("../models/user_questions_reply_comment");
+const CourseURL = require("../models/course_url");
+
 CourseSection.hasMany(CourseSectionComponent, { onDelete: "CASCADE" });
 CourseSectionComponent.belongsTo(CourseSection);
 Course.hasMany(CourseSection, { onDelete: "CASCADE" });
@@ -58,3 +60,6 @@ User.hasMany(UserVote, { onDelete: "CASCADE" });
 Course.hasMany(UserQuestions, { onDelete: "CASCADE" });
 
 User.hasMany(UserTestGrade, { onDelete: "CASCADE" });
+
+Course.hasOne(CourseURL, { onDelete: "CASCADE" });
+CourseURL.belongsTo(Course);
