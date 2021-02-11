@@ -6,6 +6,7 @@ const CONSTANTS = require("../utils/const");
 const UserVote = require("../models/user_votes");
 const UserQuestionsRepliesComment = require("../models/user_questions_reply_comment");
 const sequelize = require("../database/connection").sequelize;
+const Sequelize = require("sequelize");
 /**
  * postQuestion
  * @param {Request} req
@@ -47,6 +48,10 @@ async function getQuestions(req, res) {
     if (req.query.courseId) where.CourseId = Number(req.query.courseId);
     if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
       sortOrder = req.query.sortOrder;
+    if (req.query.tag)
+      where.tags = {
+        [Sequelize.Op.like]: `%${req.query.tag}%`,
+      };
     if (
       req.query.sort &&
       CONSTANTS.FORUM_QUESTIONS_SORT_PARAMETERS.includes(req.query.sort)
