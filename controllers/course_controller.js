@@ -365,8 +365,12 @@ async function getUserCourseState(req, res) {
         },
       ],
     });
+    if (!course) {
+      res.status(204).end();
+      return;
+    }
     course.image = null;
-    res.status(200).send(course).end();
+    res.status(200).send(course.UserCourses[0]).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
@@ -393,6 +397,10 @@ async function enrollUserInCourse(req, res) {
         id: courseId,
       },
     });
+    if (user.type != CONSTANTS.STUDENT)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "must be a student" }] })
+      );
     if (course.gender != CONSTANTS.BOTH && course.gender != user.gender)
       throw new Error(
         JSON.stringify({ errors: [{ message: "gender difference" }] })
