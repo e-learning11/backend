@@ -348,11 +348,37 @@ async function createCourse(req, res) {
  */
 async function getCourseFullInfo(req, res) {
   try {
-    const courseId = Number(req.query.courseId);
+    const { type, typeId } = req.query;
+    const where = {};
+    if (type == CONSTANTS.COURSE_BY_ID) {
+      where.id = Number(typeId);
+      where.private = false;
+    } else if (type == CONSTANTS.COURSE_BY_URL) {
+      const courseFromURL = await CourseURL.findOne({
+        where: {
+          url: typeId,
+        },
+      });
+      if (!courseFromURL)
+        throw new Error(
+          JSON.stringify({ errors: [{ message: "no course with this url" }] })
+        );
+      where.id = courseFromURL.CourseId;
+    } else {
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "please check that you specified correct query parameters",
+            },
+          ],
+        })
+      );
+    }
+
     const course = await Course.findOne({
-      where: {
-        id: courseId,
-      },
+      where: where,
       include: [
         {
           model: CourseSection,

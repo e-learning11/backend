@@ -18,4 +18,6 @@ module.exports = {
   FORUM_REPLY: "forum_reply",
   FORUM_UPVOTE: "upvote",
   FORUM_DOWNVOTE: "downvote",
+  COURSE_BY_ID: "course_by_id",
+  COURSE_BY_URL: "course_by_url",
 };
