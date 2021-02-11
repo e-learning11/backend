@@ -60,6 +60,10 @@ async function getQuestions(req, res) {
       CONSTANTS.FORUM_QUESTIONS_SORT_PARAMETERS.includes(req.query.sort)
     )
       order.push([req.query.sort, sortOrder]);
+    if (req.query.title)
+      where.title = {
+        [Sequelize.Op.like]: `%${req.query.title}%`,
+      };
     const questions = await UserQuestions.findAll({
       where: where,
       order: order,
