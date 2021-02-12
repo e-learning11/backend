@@ -806,6 +806,58 @@ async function getCourseAssignmentsSubmits(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * gradeAssignmentSubmission
+ * @param {Request} req
+ * @param {Response} res
+ * grade a submisiion of assignment form user
+ */
+async function gradeAssignmentSubmission(req, res) {
+  try {
+    const userId = req.user.id;
+    const { assignmentId, grade, courseId } = req.body;
+    if (!assignmentId)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "please add assignmentId" }] })
+      );
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "please add courseId" }] })
+      );
+    if (!grade)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "please add grade" }] })
+      );
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const assignmentSubmission = await CourseAssignment.findOne({
+      where: {
+        id: Number(assignmentId),
+        CourseId: Number(courseId),
+      },
+    });
+    if (!assignmentSubmission)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no assignment with this id" }] })
+      );
+    assignmentSubmission.grade = Number(grade);
+    await assignmentSubmission.save();
+    res.status(200).send(assignmentSubmission).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -822,4 +874,5 @@ module.exports = {
   getCourseOverview,
   submitAssignmentAnswer,
   getCourseAssignmentsSubmits,
+  gradeAssignmentSubmission,
 };

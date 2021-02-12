@@ -73,4 +73,9 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getCourseAssignmentsSubmits
 );
+router.post(
+  "/course/assignment/grade",
+  authenticationModule.checkAuth,
+  CourseController.gradeAssignmentSubmission
+);
 module.exports = router;
