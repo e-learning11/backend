@@ -78,4 +78,21 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.gradeAssignmentSubmission
 );
+
+router.post(
+  "/course/essay/submit",
+  authenticationModule.checkAuth,
+  CourseController.submitEssayAnswer
+);
+router.get(
+  "/course/essays/submits",
+  authenticationModule.checkAuth,
+  CourseController.getCourseEssaysSubmits
+);
+
+router.post(
+  "/course/essay/grade",
+  authenticationModule.checkAuth,
+  CourseController.gradeEssaySubmission
+);
 module.exports = router;

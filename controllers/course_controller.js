@@ -12,6 +12,7 @@ const Prequisite = require("../models/course_prequisite");
 const UserTestGrade = require("../models/user_grades");
 const CourseURL = require("../models/course_url");
 const CourseAssignment = require("../models/course_assignment");
+const CourseEssay = require("../models/course_essay");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -781,9 +782,9 @@ async function getCourseAssignmentsSubmits(req, res) {
     } = req.query;
     const where = {};
     if (courseSectionComponentId)
-      where.CourseSectionComponentId = courseSectionComponentId;
-    if (enrolledUerId) where.UserId = enrolledUerId;
-    where.CourseId = courseId;
+      where.CourseSectionComponentId = Number(courseSectionComponentId);
+    if (enrolledUerId) where.UserId = Number(enrolledUerId);
+    where.CourseId = Number(courseId);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
       where: {
@@ -858,6 +859,130 @@ async function gradeAssignmentSubmission(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * submitEssayAnswer
+ * @param {Request} req
+ * @param {Response} res
+ * submit answer to an essay which is not autograded
+ */
+async function submitEssayAnswer(req, res) {
+  try {
+    const userId = req.user.id;
+    const { courseId, questionId, text } = req.body;
+    // check that user is enrolled in course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: Number(courseId),
+        type: CONSTANTS.ENROLLED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not enrolled in course" }] })
+      );
+    const answer = await CourseEssay.create({
+      UserId: userId,
+      CourseId: Number(courseId),
+      QuestionId: Number(questionId),
+      text: text,
+    });
+    res.status(200).send(answer).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getCourseEssaysSubmits
+ * @param {Request} req
+ * @param {Response} res
+ * get course submits for essay question
+ */
+async function getCourseEssaysSubmits(req, res) {
+  try {
+    const userId = req.user.id;
+    const { courseId, questionId, enrolledUerId, limit, offset } = req.query;
+    const where = {};
+    if (questionId) where.QuestionId = Number(questionId);
+    if (enrolledUerId) where.UserId = Number(enrolledUerId);
+    where.CourseId = Number(courseId);
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const coursesEssaysSubmits = await CourseEssay.findAll({
+      where: where,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+    res.status(200).send(coursesEssaysSubmits).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * gradeEssaySubmission
+ * @param {Request} req
+ * @param {Response} res
+ * grade a submisiion of essay rorm user
+ */
+async function gradeEssaySubmission(req, res) {
+  try {
+    const userId = req.user.id;
+    const { essayId, grade, courseId } = req.body;
+    if (!essayId)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "please add essayId" }] })
+      );
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "please add courseId" }] })
+      );
+    if (!grade)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "please add grade" }] })
+      );
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const essaySubmission = await CourseEssay.findOne({
+      where: {
+        id: Number(essayId),
+        CourseId: Number(courseId),
+      },
+    });
+    if (!essaySubmission)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no essay with this id" }] })
+      );
+    essaySubmission.grade = Number(grade);
+    await essaySubmission.save();
+    res.status(200).send(essaySubmission).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -875,4 +1000,7 @@ module.exports = {
   submitAssignmentAnswer,
   getCourseAssignmentsSubmits,
   gradeAssignmentSubmission,
+  submitEssayAnswer,
+  getCourseEssaysSubmits,
+  gradeEssaySubmission,
 };
