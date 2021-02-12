@@ -57,6 +57,11 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.markCourseAsComplete
 );
+router.post(
+  "/course/assignment/submit",
+  authenticationModule.checkAuth,
+  CourseController.submitAssignmentAnswer
+);
 
 router.get(
   "/course/overview",

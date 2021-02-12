@@ -11,6 +11,7 @@ const Answer = require("../models/answer");
 const Prequisite = require("../models/course_prequisite");
 const UserTestGrade = require("../models/user_grades");
 const CourseURL = require("../models/course_url");
+const CourseAssignment = require("../models/course_assignment");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -729,6 +730,39 @@ async function getCourseOverview(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * submitAssignmentAnswer
+ * @param {Request} req
+ * @param {Response} res
+ * submit answer to an assignment which is not autograded
+ */
+async function submitAssignmentAnswer(req, res) {
+  try {
+    const userId = req.user.id;
+    const { courseId, courseSectionComponentId, text } = req.body;
+    // check that user is enrolled in course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: Number(courseId),
+        type: CONSTANTS.ENROLLED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not enrolled in course" }] })
+      );
+    const answer = await CourseAssignment.create({
+      UserId: userId,
+      CourseId: Number(courseId),
+      CourseSectionComponentId: Number(courseSectionComponentId),
+      text: text,
+    });
+    res.status(200).send(answer).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -743,4 +777,5 @@ module.exports = {
   markCourseAsComplete,
   getFinishedCoursesByUser,
   getCourseOverview,
+  submitAssignmentAnswer,
 };
