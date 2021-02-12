@@ -984,6 +984,120 @@ async function gradeEssaySubmission(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * editCourseBasicInfo
+ * @param {Request} req
+ * @param {Response} res
+ * edit basic course info
+ */
+async function editCourseBasicInfo(req, res) {
+  const t = await sequelize.transaction();
+  try {
+    const userId = req.user.id;
+    const {
+      courseId,
+      name,
+      summary,
+      language,
+      description,
+      gender,
+      private,
+      ageMin,
+      ageMax,
+      url,
+    } = req.body;
+
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const course = await Course.findOne({
+      where: {
+        id: courseId,
+      },
+    });
+    course.name = name || course.name;
+    course.summary = summary || course.summary;
+    course.language = language || course.language;
+    course.description = description || course.description;
+    course.gender = Number(gender) || course.gender;
+    course.ageMin = Number(ageMin) || course.ageMin;
+    course.ageMax = Number(ageMax) || course.ageMax;
+    course.image = req.file?.buffer ? req.file.buffer : course.image;
+
+    if (String(private) == "true") {
+      if (url) {
+        const urlCourse = await CourseURL.findOne({
+          where: {
+            url: url,
+          },
+        });
+        if (urlCourse) {
+          throw new Error(
+            JSON.stringify({
+              errors: [
+                { message: "this url already exists please try another" },
+              ],
+            })
+          );
+        }
+        const courseURL = await CourseURL.findOne({
+          where: {
+            CourseId: course.id,
+          },
+        });
+        await CourseURL.create(
+          {
+            CourseId: course.id,
+            url: url,
+          },
+          {
+            transaction: t,
+          }
+        );
+
+        if (courseURL)
+          await CourseURL.destroy({
+            where: {
+              url: courseURL.url,
+            },
+            transaction: t,
+          });
+        course.private = true;
+        //course.url = url;
+      }
+    } else {
+      course.private = false;
+      const courseURL = await CourseURL.findOne({
+        where: {
+          CourseId: course.id,
+        },
+      });
+      if (courseURL)
+        await CourseURL.destroy({
+          where: {
+            url: courseURL.url,
+          },
+          transaction: t,
+        });
+    }
+    await course.save({ transaction: t });
+    await t.commit();
+    course.image = null;
+    res.status(200).send(course).end();
+  } catch (ex) {
+    await t.rollback();
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -1004,4 +1118,5 @@ module.exports = {
   submitEssayAnswer,
   getCourseEssaysSubmits,
   gradeEssaySubmission,
+  editCourseBasicInfo,
 };

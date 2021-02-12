@@ -95,4 +95,11 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.gradeEssaySubmission
 );
+
+router.put(
+  "/course/edit",
+  authenticationModule.checkAuth,
+  upload.single("image"),
+  CourseController.editCourseBasicInfo
+);
 module.exports = router;
