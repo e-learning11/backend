@@ -590,14 +590,24 @@ async function getAllCourses(req, res) {
     const where = {
       private: false,
     };
+    const order = [];
+    let sortOrder = "DESC";
     if (req.query.language) where.language = req.query.language;
     if (req.query.name) where.name = req.query.name;
     if (req.query.date) where.date = req.query.date;
     if (req.query.gender) where.gender = Number(req.query.gender);
     if (req.query.courseId) where.id = Number(req.query.courseId);
+    if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
+      sortOrder = req.query.sortOrder;
+    if (
+      req.query.sort &&
+      CONSTANTS.COURSE_SORT_PARAMETERS.includes(req.query.sort)
+    )
+      order.push([req.query.sort, sortOrder]);
     //if (req.query.age) where.age = Number(req.query.age);
     const courses = await Course.findAll({
       where: where,
+      order: order,
       limit: Number(limit),
       offset: Number(offset),
       include: [
