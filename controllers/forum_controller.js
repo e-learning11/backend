@@ -43,10 +43,16 @@ async function getQuestions(req, res) {
     const where = {};
     const order = [];
     let sortOrder = "DESC";
+    let filterKey = null;
+    let isAnswered = null;
     if (req.query.questionId) where.id = Number(req.query.questionId);
     if (req.query.askerId) where.UserId = Number(req.query.askerId);
     if (req.query.votes) where.votes = Number(req.query.votes);
     if (req.query.courseId) where.CourseId = Number(req.query.courseId);
+    if (req.query.isAnswered) {
+      filterKey = true;
+      isAnswered = req.query.isAnswered == "true" ? true : false;
+    }
     if (req.query.isFeatured)
       where.isFeatured = req.query.isFeatured == "true" ? true : false;
     if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
@@ -69,9 +75,36 @@ async function getQuestions(req, res) {
       order: order,
       limit: Number(limit),
       offset: Number(offset),
-      include: [{ model: User, attributes: ["id"] }],
+
+      include: [
+        { model: User, attributes: ["id", "firstName", "lastName", "age"] },
+        { model: UserQuestionsReplies },
+      ],
+      attributes: ["title", "text", "id", "tags", "votes", "UserId"],
     });
-    res.status(200).send(questions).end();
+    let questionToSendBack = [];
+    for (let question of questions) {
+      let tempQ = question.get();
+      tempQ.noOfAnswers = tempQ.UserQuestionsReplies.length;
+      delete tempQ.UserQuestionsReplies;
+      questionToSendBack.push(tempQ);
+    }
+    // may need to filter or sort the array
+    // questionToSendBack.sort((a, b) => {
+    //   if (a.noOfAnswers < b.noOfAnswers) return -1;
+    //   return 1;
+    // });
+    if (filterKey) {
+      if (isAnswered)
+        questionToSendBack = questionToSendBack.filter(
+          (obj) => obj.noOfAnswers > 0
+        );
+      else
+        questionToSendBack = questionToSendBack.filter(
+          (obj) => obj.noOfAnswers == 0
+        );
+    }
+    res.status(200).send(questionToSendBack).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
