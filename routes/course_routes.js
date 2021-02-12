@@ -68,4 +68,9 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getCourseOverview
 );
+router.get(
+  "/course/assignments/submits",
+  authenticationModule.checkAuth,
+  CourseController.getCourseAssignmentsSubmits
+);
 module.exports = router;

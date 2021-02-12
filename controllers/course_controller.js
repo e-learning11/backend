@@ -763,6 +763,49 @@ async function submitAssignmentAnswer(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getCourseAssignmentsSubmits
+ * @param {Request} req
+ * @param {Response} res
+ * get course submits for assignment sections
+ */
+async function getCourseAssignmentsSubmits(req, res) {
+  try {
+    const userId = req.user.id;
+    const {
+      courseId,
+      courseSectionComponentId,
+      enrolledUerId,
+      limit,
+      offset,
+    } = req.query;
+    const where = {};
+    if (courseSectionComponentId)
+      where.CourseSectionComponentId = courseSectionComponentId;
+    if (enrolledUerId) where.UserId = enrolledUerId;
+    where.CourseId = courseId;
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const coursesAssignmentsSubmits = await CourseAssignment.findAll({
+      where: where,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+    res.status(200).send(coursesAssignmentsSubmits).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -778,4 +821,5 @@ module.exports = {
   getFinishedCoursesByUser,
   getCourseOverview,
   submitAssignmentAnswer,
+  getCourseAssignmentsSubmits,
 };
