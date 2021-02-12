@@ -692,6 +692,43 @@ async function markCourseAsComplete(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getCourseOverview
+ * @param {Request} req
+ * @param {Response} res
+ * get basic course info like enrolled students and grader and assignemnts..etc
+ */
+async function getCourseOverview(req, res) {
+  try {
+    const { courseId } = req.query;
+    const course = await Course.findOne({
+      where: {
+        id: Number(courseId),
+      },
+      include: [
+        {
+          model: UserCourse,
+          where: {
+            CourseId: Number(courseId),
+            type: CONSTANTS.ENROLLED,
+          },
+        },
+      ],
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no course with this id" }] })
+      );
+    course.image = null;
+
+    const courseToSendBack = course.get();
+    courseToSendBack.image = null;
+    courseToSendBack.noOfEnrolledUsers = courseToSendBack.UserCourses.length;
+    res.status(200).send(courseToSendBack).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -705,4 +742,5 @@ module.exports = {
   markComponentAsDone,
   markCourseAsComplete,
   getFinishedCoursesByUser,
+  getCourseOverview,
 };

@@ -57,4 +57,10 @@ router.post(
   authenticationModule.checkAuth,
   CourseController.markCourseAsComplete
 );
+
+router.get(
+  "/course/overview",
+  authenticationModule.checkAuth,
+  CourseController.getCourseOverview
+);
 module.exports = router;
