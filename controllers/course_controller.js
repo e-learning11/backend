@@ -549,6 +549,7 @@ async function autoGradeTest(req, res) {
     });
     let grade = 0;
     for (let [i, question] of courseSectionComponent.Questions.entries()) {
+      if (!CONSTANTS.AUTOGRADE_TYPE.includes(question.type)) continue;
       if (question.correctAnswer == answers[i]) {
         results.push(1);
         grade += 1;

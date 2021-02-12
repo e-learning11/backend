@@ -22,5 +22,6 @@ module.exports = {
   COURSE_BY_URL: "course_by_url",
   FORUM_QUESTIONS_SORT_PARAMETERS: ["votes", "createdAt"],
   COURSE_SORT_PARAMETERS: ["date", "createdAt"],
-  ESSAY_QUESTION: "essay",
+  AUTOGRADE_TYPE: ["MCQ", "TorF"],
+  ESSAY_QUESTION: "Essay",
 };
