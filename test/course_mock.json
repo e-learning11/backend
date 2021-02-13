@@ -1,0 +1,181 @@
+{
+    "gender":3,
+    "private":false,
+    "url":"url1",
+    "age": [0,20],
+    "name": "Explore Vue 3 (Including Router and Vuex)",
+    "summary": "Learn HTML, CSS , Javascript and Much more in this Free Course, Made for you and your knowledge",
+    "description": " Learn HTML, CSS , Javascript and Much more in this Free Course. Made for you and your knowledge. Hello and Welcome to the Course, This is your instructor saluting you.",
+   
+    "prerequisites": [40],
+    "language": "English",
+    "date": "1/1/2021",
+    
+    "sections": [
+      {
+        "name": "Introduction", 
+        "start": 1,
+        "end": 3,
+        "components": [
+          {
+            "number": 1,
+            "videoID": "https://player.vimeo.com/video/48815306",
+            "type": "Video",
+            "name": "Introduction",
+            "File":null
+          },
+          {
+            "number": 2,
+            "videoID": "https://player.vimeo.com/video/363540035",
+            "type": "Video",
+            "name": "Vue Router and Its uses: An Intro to the Same name",
+            "File":null
+          },
+          {
+            "number": 3,
+            "videoID": "https://player.vimeo.com/video/499908635",
+            "type": "Video",
+            "name": "Vuex and Global Variables",
+            "File":null
+          }
+        ]
+      },
+      {
+        "name": "More Topics to Talk About",
+        "start": 4,
+        "end": 5,
+        "components": [
+           {"passingGrade":2,
+            "number": 4,
+            "type": "Test",
+            "test": [
+              {
+                "Q": "How are you?",
+                "A": ["True", "False"],
+                "correctAnswer":0
+              },
+              {
+                "Q": "Choose the Best out of the below answers.",
+                "A": [
+                  "Sleeping For 8 hours",
+                  "Eating your favourite food",
+                  "Enjoying the company of friends"
+                ],
+                "correctAnswer":0
+              },
+              {
+                "Q": "How are you again?",
+                "A": ["True", "False"],
+                "correctAnswer":0
+              },
+              {
+                "Q": "Choose the Best out of the below answers.",
+                "A": [
+                  "Why are you asking again?",
+                  "I already answered!!",
+                  "This is a wierd test."
+                ],
+                "correctAnswer":1
+              }
+            ],
+            "name": "Test"
+          },
+          {
+            "number": 5,
+            "type": "Test",
+            "test": [
+              {
+                "Q": "How are you?",
+                "A": ["True", "False"],
+                "type": "TorF",
+                "correctAnswer":0
+              },
+              {
+                "Q": "Choose the Best out of the below answers.",
+                "A": [
+                  "Sleeping For 8 hours",
+                  "Eating your favourite food",
+                  "Enjoying the company of friends"
+                ],
+                "type": "MCQ",
+                "correctAnswer":2
+              },
+              {
+                "Q": "How are you again?",
+                "A": ["True", "False"],
+                "type": "TorF",
+                "correctAnswer":0
+              },
+              {
+                "Q": "Choose the Best out of the below answers.",
+                "A": [
+                  "Why are you asking again?",
+                  "I already answered!!",
+                  "This is a wierd test."
+                ],
+                "type": "MCQ",
+                "correctAnswer":0
+              },
+              {
+                "Q": "Talk About your Hobbies.",
+                "type": "Essay"
+              }
+            ],
+            "name": "Second Test"
+          }
+        ]
+      },
+      {
+        "name": "First Assignment",
+        "start": 6,
+        "end": 6,
+        "components": [
+          { 
+	    "passingGrade":100,
+            "number": 6,
+            "name": "First Assignment",
+            "type": "Assignment"
+            
+          }
+        ]
+      },
+      {
+        "name": "Second Assignment",
+        "start": 7,
+        "end": 7,
+        "components": [
+          {
+            "number": 7,
+            "name": "First Assignment",
+            "type": "Assignment"
+            
+          }
+        ]
+      },
+      {
+        "name": "Third Assignment",
+        "start": 8,
+        "end": 8,
+        "components": [
+          {
+            "number": 8,
+            "name": "First Assignment",
+            "type": "Assignment"
+            
+          }
+        ]
+      },
+      {
+        "name": "Fourth Assignment",
+        "start": 9,
+        "end": 9,
+        "components": [
+          {
+            "number": 9,
+            "name": "First Assignment",
+            "type": "Assignment"
+          }
+        ]
+      }
+    ]
+  }

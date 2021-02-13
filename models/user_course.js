@@ -3,7 +3,7 @@ const sequelize = require("../database/connection").sequelize;
 
 const UserCourse = sequelize.define("UserCourse", {
   type: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT("long"),
     allowNull: false,
     validate: {
       notNull: {

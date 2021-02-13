@@ -3,7 +3,7 @@ const sequelize = require("../database/connection").sequelize;
 
 const Question = sequelize.define("Question", {
   Q: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT("long"),
     allowNull: false,
     validate: {
       notNull: {
@@ -12,7 +12,7 @@ const Question = sequelize.define("Question", {
     },
   },
   type: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT("long"),
     allowNull: true,
   },
   correctAnswer: {

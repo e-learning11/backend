@@ -4,7 +4,7 @@ const sequelize = require("../database/connection").sequelize;
 
 const CourseSection = sequelize.define("CourseSection", {
   name: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT("long"),
     allowNull: false,
     validate: {
       notNull: {
