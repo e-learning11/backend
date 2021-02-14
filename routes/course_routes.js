@@ -102,4 +102,10 @@ router.put(
   upload.single("image"),
   CourseController.editCourseBasicInfo
 );
+
+router.get(
+  "/course/component/status",
+  authenticationModule.checkAuth,
+  CourseController.getCompoentStatus
+);
 module.exports = router;

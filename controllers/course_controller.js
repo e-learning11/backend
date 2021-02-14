@@ -13,6 +13,7 @@ const UserTestGrade = require("../models/user_grades");
 const CourseURL = require("../models/course_url");
 const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
+const UserCourseComponent = require("../models/user_course_component");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -410,7 +411,14 @@ async function getCourseFullInfo(req, res) {
           include: [
             {
               model: CourseSectionComponent,
-              attributes: ["number", "name", "videoID", "type", "passingGrade"],
+              attributes: [
+                "number",
+                "name",
+                "videoID",
+                "type",
+                "passingGrade",
+                "id",
+              ],
               include: [{ model: Question, include: [{ model: Answer }] }],
             },
           ],
@@ -682,9 +690,11 @@ async function getAllCourses(req, res) {
  * mark component as done for a student
  */
 async function markComponentAsDone(req, res) {
+  const t = await sequelize.transaction();
   try {
     const userId = req.user.id;
     const courseId = Number(req.query.courseId);
+    const componentId = Number(req.query.componentId);
     const userCourse = await UserCourse.findOne({
       where: {
         CourseId: courseId,
@@ -692,14 +702,89 @@ async function markComponentAsDone(req, res) {
         type: CONSTANTS.ENROLLED,
       },
     });
-    userCourse.currentComponent += 1;
-    await userCourse.save();
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not enrolled in this course" }],
+        })
+      );
+    const courseComponent = await CourseSectionComponent.findOne({
+      where: {
+        id: componentId,
+      },
+    });
+    if (!courseComponent)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no compoent with this id" }],
+        })
+      );
+    userCourse.currentComponent = 1 + courseComponent.number;
+    await userCourse.save({ transaction: t });
+    const userCourseSectionCompoent = await UserCourseComponent.findOne({
+      where: {
+        UserId: userId,
+        CourseSectionComponentId: componentId,
+      },
+    });
+    if (!userCourseSectionCompoent) {
+      await UserCourseComponent.create(
+        {
+          UserId: userId,
+          CourseSectionComponentId: componentId,
+          isDone: true,
+        },
+        { transaction: t }
+      );
+    } else {
+      userCourseSectionCompoent.isDone = true;
+      await userCourseSectionCompoent.save({ transaction: t });
+    }
+    await t.commit();
     res.status(200).send(String(userCourse.currentComponent)).end();
   } catch (ex) {
+    await t.rollback();
     errorHandler(req, res, ex);
   }
 }
 
+/**
+ * getCompoentStatus
+ * @param {Request} req
+ * @param {Response} res
+ * get compoent status for student
+ */
+async function getCompoentStatus(req, res) {
+  try {
+    const userId = req.user.id;
+    const courseId = Number(req.query.courseId);
+    const componentId = Number(req.query.componentId);
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: courseId,
+        UserId: userId,
+        type: CONSTANTS.ENROLLED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not enrolled in this course" }],
+        })
+      );
+    const isDone = await UserCourseComponent.findOne({
+      where: {
+        UserId: userId,
+        CourseSectionComponentId: componentId,
+      },
+    });
+    let finished = true;
+    if (!isDone || !isDone.isDone) finished = true;
+    res.status(200).send({ isDone: finished }).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 /**
  * markCourseAsComplete
  * @param {Request} req
@@ -1148,4 +1233,5 @@ module.exports = {
   getCourseEssaysSubmits,
   gradeEssaySubmission,
   editCourseBasicInfo,
+  getCompoentStatus,
 };
