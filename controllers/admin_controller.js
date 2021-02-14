@@ -101,7 +101,11 @@ async function approveCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
-
+/**
+ * getUserFullInfo
+ * @param {Request} req
+ * @param {Response} res
+ */
 async function getUserFullInfo(req, res) {
   try {
     const userId = req.user.id;
@@ -196,4 +200,5 @@ async function getUserFullInfo(req, res) {
 module.exports = {
   approveCourse,
   approveUser,
+  getUserFullInfo,
 };

@@ -22,7 +22,10 @@ const CourseEssay = require("../models/course_essay");
 async function getEnrolledCoursesByUser(req, res) {
   try {
     const userId = req.user.id;
+    const { limit, offset } = req.query;
     const userCourses = await Course.findAll({
+      limit: Number(limit),
+      offset: Number(offset),
       include: [
         {
           model: UserCourse,
@@ -63,7 +66,11 @@ async function getEnrolledCoursesByUser(req, res) {
 async function getFinishedCoursesByUser(req, res) {
   try {
     const userId = req.user.id;
+    const { limit, offset } = req.query;
+
     const userCourses = await Course.findAll({
+      limit: Number(limit),
+      offset: Number(offset),
       include: [
         {
           model: UserCourse,
@@ -103,7 +110,10 @@ async function getFinishedCoursesByUser(req, res) {
 async function getCoursesCreatedByuser(req, res) {
   try {
     const userId = req.user.id;
+    const { limit, offset } = req.query;
     const userCourses = await Course.findAll({
+      limit: Number(limit),
+      offset: Number(offset),
       include: [
         {
           model: UserCourse,
