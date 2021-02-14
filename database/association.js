@@ -41,6 +41,7 @@ Course.belongsToMany(Course, {
   through: Prequisite,
   as: "prequisites",
 });
+//Course.hasMany(Course, { as: "prequisites" });
 
 UserQuestionsRepliesComment.belongsTo(User);
 User.hasMany(UserQuestionsRepliesComment, { onDelete: "CASCADE" });
@@ -62,6 +63,7 @@ User.hasMany(UserVote, { onDelete: "CASCADE" });
 Course.hasMany(UserQuestions, { onDelete: "CASCADE" });
 
 User.hasMany(UserTestGrade, { onDelete: "CASCADE" });
+UserTestGrade.belongsTo(User);
 
 Course.hasOne(CourseURL, { onDelete: "CASCADE" });
 CourseURL.belongsTo(Course);

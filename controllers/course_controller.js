@@ -381,12 +381,26 @@ async function getCourseFullInfo(req, res) {
 
     const course = await Course.findOne({
       where: where,
+      attributes: [
+        "id",
+        "name",
+        "summary",
+        "description",
+        "language",
+        "date",
+        "approved",
+        "private",
+        "gender",
+        "ageMin",
+        "ageMax",
+      ],
       include: [
         {
           model: CourseSection,
           include: [
             {
               model: CourseSectionComponent,
+              attributes: ["number", "name", "videoID", "type", "passingGrade"],
               include: [{ model: Question, include: [{ model: Answer }] }],
             },
           ],
@@ -402,6 +416,11 @@ async function getCourseFullInfo(req, res) {
             "gender",
             "age",
           ],
+        },
+        {
+          model: Course,
+          as: "prequisites",
+          attributes: ["id", "name", "summary"],
         },
       ],
     });

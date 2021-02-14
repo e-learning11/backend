@@ -49,7 +49,7 @@ async function approveUser(req, res) {
         id: Number(id),
       },
     });
-    if (!user)
+    if (!userToBeApproved)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user not found" }],
@@ -88,7 +88,7 @@ async function approveCourse(req, res) {
         id: Number(id),
       },
     });
-    if (!user)
+    if (!courseToBeApproved)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "course not found" }],
@@ -97,6 +97,97 @@ async function approveCourse(req, res) {
     courseToBeApproved.approved = approve;
     await courseToBeApproved.save();
     res.status(200).send(courseToBeApproved).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+async function getUserFullInfo(req, res) {
+  try {
+    const userId = req.user.id;
+    const { id } = req.query;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user || user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user not admin" }],
+        })
+      );
+    const userFullInfo = await User.findOne({
+      where: {
+        id: Number(id),
+      },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "type",
+        "approved",
+        "gender",
+        "age",
+      ],
+      include: [
+        {
+          model: UserCourse,
+          include: [
+            {
+              model: Course,
+              attributes: [
+                "id",
+                "name",
+                "summary",
+                "description",
+                "language",
+                "date",
+                "approved",
+                "private",
+                "gender",
+                "ageMin",
+                "ageMax",
+              ],
+              include: [
+                {
+                  model: CourseSection,
+                  include: [
+                    {
+                      model: CourseSectionComponent,
+                      attributes: [
+                        "number",
+                        "name",
+                        "videoID",
+                        "type",
+                        "passingGrade",
+                      ],
+                      include: [
+                        { model: Question, include: [{ model: Answer }] },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  model: Prequisite,
+                  as: "prequisites",
+                  attributes: ["id"],
+                },
+              ],
+            },
+          ],
+        },
+        { model: UserTestGrade },
+      ],
+    });
+    if (!userFullInfo)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user not found" }],
+        })
+      );
   } catch (ex) {
     errorHandler(req, res, ex);
   }
