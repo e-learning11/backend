@@ -857,6 +857,7 @@ function getComponent() {
         obj.test.push({
           Q: "How are you again?",
           A: ["True", "False"],
+          type: "TorF",
           correctAnswer: Math.round(Math.random()),
         });
       } else {
@@ -868,6 +869,7 @@ function getComponent() {
         obj.test.push({
           Q: "Choose the Best out of the below answers.",
           A: a,
+          type: "MCQ",
           correctAnswer: Math.floor(Math.random() * a.length),
         });
       }
