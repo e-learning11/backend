@@ -1,6 +1,6 @@
 {
-  "id": 40,
-  "name": "Explore Vue 3 (Including Router and Vuex)",
+  "courseId": 40,
+  "name": "new name",
   "summary": "Learn HTML, CSS , Javascript and Much more in this Free Course, Made for you and your knowledge",
   "description": " Learn HTML, CSS , Javascript and Much more in this Free Course. Made for you and your knowledge. Hello and Welcome to the Course, This is your instructor saluting you.",
   "language": "English",
@@ -68,116 +68,81 @@
                   "test": [
                       {
                           "id": 235,
-                          "Q": "How are you?",
-                          "type": null,
+                          "Q": "this is first question edit ? ",
+                          "type": "TorF",
                           "correctAnswer": 0,
                           "createdAt": "2021-02-11T19:53:48.000Z",
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 278,
                           "A": [
-                              {
-                                  "id": 521,
-                                  "A": "True",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 235
-                              },
-                              {
-                                  "id": 522,
-                                  "A": "False",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 235
-                              }
+                              "True", "False"
+                                  
                           ]
                       },
                       {
                           "id": 236,
                           "Q": "Choose the Best out of the below A.",
-                          "type": null,
+                          "type": "MCQ",
                           "correctAnswer": 0,
                           "createdAt": "2021-02-11T19:53:48.000Z",
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 278,
                           "A": [
-                              {
-                                  "id": 523,
-                                  "A": "Sleeping For 8 hours",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 236
-                              },
-                              {
-                                  "id": 524,
-                                  "A": "Eating your favourite food",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 236
-                              },
-                              {
-                                  "id": 525,
-                                  "A": "Enjoying the company of friends",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 236
-                              }
+                              
+                                  "Sleeping For 8 hours",
+                                   
+                              
+                              
+                                  "Eating your favourite food",
+                                   
+                              
+                              
+                                  "Enjoying the company of friends"
+                                   
+                              
                           ]
                       },
                       {
                           "id": 237,
                           "Q": "How are you again?",
-                          "type": null,
+                          "type": "TorF",
                           "correctAnswer": 0,
                           "createdAt": "2021-02-11T19:53:48.000Z",
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 278,
                           "A": [
-                              {
-                                  "id": 526,
-                                  "A": "True",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 237
-                              },
-                              {
-                                  "id": 527,
-                                  "A": "False",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 237
-                              }
+                              
+                                  
+                                  "True",
+                                   
+                            
+                              
+                                  "False"
+                              
                           ]
                       },
                       {
                           "id": 238,
                           "Q": "Choose the Best out of the below A.",
-                          "type": null,
+                          "type": "MCQ",
                           "correctAnswer": 1,
                           "createdAt": "2021-02-11T19:53:48.000Z",
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 278,
                           "A": [
-                              {
-                                  "id": 528,
-                                  "A": "Why are you asking again?",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 238
-                              },
-                              {
-                                  "id": 529,
-                                  "A": "I already answered!!",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 238
-                              },
-                              {
-                                  "id": 530,
-                                  "A": "This is a wierd test.",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 238
-                              }
+                              
+                                
+                                  "Why are you asking again?",
+                                   
+                              
+                               
+                                  "I already answered!!",
+                               
+                             
+                                  
+                                  "This is a wierd test."
+                                  
+                              
                           ]
                       }
                   ]
@@ -199,20 +164,15 @@
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 279,
                           "A": [
-                              {
-                                  "id": 531,
-                                  "A": "True",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 239
-                              },
-                              {
-                                  "id": 532,
-                                  "A": "False",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 239
-                              }
+                              
+                                 
+                                  "True",
+                             
+                              
+                          
+                                  "False"
+                               
+                              
                           ]
                       },
                       {
@@ -224,27 +184,17 @@
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 279,
                           "A": [
-                              {
-                                  "id": 533,
-                                  "A": "Sleeping For 8 hours",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 240
-                              },
-                              {
-                                  "id": 534,
-                                  "A": "Eating your favourite food",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 240
-                              },
-                              {
-                                  "id": 535,
-                                  "A": "Enjoying the company of friends",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 240
-                              }
+                              
+                              
+                                  "Sleeping For 8 hours",
+                         
+                           
+                                  "Eating your favourite food",
+                              
+                                 
+                                  "Enjoying the company of friends"
+                                  
+                              
                           ]
                       },
                       {
@@ -256,20 +206,12 @@
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 279,
                           "A": [
-                              {
-                                  "id": 536,
-                                  "A": "True",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 241
-                              },
-                              {
-                                  "id": 537,
-                                  "A": "False",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 241
-                              }
+                             
+                                 
+                                  "True",
+                             
+                               
+                                  "False"
                           ]
                       },
                       {
@@ -281,27 +223,18 @@
                           "updatedAt": "2021-02-11T19:53:48.000Z",
                           "CourseSectionComponentId": 279,
                           "A": [
-                              {
-                                  "id": 538,
-                                  "A": "Why are you asking again?",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 242
-                              },
-                              {
-                                  "id": 539,
-                                  "A": "I already answered!!",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 242
-                              },
-                              {
-                                  "id": 540,
-                                  "A": "This is a wierd test.",
-                                  "createdAt": "2021-02-11T19:53:48.000Z",
-                                  "updatedAt": "2021-02-11T19:53:48.000Z",
-                                  "QuestionId": 242
-                              }
+                 
+                                  "Why are you asking again?",
+                    
+                       
+                  
+                                  "I already answered!!",
+                            
+                          
+                          
+                                  "This is a wierd test."
+                   
+                       
                           ]
                       },
                       {

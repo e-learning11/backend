@@ -1269,11 +1269,13 @@ async function editFullCourse(req, res) {
     course.ageMax = Number(age[1]);
     course.ageMin = Number(age[0]);
     // check if url exist before
-    const courseURL = await CourseURL.findOne({
-      where: {
-        url: url,
-      },
-    });
+    const courseURL = url
+      ? await CourseURL.findOne({
+          where: {
+            url: url,
+          },
+        })
+      : null;
     if (courseURL && courseURL.CourseId != Number(courseId))
       throw new Error(
         JSON.stringify({ errors: [{ message: "the url is not valid" }] })
@@ -1363,12 +1365,13 @@ async function editFullCourse(req, res) {
         if (component.id) {
           componentId = component.id;
           // compoent already exist
+          console.log("before selection");
           const componentDB = await CourseSectionComponent.findOne({
             where: {
               id: component.id,
             },
           });
-
+          console.log("before edit ");
           componentDB.number = component.number;
           componentDB.name = component.name;
           componentDB.videoID = component.videoID;
@@ -1376,7 +1379,9 @@ async function editFullCourse(req, res) {
           componentDB.passingGrade = component.passingGrade;
           componentDB.CourseSectionId = sectionId;
           componentDB.file = file;
+          console.log("before save");
           await componentDB.save({ transaction: t });
+          console.log("stuck!!!!");
         } else {
           const componentDB = await CourseSectionComponent.create(
             {
@@ -1445,8 +1450,11 @@ async function editFullCourse(req, res) {
       }
     }
     await t.commit();
+    course.image = null;
+    res.status(200).send(course).end();
   } catch (ex) {
     await t.rollback();
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
