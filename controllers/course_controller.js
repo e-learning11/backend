@@ -720,7 +720,10 @@ async function markComponentAsDone(req, res) {
           errors: [{ message: "no compoent with this id" }],
         })
       );
-    userCourse.currentComponent = 1 + courseComponent.number;
+    userCourse.currentComponent = Math.max(
+      userCourse.currentComponent,
+      1 + courseComponent.number
+    );
     await userCourse.save({ transaction: t });
     const userCourseSectionCompoent = await UserCourseComponent.findOne({
       where: {
@@ -1349,6 +1352,7 @@ async function editFullCourse(req, res) {
       for (let component of section.components) {
         let componentId = null;
         let file = null;
+        let componentReset = component.reset;
         if (
           component.File &&
           (component.type == CONSTANTS.VIDEO ||
@@ -1365,13 +1369,28 @@ async function editFullCourse(req, res) {
         if (component.id) {
           componentId = component.id;
           // compoent already exist
-          console.log("before selection");
           const componentDB = await CourseSectionComponent.findOne({
             where: {
               id: component.id,
             },
           });
-          console.log("before edit ");
+
+          // check if there is any change to the component to reset user progress
+          if (
+            componentReset &&
+            (componentDB.name != component.name ||
+              componentDB.videoID != component.videoID ||
+              componentDB.type != component.type ||
+              componentDB.passingGrade != component.passingGrade ||
+              Buffer.compare(componentDB.file, file))
+          ) {
+            await UserCourseComponent.destroy({
+              where: {
+                CourseSectionComponentId: component.id,
+              },
+              transaction: t,
+            });
+          }
           componentDB.number = component.number;
           componentDB.name = component.name;
           componentDB.videoID = component.videoID;
@@ -1379,9 +1398,7 @@ async function editFullCourse(req, res) {
           componentDB.passingGrade = component.passingGrade;
           componentDB.CourseSectionId = sectionId;
           componentDB.file = file;
-          console.log("before save");
           await componentDB.save({ transaction: t });
-          console.log("stuck!!!!");
         } else {
           const componentDB = await CourseSectionComponent.create(
             {
@@ -1409,12 +1426,35 @@ async function editFullCourse(req, res) {
                   id: question.id,
                 },
               });
+              // if any change to prevoius question then reset
+              if (
+                componentReset &&
+                (questionDB.Q != question.Q ||
+                  questionDB.type != question.type ||
+                  questionDB.correctAnswer != question.correctAnswer)
+              ) {
+                await UserCourseComponent.destroy({
+                  where: {
+                    CourseSectionComponentId: component.id,
+                  },
+                  transaction: t,
+                });
+              }
               questionDB.CourseSectionComponentId = componentId;
               questionDB.Q = question.Q;
               questionDB.type = question.type;
               questionDB.correctAnswer = question.correctAnswer;
               await questionDB.save({ transaction: t });
             } else {
+              // if there is a new question then reset user progress fo this compoent
+              if (componentReset) {
+                await UserCourseComponent.destroy({
+                  where: {
+                    CourseSectionComponentId: component.id,
+                  },
+                  transaction: t,
+                });
+              }
               let questionDB = await Question.create(
                 {
                   CourseSectionComponentId: componentId,

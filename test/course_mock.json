@@ -21,15 +21,18 @@
           "CourseId": 40,
           "components": [
               {
+                  "reset":true,
                   "number": 1,
                   "name": "Introduction",
                   "videoID": "https://player.vimeo.com/video/48815306",
                   "type": "Video",
                   "passingGrade": null,
-                  "id": 275
+                  "id": 275,
+                  "File":true
                  
               },
               {
+                "reset":false,
                   "number": 2,
                   "name": "Vue Router and Its uses: An Intro to the Same name",
                   "videoID": "https://player.vimeo.com/video/363540035",
@@ -39,6 +42,7 @@
                  
               },
               {
+                "reset":false,
                   "number": 3,
                   "name": "Vuex and Global Variables",
                   "videoID": "https://player.vimeo.com/video/499908635",
@@ -59,6 +63,7 @@
           "CourseId": 40,
           "components": [
               {
+                "reset":false,
                   "number": 4,
                   "name": "Test",
                   "videoID": null,
@@ -148,6 +153,7 @@
                   ]
               },
               {
+                "reset":false,
                   "number": 5,
                   "name": "Second Test",
                   "videoID": null,
@@ -261,6 +267,7 @@
           "CourseId": 40,
           "components": [
               {
+                "reset":false,
                   "number": 6,
                   "name": "First Assignment",
                   "videoID": null,
@@ -281,6 +288,7 @@
           "CourseId": 40,
           "components": [
               {
+                "reset":false,
                   "number": 7,
                   "name": "First Assignment",
                   "videoID": null,
@@ -301,6 +309,7 @@
           "CourseId": 40,
           "components": [
               {
+                "reset":false,
                   "number": 8,
                   "name": "First Assignment",
                   "videoID": null,
@@ -321,6 +330,7 @@
           "CourseId": 40,
           "components": [
               {
+                "reset":false,
                   "number": 9,
                   "name": "First Assignment",
                   "videoID": null,
