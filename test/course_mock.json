@@ -1,181 +1,402 @@
 {
-    "gender":3,
-    "private":false,
-    "url":"url1",
-    "age": [0,20],
-    "name": "Explore Vue 3 (Including Router and Vuex)",
-    "summary": "Learn HTML, CSS , Javascript and Much more in this Free Course, Made for you and your knowledge",
-    "description": " Learn HTML, CSS , Javascript and Much more in this Free Course. Made for you and your knowledge. Hello and Welcome to the Course, This is your instructor saluting you.",
-   
-    "prerequisites": [40],
-    "language": "English",
-    "date": "1/1/2021",
-    
-    "sections": [
+  "id": 40,
+  "name": "Explore Vue 3 (Including Router and Vuex)",
+  "summary": "Learn HTML, CSS , Javascript and Much more in this Free Course, Made for you and your knowledge",
+  "description": " Learn HTML, CSS , Javascript and Much more in this Free Course. Made for you and your knowledge. Hello and Welcome to the Course, This is your instructor saluting you.",
+  "language": "English",
+  "date": "2020-12-31T22:00:00.000Z",
+  "approved": false,
+  "private": false,
+  "gender": 3,
+  "age": [0,70],
+  "prerequisites":[],
+  "sections": [
       {
-        "name": "Introduction", 
-        "start": 1,
-        "end": 3,
-        "components": [
-          {
-            "number": 1,
-            "videoID": "https://player.vimeo.com/video/48815306",
-            "type": "Video",
-            "name": "Introduction",
-            "File":null
-          },
-          {
-            "number": 2,
-            "videoID": "https://player.vimeo.com/video/363540035",
-            "type": "Video",
-            "name": "Vue Router and Its uses: An Intro to the Same name",
-            "File":null
-          },
-          {
-            "number": 3,
-            "videoID": "https://player.vimeo.com/video/499908635",
-            "type": "Video",
-            "name": "Vuex and Global Variables",
-            "File":null
-          }
-        ]
-      },
-      {
-        "name": "More Topics to Talk About",
-        "start": 4,
-        "end": 5,
-        "components": [
-           {"passingGrade":2,
-            "number": 4,
-            "type": "Test",
-            "test": [
+          "id": 183,
+          "name": "Introduction",
+          "start": 1,
+          "end": 3,
+          "createdAt": "2021-02-11T19:53:48.000Z",
+          "updatedAt": "2021-02-11T19:53:48.000Z",
+          "CourseId": 40,
+          "components": [
               {
-                "Q": "How are you?",
-                "A": ["True", "False"],
-                "correctAnswer":0
+                  "number": 1,
+                  "name": "Introduction",
+                  "videoID": "https://player.vimeo.com/video/48815306",
+                  "type": "Video",
+                  "passingGrade": null,
+                  "id": 275
+                 
               },
               {
-                "Q": "Choose the Best out of the below answers.",
-                "A": [
-                  "Sleeping For 8 hours",
-                  "Eating your favourite food",
-                  "Enjoying the company of friends"
-                ],
-                "correctAnswer":0
+                  "number": 2,
+                  "name": "Vue Router and Its uses: An Intro to the Same name",
+                  "videoID": "https://player.vimeo.com/video/363540035",
+                  "type": "Video",
+                  "passingGrade": null,
+                  "id": 276
+                 
               },
               {
-                "Q": "How are you again?",
-                "A": ["True", "False"],
-                "correctAnswer":0
-              },
-              {
-                "Q": "Choose the Best out of the below answers.",
-                "A": [
-                  "Why are you asking again?",
-                  "I already answered!!",
-                  "This is a wierd test."
-                ],
-                "correctAnswer":1
+                  "number": 3,
+                  "name": "Vuex and Global Variables",
+                  "videoID": "https://player.vimeo.com/video/499908635",
+                  "type": "Video",
+                  "passingGrade": null,
+                  "id": 277
+                 
               }
-            ],
-            "name": "Test"
-          },
-          {
-            "number": 5,
-            "type": "Test",
-            "test": [
+          ]
+      },
+      {
+          "id": 184,
+          "name": "More Topics to Talk About",
+          "start": 4,
+          "end": 5,
+          "createdAt": "2021-02-11T19:53:48.000Z",
+          "updatedAt": "2021-02-11T19:53:48.000Z",
+          "CourseId": 40,
+          "components": [
               {
-                "Q": "How are you?",
-                "A": ["True", "False"],
-                "type": "TorF",
-                "correctAnswer":0
+                  "number": 4,
+                  "name": "Test",
+                  "videoID": null,
+                  "type": "Test",
+                  "passingGrade": 2,
+                  "id": 278,
+                  "test": [
+                      {
+                          "id": 235,
+                          "Q": "How are you?",
+                          "type": null,
+                          "correctAnswer": 0,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 278,
+                          "A": [
+                              {
+                                  "id": 521,
+                                  "A": "True",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 235
+                              },
+                              {
+                                  "id": 522,
+                                  "A": "False",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 235
+                              }
+                          ]
+                      },
+                      {
+                          "id": 236,
+                          "Q": "Choose the Best out of the below A.",
+                          "type": null,
+                          "correctAnswer": 0,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 278,
+                          "A": [
+                              {
+                                  "id": 523,
+                                  "A": "Sleeping For 8 hours",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 236
+                              },
+                              {
+                                  "id": 524,
+                                  "A": "Eating your favourite food",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 236
+                              },
+                              {
+                                  "id": 525,
+                                  "A": "Enjoying the company of friends",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 236
+                              }
+                          ]
+                      },
+                      {
+                          "id": 237,
+                          "Q": "How are you again?",
+                          "type": null,
+                          "correctAnswer": 0,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 278,
+                          "A": [
+                              {
+                                  "id": 526,
+                                  "A": "True",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 237
+                              },
+                              {
+                                  "id": 527,
+                                  "A": "False",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 237
+                              }
+                          ]
+                      },
+                      {
+                          "id": 238,
+                          "Q": "Choose the Best out of the below A.",
+                          "type": null,
+                          "correctAnswer": 1,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 278,
+                          "A": [
+                              {
+                                  "id": 528,
+                                  "A": "Why are you asking again?",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 238
+                              },
+                              {
+                                  "id": 529,
+                                  "A": "I already answered!!",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 238
+                              },
+                              {
+                                  "id": 530,
+                                  "A": "This is a wierd test.",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 238
+                              }
+                          ]
+                      }
+                  ]
               },
               {
-                "Q": "Choose the Best out of the below answers.",
-                "A": [
-                  "Sleeping For 8 hours",
-                  "Eating your favourite food",
-                  "Enjoying the company of friends"
-                ],
-                "type": "MCQ",
-                "correctAnswer":2
-              },
-              {
-                "Q": "How are you again?",
-                "A": ["True", "False"],
-                "type": "TorF",
-                "correctAnswer":0
-              },
-              {
-                "Q": "Choose the Best out of the below answers.",
-                "A": [
-                  "Why are you asking again?",
-                  "I already answered!!",
-                  "This is a wierd test."
-                ],
-                "type": "MCQ",
-                "correctAnswer":0
-              },
-              {
-                "Q": "Talk About your Hobbies.",
-                "type": "Essay"
+                  "number": 5,
+                  "name": "Second Test",
+                  "videoID": null,
+                  "type": "Test",
+                  "passingGrade": null,
+                  "id": 279,
+                  "test": [
+                      {
+                          "id": 239,
+                          "Q": "How are you?",
+                          "type": "TorF",
+                          "correctAnswer": 0,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 279,
+                          "A": [
+                              {
+                                  "id": 531,
+                                  "A": "True",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 239
+                              },
+                              {
+                                  "id": 532,
+                                  "A": "False",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 239
+                              }
+                          ]
+                      },
+                      {
+                          "id": 240,
+                          "Q": "Choose the Best out of the below A.",
+                          "type": "MCQ",
+                          "correctAnswer": 2,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 279,
+                          "A": [
+                              {
+                                  "id": 533,
+                                  "A": "Sleeping For 8 hours",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 240
+                              },
+                              {
+                                  "id": 534,
+                                  "A": "Eating your favourite food",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 240
+                              },
+                              {
+                                  "id": 535,
+                                  "A": "Enjoying the company of friends",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 240
+                              }
+                          ]
+                      },
+                      {
+                          "id": 241,
+                          "Q": "How are you again?",
+                          "type": "TorF",
+                          "correctAnswer": 0,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 279,
+                          "A": [
+                              {
+                                  "id": 536,
+                                  "A": "True",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 241
+                              },
+                              {
+                                  "id": 537,
+                                  "A": "False",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 241
+                              }
+                          ]
+                      },
+                      {
+                          "id": 242,
+                          "Q": "Choose the Best out of the below A.",
+                          "type": "MCQ",
+                          "correctAnswer": 0,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 279,
+                          "A": [
+                              {
+                                  "id": 538,
+                                  "A": "Why are you asking again?",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 242
+                              },
+                              {
+                                  "id": 539,
+                                  "A": "I already answered!!",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 242
+                              },
+                              {
+                                  "id": 540,
+                                  "A": "This is a wierd test.",
+                                  "createdAt": "2021-02-11T19:53:48.000Z",
+                                  "updatedAt": "2021-02-11T19:53:48.000Z",
+                                  "QuestionId": 242
+                              }
+                          ]
+                      },
+                      {
+                          "id": 243,
+                          "Q": "Talk About your Hobbies.",
+                          "type": "Essay",
+                          "correctAnswer": null,
+                          "createdAt": "2021-02-11T19:53:48.000Z",
+                          "updatedAt": "2021-02-11T19:53:48.000Z",
+                          "CourseSectionComponentId": 279,
+                          "A": []
+                      }
+                  ]
               }
-            ],
-            "name": "Second Test"
-          }
-        ]
+          ]
       },
       {
-        "name": "First Assignment",
-        "start": 6,
-        "end": 6,
-        "components": [
-          { 
-	    "passingGrade":100,
-            "number": 6,
-            "name": "First Assignment",
-            "type": "Assignment"
-            
-          }
-        ]
+          "id": 185,
+          "name": "First Assignment",
+          "start": 6,
+          "end": 6,
+          "createdAt": "2021-02-11T19:53:48.000Z",
+          "updatedAt": "2021-02-11T19:53:48.000Z",
+          "CourseId": 40,
+          "components": [
+              {
+                  "number": 6,
+                  "name": "First Assignment",
+                  "videoID": null,
+                  "type": "Assignment",
+                  "passingGrade": 100,
+                  "id": 280
+                 
+              }
+          ]
       },
       {
-        "name": "Second Assignment",
-        "start": 7,
-        "end": 7,
-        "components": [
-          {
-            "number": 7,
-            "name": "First Assignment",
-            "type": "Assignment"
-            
-          }
-        ]
+          "id": 186,
+          "name": "Second Assignment",
+          "start": 7,
+          "end": 7,
+          "createdAt": "2021-02-11T19:53:48.000Z",
+          "updatedAt": "2021-02-11T19:53:48.000Z",
+          "CourseId": 40,
+          "components": [
+              {
+                  "number": 7,
+                  "name": "First Assignment",
+                  "videoID": null,
+                  "type": "Assignment",
+                  "passingGrade": null,
+                  "id": 281
+                 
+              }
+          ]
       },
       {
-        "name": "Third Assignment",
-        "start": 8,
-        "end": 8,
-        "components": [
-          {
-            "number": 8,
-            "name": "First Assignment",
-            "type": "Assignment"
-            
-          }
-        ]
+          "id": 187,
+          "name": "Third Assignment",
+          "start": 8,
+          "end": 8,
+          "createdAt": "2021-02-11T19:53:48.000Z",
+          "updatedAt": "2021-02-11T19:53:48.000Z",
+          "CourseId": 40,
+          "components": [
+              {
+                  "number": 8,
+                  "name": "First Assignment",
+                  "videoID": null,
+                  "type": "Assignment",
+                  "passingGrade": null,
+                  "id": 282
+                 
+              }
+          ]
       },
       {
-        "name": "Fourth Assignment",
-        "start": 9,
-        "end": 9,
-        "components": [
-          {
-            "number": 9,
-            "name": "First Assignment",
-            "type": "Assignment"
-          }
-        ]
+          "id": 188,
+          "name": "Fourth Assignment",
+          "start": 9,
+          "end": 9,
+          "createdAt": "2021-02-11T19:53:48.000Z",
+          "updatedAt": "2021-02-11T19:53:48.000Z",
+          "CourseId": 40,
+          "components": [
+              {
+                  "number": 9,
+                  "name": "First Assignment",
+                  "videoID": null,
+                  "type": "Assignment",
+                  "passingGrade": null,
+                  "id": 283
+                 
+              }
+          ]
       }
-    ]
-  }
+  ]
+}

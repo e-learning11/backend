@@ -278,6 +278,8 @@ async function createCourse(req, res) {
       },
       { transaction: t }
     );
+    let videoFileIndex = 0;
+    let assignmentFileIndex = 0;
     for (let section of sections) {
       let sectionObj = await CourseSection.create(
         {
@@ -288,8 +290,7 @@ async function createCourse(req, res) {
         },
         { transaction: t }
       );
-      let videoFileIndex = 0;
-      let assignmentFileIndex = 0;
+
       for (let component of section.components) {
         let file = null;
         if (
@@ -1212,6 +1213,244 @@ async function editCourseBasicInfo(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * editFullCourse
+ * @param {Request} req
+ * @param {Response} res
+ * edit every detail about course and its associates
+ */
+async function editFullCourse(req, res) {
+  const t = await sequelize.transaction();
+  try {
+    const userId = req.user.id;
+    const {
+      courseId,
+      gender,
+      private,
+      url,
+      age,
+      name,
+      summary,
+      description,
+      prerequisites,
+      language,
+      date,
+      sections,
+    } = JSON.parse(req.body.json);
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const course = await Course.findOne({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no course exist with id" }] })
+      );
+    course.name = name;
+    course.gender = Number(gender);
+    course.summary = summary;
+    course.description = description;
+    course.language = language;
+    course.date = date;
+    course.private = private;
+    course.ageMax = Number(age[1]);
+    course.ageMin = Number(age[0]);
+    // check if url exist before
+    const courseURL = await CourseURL.findOne({
+      where: {
+        url: url,
+      },
+    });
+    if (courseURL && courseURL.CourseId != Number(courseId))
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "the url is not valid" }] })
+      );
+
+    await CourseURL.destroy({
+      where: {
+        CourseId: courseId,
+      },
+      transaction: t,
+    });
+
+    // check if image changed
+    if (
+      req.files["image"] &&
+      req.files["image"][0] &&
+      req.files["image"][0].buffer
+    )
+      course.image = await req.files["image"][0].buffer;
+    await course.save({ transaction: t });
+    // remove old prequistes
+    await Prequisite.destroy({
+      where: {
+        CourseId: course.id,
+      },
+      transaction: t,
+    });
+    // edit prequeistes
+    for (let prequisiteId of prerequisites) {
+      await Prequisite.create(
+        {
+          CourseId: course.id,
+          prequisiteId: Number(prequisiteId),
+        },
+        { transaction: t }
+      );
+    }
+    // edit new sections
+    let videoFileIndex = 0;
+    let assignmentFileIndex = 0;
+    for (let section of sections) {
+      let sectionId = null;
+      if (section.id) {
+        sectionId = section.id;
+        // section already exist
+        const sectionDB = await CourseSection.findOne({
+          where: {
+            id: Number(section.id),
+          },
+        });
+        sectionDB.name = section.name;
+        sectionDB.start = section.start;
+        sectionDB.end = section.end;
+        await sectionDB.save({ transaction: t });
+      } else {
+        // create new section
+        const sectionDB = await CourseSection.create(
+          {
+            name: section.name,
+            start: section.start,
+            end: section.end,
+            CourseId: course.id,
+          },
+          { transaction: t }
+        );
+        sectionId = sectionDB.id;
+      }
+
+      // loop on section compoent
+
+      for (let component of section.components) {
+        let componentId = null;
+        let file = null;
+        if (
+          component.File &&
+          (component.type == CONSTANTS.VIDEO ||
+            component.type == CONSTANTS.ASSIGNMENT)
+        ) {
+          if (component.type == CONSTANTS.VIDEO) {
+            file = req.files["vidoeFile"][videoFileIndex].buffer;
+            videoFileIndex++;
+          } else {
+            file = req.files["assignmentFile"][assignmentFileIndex].buffer;
+            assignmentFileIndex++;
+          }
+        }
+        if (component.id) {
+          componentId = component.id;
+          // compoent already exist
+          const componentDB = await CourseSectionComponent.findOne({
+            where: {
+              id: component.id,
+            },
+          });
+
+          componentDB.number = component.number;
+          componentDB.name = component.name;
+          componentDB.videoID = component.videoID;
+          componentDB.type = component.type;
+          componentDB.passingGrade = component.passingGrade;
+          componentDB.CourseSectionId = sectionId;
+          componentDB.file = file;
+          await componentDB.save({ transaction: t });
+        } else {
+          const componentDB = await CourseSectionComponent.create(
+            {
+              number: component.number,
+              videoID: component.videoID,
+              name: component.name,
+              type: component.type,
+              CourseSectionId: sectionId,
+              file: file,
+              passingGrade: component.passingGrade,
+            },
+            { transaction: t }
+          );
+          componentId = componentDB.id;
+        }
+
+        // check if test to add questions
+        if (component.test) {
+          for (let question of component.test) {
+            let questionId = null;
+            if (question.id) {
+              questionId = question.id;
+              const questionDB = await Question.findOne({
+                where: {
+                  id: question.id,
+                },
+              });
+              questionDB.CourseSectionComponentId = componentId;
+              questionDB.Q = question.Q;
+              questionDB.type = question.type;
+              questionDB.correctAnswer = question.correctAnswer;
+              await questionDB.save({ transaction: t });
+            } else {
+              let questionDB = await Question.create(
+                {
+                  CourseSectionComponentId: componentId,
+                  Q: question.Q,
+                  type: question.type,
+                  correctAnswer: question.correctAnswer,
+                },
+                { transaction: t }
+              );
+              questionId = questionDB.id;
+            }
+            // loop on answers
+            if (question.A) {
+              // remove all previous answers
+              await Answer.destroy({
+                where: {
+                  QuestionId: questionId,
+                },
+                transaction: t,
+              });
+              for (let answer of question.A) {
+                let answerDB = await Answer.create(
+                  {
+                    A: answer,
+                    QuestionId: questionId,
+                  },
+                  { transaction: t }
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+    await t.commit();
+  } catch (ex) {
+    await t.rollback();
+    errorHandler(req, res, ex);
+  }
+}
+
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -1234,4 +1473,5 @@ module.exports = {
   gradeEssaySubmission,
   editCourseBasicInfo,
   getCompoentStatus,
+  editFullCourse,
 };

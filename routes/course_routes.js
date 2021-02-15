@@ -108,4 +108,15 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getCompoentStatus
 );
+
+router.put(
+  "/course/full-edit",
+  authenticationModule.checkAuth,
+  upload.fields([
+    { name: "image" },
+    { name: "vidoeFile" },
+    { name: "assignmentFile" },
+  ]),
+  CourseController.editFullCourse
+);
 module.exports = router;
