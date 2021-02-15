@@ -156,6 +156,9 @@ async function getRandomCourses(req, res) {
     const count = Number(req.query.count);
     const courses = await Course.findAll({
       limit: count,
+      where: {
+        private: false,
+      },
     });
     const coursesToSendBack = [];
     for (let course of courses) {
