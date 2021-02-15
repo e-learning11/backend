@@ -65,6 +65,9 @@ Course.hasMany(UserQuestions, { onDelete: "CASCADE" });
 User.hasMany(UserTestGrade, { onDelete: "CASCADE" });
 UserTestGrade.belongsTo(User);
 
+Course.hasMany(UserTestGrade, { onDelete: "CASCADE" });
+UserTestGrade.belongsTo(Course);
+
 Course.hasOne(CourseURL, { onDelete: "CASCADE" });
 CourseURL.belongsTo(Course);
 

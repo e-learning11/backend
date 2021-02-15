@@ -580,6 +580,7 @@ async function autoGradeTest(req, res) {
   try {
     const userId = req.user.id;
     const testId = Number(req.query.testId);
+    const courseId = Number(req.query.courseId);
     const answers = req.body.answers;
     const results = [];
     const courseSectionComponent = await CourseSectionComponent.findOne({
@@ -601,12 +602,14 @@ async function autoGradeTest(req, res) {
       where: {
         UserId: userId,
         testId: testId,
+        CourseId: courseId,
       },
     });
     if (!userGrade) {
       await UserTestGrade.create({
         UserId: userId,
         testId: testId,
+        CourseId: courseId,
         grade: grade,
         lastTimeSubmit: Date.now(),
       });
@@ -1498,6 +1501,85 @@ async function getComponentFile(req, res) {
   }
 }
 
+/**
+ * getUserAutoTestGrade
+ * @param {Request} req
+ * @param {Response} res
+ * get user auto grade for specific test
+ */
+async function getUserAutoTestGrade(req, res) {
+  try {
+    const { userId, testId, courseId } = req.query;
+    if (!userId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add userId as a query parameter" }],
+        })
+      );
+    if (!testId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add testId as a query parameter" }],
+        })
+      );
+    const grade = await UserTestGrade.findOne({
+      where: {
+        UserId: Number(userId),
+        testId: Number(testId),
+      },
+    });
+    if (!grade)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no auto grade for this test with this user" }],
+        })
+      );
+    res.status(200).send(grade).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getUserAutoTestGrade
+ * @param {Request} req
+ * @param {Response} res
+ * get user auto grade for specific test
+ */
+async function getUserEssayGrade(req, res) {
+  try {
+    const { userId, questionId, courseId } = req.query;
+    if (!userId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add userId as a query parameter" }],
+        })
+      );
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add questionId as a query parameter" }],
+        })
+      );
+
+    const grade = await CourseEssay.findOne({
+      where: {
+        UserId: Number(userId),
+        QuestionId: Number(questionId),
+        CourseId: Number(courseId),
+      },
+    });
+    if (!grade)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no auto grade for this test with this user" }],
+        })
+      );
+    res.status(200).send(grade).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -1522,4 +1604,5 @@ module.exports = {
   getCompoentStatus,
   editFullCourse,
   getComponentFile,
+  getUserAutoTestGrade,
 };
