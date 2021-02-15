@@ -1471,6 +1471,29 @@ async function editFullCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getComponentFile
+ * @param {Request} req
+ * @param {Response} res
+ * get file of specific compoent
+ */
+async function getComponentFile(req, res) {
+  try {
+    const { componentId } = req.query;
+    const component = await CourseSectionComponent.findOne({
+      where: {
+        id: Number(componentId),
+      },
+    });
+    if (!component)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no component with this id" }] })
+      );
+    res.end(component.file, "binary");
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 
 module.exports = {
   getEnrolledCoursesByUser,
@@ -1495,4 +1518,5 @@ module.exports = {
   editCourseBasicInfo,
   getCompoentStatus,
   editFullCourse,
+  getComponentFile,
 };

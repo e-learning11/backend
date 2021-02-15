@@ -119,4 +119,7 @@ router.put(
   ]),
   CourseController.editFullCourse
 );
+
+router.get("/course/component/file", CourseController.getComponentFile);
+
 module.exports = router;
