@@ -1353,6 +1353,16 @@ async function editFullCourse(req, res) {
         let componentId = null;
         let file = null;
         let componentReset = component.reset;
+        // if compoent reset reset all progress
+        if (componentReset) {
+          await UserCourseComponent.destroy({
+            where: {
+              CourseSectionComponentId: component.id,
+            },
+            transaction: t,
+          });
+        }
+
         if (
           component.File &&
           (component.type == CONSTANTS.VIDEO ||
@@ -1366,6 +1376,7 @@ async function editFullCourse(req, res) {
             assignmentFileIndex++;
           }
         }
+
         if (component.id) {
           componentId = component.id;
           // compoent already exist
@@ -1375,22 +1386,6 @@ async function editFullCourse(req, res) {
             },
           });
 
-          // check if there is any change to the component to reset user progress
-          if (
-            componentReset &&
-            (componentDB.name != component.name ||
-              componentDB.videoID != component.videoID ||
-              componentDB.type != component.type ||
-              componentDB.passingGrade != component.passingGrade ||
-              Buffer.compare(componentDB.file, file))
-          ) {
-            await UserCourseComponent.destroy({
-              where: {
-                CourseSectionComponentId: component.id,
-              },
-              transaction: t,
-            });
-          }
           componentDB.number = component.number;
           componentDB.name = component.name;
           componentDB.videoID = component.videoID;
@@ -1426,35 +1421,13 @@ async function editFullCourse(req, res) {
                   id: question.id,
                 },
               });
-              // if any change to prevoius question then reset
-              if (
-                componentReset &&
-                (questionDB.Q != question.Q ||
-                  questionDB.type != question.type ||
-                  questionDB.correctAnswer != question.correctAnswer)
-              ) {
-                await UserCourseComponent.destroy({
-                  where: {
-                    CourseSectionComponentId: component.id,
-                  },
-                  transaction: t,
-                });
-              }
+
               questionDB.CourseSectionComponentId = componentId;
               questionDB.Q = question.Q;
               questionDB.type = question.type;
               questionDB.correctAnswer = question.correctAnswer;
               await questionDB.save({ transaction: t });
             } else {
-              // if there is a new question then reset user progress fo this compoent
-              if (componentReset) {
-                await UserCourseComponent.destroy({
-                  where: {
-                    CourseSectionComponentId: component.id,
-                  },
-                  transaction: t,
-                });
-              }
               let questionDB = await Question.create(
                 {
                   CourseSectionComponentId: componentId,
