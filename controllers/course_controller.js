@@ -323,12 +323,19 @@ async function createCourse(req, res) {
         );
         if (component.test) {
           for (let question of component.test) {
+            let correctAnswer = null;
+
+            try {
+              correctAnswer = question.A[question.correctAnswer];
+            } catch (ex) {
+              correctAnswer = null;
+            }
             let questionObj = await Question.create(
               {
                 CourseSectionComponentId: courseSelectionComponentObj.id,
                 Q: question.Q,
                 type: question.type,
-                correctAnswer: question.correctAnswer,
+                correctAnswer: correctAnswer,
               },
               { transaction: t }
             );
@@ -423,7 +430,13 @@ async function getCourseFullInfo(req, res) {
                 "passingGrade",
                 "id",
               ],
-              include: [{ model: Question, include: [{ model: Answer }] }],
+              include: [
+                {
+                  model: Question,
+                  attributes: ["id", "Q", "type"],
+                  include: [{ model: Answer }],
+                },
+              ],
             },
           ],
         },
@@ -1522,6 +1535,12 @@ async function editFullCourse(req, res) {
         if (component.test) {
           for (let question of component.test) {
             let questionId = null;
+            let correctAnswer = null;
+            try {
+              correctAnswer = question.A[question.correctAnswer];
+            } catch (ex) {
+              correctAnswer = null;
+            }
             if (question.id) {
               questionId = question.id;
               const questionDB = await Question.findOne({
@@ -1533,7 +1552,7 @@ async function editFullCourse(req, res) {
               questionDB.CourseSectionComponentId = componentId;
               questionDB.Q = question.Q;
               questionDB.type = question.type;
-              questionDB.correctAnswer = question.correctAnswer;
+              questionDB.correctAnswer = correctAnswer;
               await questionDB.save({ transaction: t });
             } else {
               let questionDB = await Question.create(
@@ -1541,7 +1560,7 @@ async function editFullCourse(req, res) {
                   CourseSectionComponentId: componentId,
                   Q: question.Q,
                   type: question.type,
-                  correctAnswer: question.correctAnswer,
+                  correctAnswer: correctAnswer,
                 },
                 { transaction: t }
               );

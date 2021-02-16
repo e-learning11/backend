@@ -16,7 +16,7 @@ const Question = sequelize.define("Question", {
     allowNull: true,
   },
   correctAnswer: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.TEXT("long"),
   },
 });
 
