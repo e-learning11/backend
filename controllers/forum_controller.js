@@ -70,6 +70,10 @@ async function getQuestions(req, res) {
       where.title = {
         [Sequelize.Op.like]: `%${req.query.title}%`,
       };
+    const whereReplies = {};
+    if (req.query.isAcceptedAnswer)
+      whereReplies.isAnswer =
+        req.query.isAcceptedAnswer == "true" ? true : false;
     const questions = await UserQuestions.findAll({
       where: where,
       order: order,
@@ -77,7 +81,7 @@ async function getQuestions(req, res) {
       offset: Number(offset),
       include: [
         { model: User, attributes: ["id", "firstName", "lastName", "age"] },
-        { model: UserQuestionsReplies },
+        { model: UserQuestionsReplies, where: whereReplies },
       ],
       attributes: [
         "title",
