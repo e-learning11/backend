@@ -122,5 +122,10 @@ router.put(
 router.get("/course/test/user-grade", CourseController.getUserAutoTestGrade);
 router.get("/course/essay/user-grade", CourseController.getUserEssayGrade);
 router.get("/course/component/file", CourseController.getComponentFile);
+router.get(
+  "/course/test/grade",
+  authenticationModule.checkAuth,
+  CourseController.getTestGrade
+);
 
 module.exports = router;

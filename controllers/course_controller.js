@@ -612,6 +612,13 @@ async function autoGradeTest(req, res) {
       if (!CONSTANTS.AUTOGRADE_TYPE.includes(question.type)) {
         isFinished = false;
         results.push(-1);
+        await CourseEssay.create({
+          UserId: userId,
+          CourseId: Number(courseId),
+          QuestionId: Number(question.id),
+          text: answers[i],
+          testId: Number(testId),
+        });
         continue;
       }
       if (question.correctAnswer == answers[i]) {
@@ -651,6 +658,52 @@ async function autoGradeTest(req, res) {
       })
       .end();
   } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
+/**
+ * getTestGrade
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getTestGrade(req, res) {
+  try {
+    const userId = req.user.id;
+    const testId = Number(req.query.testId);
+    const courseId = Number(req.query.courseId);
+
+    const userAutoGrade = await UserTestGrade.findOne({
+      where: {
+        testId: testId,
+        UserId: userId,
+        CourseId: courseId,
+      },
+    });
+    if (!userAutoGrade)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no test submitted with this id" }],
+        })
+      );
+    const autoGrade = userAutoGrade.grade;
+    let essayGrades = 0;
+    const userEssays = await CourseEssay.findAll({
+      where: {
+        testId: testId,
+        UserId: userId,
+        CourseId: courseId,
+      },
+    });
+    for (let userEssay of userEssays) {
+      essayGrades += userEssay.grade;
+    }
+    res.status(200).send({
+      autoGrades: autoGrade,
+      essayGrades: essayGrades,
+    });
+  } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
@@ -756,6 +809,7 @@ async function markComponentAsDone(req, res) {
           errors: [{ message: "no compoent with this id" }],
         })
       );
+
     // check if this compoent is test
     if (courseComponent.type == CONSTANTS.TEST) {
       // check that user passed minimum grade
@@ -789,17 +843,35 @@ async function markComponentAsDone(req, res) {
     }
 
     // check that user finished the last one before mark this one as complete
+
     if (courseComponent.number == 1) {
       // if first compoent then mark as done with no checks and make user go to next component
       userCourse.currentComponent = 2;
     } else {
       // check that user finished compoent with number courseCompoent.number-1
-      const prevCourseComponent = await CourseSection.findOne({
+
+      const prevCourse = await Course.findOne({
         where: {
-          CourseSectionId: courseComponent.CourseSectionId,
-          number: courseComponent.number - 1,
+          id: courseId,
         },
+        attributes: ["id"],
+        include: [
+          {
+            model: CourseSection,
+            attributes: ["id"],
+            include: [
+              {
+                model: CourseSectionComponent,
+                where: {
+                  number: courseComponent.number - 1,
+                },
+              },
+            ],
+          },
+        ],
       });
+      const prevCourseComponent =
+        prevCourse.CourseSections[0].CourseSectionComponents[0];
       if (!prevCourseComponent)
         throw new Error(
           JSON.stringify({
@@ -855,6 +927,7 @@ async function markComponentAsDone(req, res) {
     await t.commit();
     res.status(200).send(String(userCourse.currentComponent)).end();
   } catch (ex) {
+    //console.log(ex);
     await t.rollback();
     errorHandler(req, res, ex);
   }
@@ -1109,7 +1182,7 @@ async function gradeAssignmentSubmission(req, res) {
 async function submitEssayAnswer(req, res) {
   try {
     const userId = req.user.id;
-    const { courseId, questionId, text } = req.body;
+    const { courseId, questionId, text, testId } = req.body;
     // check that user is enrolled in course
     const userCourse = await UserCourse.findOne({
       where: {
@@ -1127,6 +1200,7 @@ async function submitEssayAnswer(req, res) {
       CourseId: Number(courseId),
       QuestionId: Number(questionId),
       text: text,
+      testId: Number(testId),
     });
     res.status(200).send(answer).end();
   } catch (ex) {
@@ -1663,50 +1737,7 @@ async function getUserAutoTestGrade(req, res) {
 }
 
 /**
- * getUserAutoTestGrade
- * @param {Request} req
- * @param {Response} res
- * get user essay grade for specific test
- */
-async function getUserEssayGrade(req, res) {
-  try {
-    const { userId, questionId, courseId } = req.query;
-    if (!userId)
-      throw new Error(
-        JSON.stringify({
-          errors: [{ message: "please add userId as a query parameter" }],
-        })
-      );
-    if (!questionId)
-      throw new Error(
-        JSON.stringify({
-          errors: [{ message: "please add questionId as a query parameter" }],
-        })
-      );
-
-    const grade = await CourseEssay.findOne({
-      where: {
-        UserId: Number(userId),
-        QuestionId: Number(questionId),
-        CourseId: Number(courseId),
-      },
-    });
-    if (!grade)
-      throw new Error(
-        JSON.stringify({
-          errors: [
-            { message: "no essay grade for this question with this user" },
-          ],
-        })
-      );
-    res.status(200).send(grade).end();
-  } catch (ex) {
-    errorHandler(req, res, ex);
-  }
-}
-
-/**
- * getUserAutoTestGrade
+ * getUserEssayGrade
  * @param {Request} req
  * @param {Response} res
  * get user essay grade for specific test
@@ -1774,4 +1805,5 @@ module.exports = {
   getComponentFile,
   getUserAutoTestGrade,
   getUserEssayGrade,
+  getTestGrade,
 };

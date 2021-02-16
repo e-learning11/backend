@@ -16,6 +16,9 @@ const CourseEssay = sequelize.define("CourseEssay", {
     allowNull: false,
     defaultValue: 0,
   },
+  testId: {
+    type: DataTypes.INTEGER,
+  },
 });
 
 module.exports = CourseEssay;
