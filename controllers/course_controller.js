@@ -562,7 +562,7 @@ async function enrollUserInCourse(req, res) {
       CourseId: courseId,
       type: CONSTANTS.ENROLLED,
 
-      currentComponent: 0,
+      currentComponent: 1,
     });
     res.status(200).send(enrolledCourseState).end();
   } catch (ex) {
