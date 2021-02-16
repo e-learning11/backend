@@ -509,6 +509,92 @@ async function deleteQuestion(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ *deleteReply
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteReply(req, res) {
+  try {
+    const userId = req.user.id;
+    const { replyId } = req.query;
+    if (!replyId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add replyId to query paramaters" }],
+        })
+      );
+    // check that this reply belongs to user
+    const reply = await UserQuestionsReplies.findOne({
+      where: {
+        id: Number(replyId),
+        UserId: userId,
+      },
+    });
+    if (!reply)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no reply with this id or user doesnt own question" },
+          ],
+        })
+      );
+
+    await UserQuestionsReplies.destroy({
+      where: {
+        id: Number(replyId),
+        UserId: userId,
+      },
+    });
+    res.status(200).send("deleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * deleteComment
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteComment(req, res) {
+  try {
+    const userId = req.user.id;
+    const { commentId } = req.query;
+    if (!commentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add commentId to query paramaters" }],
+        })
+      );
+    // check that this comment belongs to user
+    const comment = await UserQuestionsRepliesComment.findOne({
+      where: {
+        id: Number(commentId),
+        UserId: userId,
+      },
+    });
+    if (!comment)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no comment with this id or user doesnt own question" },
+          ],
+        })
+      );
+
+    await UserQuestionsRepliesComment.destroy({
+      where: {
+        id: Number(commentId),
+        UserId: userId,
+      },
+    });
+    res.status(200).send("deleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -520,4 +606,6 @@ module.exports = {
   setReplyAsAnswer,
   makeQuestionFeatured,
   deleteQuestion,
+  deleteReply,
+  deleteComment,
 };

@@ -22,10 +22,22 @@ router.post(
   authenticationModule.checkAuth,
   forumController.postReply
 );
+
+router.delete(
+  "/forum/question/reply",
+  authenticationModule.checkAuth,
+  forumController.deleteReply
+);
 router.post(
   "/forum/question/reply/comment",
   authenticationModule.checkAuth,
   forumController.postComment
+);
+
+router.delete(
+  "/forum/question/reply/comment",
+  authenticationModule.checkAuth,
+  forumController.deleteComment
 );
 router.post(
   "/forum/vote",
