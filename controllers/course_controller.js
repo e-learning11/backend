@@ -1640,48 +1640,6 @@ async function getUserEssayGrade(req, res) {
   }
 }
 
-/**
- * getUserAssignmentGrade
- * @param {Request} req
- * @param {Response} res
- * get user essay grade for specific test
- */
-async function getUserAssignmentGrade(req, res) {
-  try {
-    const { userId, questionId, courseId } = req.query;
-    if (!userId)
-      throw new Error(
-        JSON.stringify({
-          errors: [{ message: "please add userId as a query parameter" }],
-        })
-      );
-    if (!questionId)
-      throw new Error(
-        JSON.stringify({
-          errors: [{ message: "please add questionId as a query parameter" }],
-        })
-      );
-
-    const grade = await CourseEssay.findOne({
-      where: {
-        UserId: Number(userId),
-        QuestionId: Number(questionId),
-        CourseId: Number(courseId),
-      },
-    });
-    if (!grade)
-      throw new Error(
-        JSON.stringify({
-          errors: [
-            { message: "no essay grade for this question with this user" },
-          ],
-        })
-      );
-    res.status(200).send(grade).end();
-  } catch (ex) {
-    errorHandler(req, res, ex);
-  }
-}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
