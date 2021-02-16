@@ -81,7 +81,7 @@ async function getQuestions(req, res) {
       offset: Number(offset),
       include: [
         { model: User, attributes: ["id", "firstName", "lastName", "age"] },
-        { model: UserQuestionsReplies, where: whereReplies },
+        { model: UserQuestionsReplies },
       ],
       attributes: [
         "title",
