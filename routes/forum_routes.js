@@ -10,6 +10,13 @@ router.post(
   authenticationModule.checkAuth,
   forumController.postQuestion
 );
+
+router.delete(
+  "/forum/question",
+  authenticationModule.checkAuth,
+  forumController.deleteQuestion
+);
+
 router.post(
   "/forum/question/reply",
   authenticationModule.checkAuth,

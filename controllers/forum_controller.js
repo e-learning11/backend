@@ -467,6 +467,48 @@ async function makeQuestionFeatured(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ *deleteQuestion
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteQuestion(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId } = req.query;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add questionId to query paramaters" }],
+        })
+      );
+    // check that this question belongs to user
+    const question = await UserQuestions.findOne({
+      where: {
+        id: Number(questionId),
+        UserId: userId,
+      },
+    });
+    if (!question)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no question with this id or user doesnt own question" },
+          ],
+        })
+      );
+
+    await UserQuestions.destroy({
+      where: {
+        id: Number(questionId),
+        UserId: userId,
+      },
+    });
+    res.status(200).send("deleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -477,4 +519,5 @@ module.exports = {
   getComments,
   setReplyAsAnswer,
   makeQuestionFeatured,
+  deleteQuestion,
 };
