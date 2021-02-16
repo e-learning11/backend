@@ -45,6 +45,11 @@ router.post(
   forumController.postComment
 );
 
+router.put(
+  "/forum/question/reply/comment",
+  authenticationModule.checkAuth,
+  forumController.editComment
+);
 router.delete(
   "/forum/question/reply/comment",
   authenticationModule.checkAuth,
