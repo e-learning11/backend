@@ -878,12 +878,25 @@ async function submitAssignmentAnswer(req, res) {
       throw new Error(
         JSON.stringify({ errors: [{ message: "user not enrolled in course" }] })
       );
-    const answer = await CourseAssignment.create({
-      UserId: userId,
-      CourseId: Number(courseId),
-      CourseSectionComponentId: Number(courseSectionComponentId),
-      text: text,
+    // chekc if answer is laready found or not
+    let answer = await CourseAssignment.findOne({
+      where: {
+        UserId: userId,
+        CourseId: Number(courseId),
+        CourseSectionComponentId: Number(courseSectionComponentId),
+      },
     });
+    if (!answer) {
+      answer = await CourseAssignment.create({
+        UserId: userId,
+        CourseId: Number(courseId),
+        CourseSectionComponentId: Number(courseSectionComponentId),
+        text: text,
+      });
+    } else {
+      answer.text = text;
+      await answer.save();
+    }
     res.status(200).send(answer).end();
   } catch (ex) {
     errorHandler(req, res, ex);
@@ -1526,6 +1539,7 @@ async function getUserAutoTestGrade(req, res) {
       where: {
         UserId: Number(userId),
         testId: Number(testId),
+        CourseId: Number(courseId),
       },
     });
     if (!grade)
@@ -1544,7 +1558,7 @@ async function getUserAutoTestGrade(req, res) {
  * getUserAutoTestGrade
  * @param {Request} req
  * @param {Response} res
- * get user auto grade for specific test
+ * get user essay grade for specific test
  */
 async function getUserEssayGrade(req, res) {
   try {
@@ -1572,7 +1586,95 @@ async function getUserEssayGrade(req, res) {
     if (!grade)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "no auto grade for this test with this user" }],
+          errors: [
+            { message: "no essay grade for this question with this user" },
+          ],
+        })
+      );
+    res.status(200).send(grade).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getUserAutoTestGrade
+ * @param {Request} req
+ * @param {Response} res
+ * get user essay grade for specific test
+ */
+async function getUserEssayGrade(req, res) {
+  try {
+    const { userId, questionId, courseId } = req.query;
+    if (!userId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add userId as a query parameter" }],
+        })
+      );
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add questionId as a query parameter" }],
+        })
+      );
+
+    const grade = await CourseEssay.findOne({
+      where: {
+        UserId: Number(userId),
+        QuestionId: Number(questionId),
+        CourseId: Number(courseId),
+      },
+    });
+    if (!grade)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no essay grade for this question with this user" },
+          ],
+        })
+      );
+    res.status(200).send(grade).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getUserAssignmentGrade
+ * @param {Request} req
+ * @param {Response} res
+ * get user essay grade for specific test
+ */
+async function getUserAssignmentGrade(req, res) {
+  try {
+    const { userId, questionId, courseId } = req.query;
+    if (!userId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add userId as a query parameter" }],
+        })
+      );
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add questionId as a query parameter" }],
+        })
+      );
+
+    const grade = await CourseEssay.findOne({
+      where: {
+        UserId: Number(userId),
+        QuestionId: Number(questionId),
+        CourseId: Number(courseId),
+      },
+    });
+    if (!grade)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no essay grade for this question with this user" },
+          ],
         })
       );
     res.status(200).send(grade).end();
@@ -1605,4 +1707,5 @@ module.exports = {
   editFullCourse,
   getComponentFile,
   getUserAutoTestGrade,
+  getUserEssayGrade,
 };

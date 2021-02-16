@@ -120,6 +120,7 @@ router.put(
   CourseController.editFullCourse
 );
 router.get("/course/test/user-grade", CourseController.getUserAutoTestGrade);
+router.get("/course/essay/user-grade", CourseController.getUserEssayGrade);
 router.get("/course/component/file", CourseController.getComponentFile);
 
 module.exports = router;
