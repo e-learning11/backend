@@ -97,7 +97,11 @@ async function getQuestions(req, res) {
     for (let question of questions) {
       let tempQ = question.get();
       tempQ.noOfAnswers = tempQ.UserQuestionsReplies.length;
+      let isAcceptedAnswer = false;
+      for (let reply of question.UserQuestionsReplies)
+        if (reply.isAnswer) isAcceptedAnswer = true;
       delete tempQ.UserQuestionsReplies;
+      tempQ.isAcceptedAnswer = isAcceptedAnswer;
       questionToSendBack.push(tempQ);
     }
     // may need to filter or sort the array
