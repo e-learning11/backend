@@ -13,6 +13,7 @@ const sequelize = new Sequelize(
       charset: "utf8",
       collate: "utf8_general_ci",
     },
+    logging: false,
   }
 );
 module.exports.sequelize = sequelize;

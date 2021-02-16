@@ -602,14 +602,14 @@ function getComponent() {
       name: "test " + getRandomWord(),
     };
     for (let i = 0; i < Math.floor(Math.random() * 6) + 2; i++) {
-      if (Math.random() > 0.5) {
+      if (Math.random() < 0.35) {
         obj.test.push({
-          Q: "How are you again?",
+          Q: "true or false",
           A: ["True", "False"],
           type: "TorF",
           correctAnswer: Math.round(Math.random()),
         });
-      } else {
+      } else if (Math.random() < 0.8) {
         let a = [];
         for (let j = 0; j < Math.round(Math.random() * 4) + 3; j++) {
           a.push(getRandomSentence());
@@ -620,6 +620,13 @@ function getComponent() {
           A: a,
           type: "MCQ",
           correctAnswer: Math.floor(Math.random() * a.length),
+        });
+      } else {
+        obj.test.push({
+          Q: "this is essay",
+          A: [],
+          type: "Essay",
+          correctAnswer: -1,
         });
       }
     }
@@ -638,9 +645,9 @@ function getComponent() {
 }
 let coursesIds = [];
 let studentsTokens = [];
-let urlNum = 300;
+let urlNum = 10000;
 async function main() {
-  for (let num = 0; num < 100; num++) {
+  for (let num = 0; num < 20; num++) {
     try {
       let firstName = getName();
       let lastName = getName();

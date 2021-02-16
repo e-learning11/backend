@@ -563,14 +563,14 @@ function getComponent() {
       name: "اختبار " + getRandomWord(),
     };
     for (let i = 0; i < Math.floor(Math.random() * 6) + 2; i++) {
-      if (Math.random() > 0.5) {
+      if (Math.random() < 0.4) {
         obj.test.push({
           Q: "كيف حالك ؟ ",
           A: ["True", "False"],
           type: "TorF",
           correctAnswer: Math.round(Math.random()),
         });
-      } else {
+      } else if (Math.random() < 0.85) {
         let a = [];
         for (let j = 0; j < Math.round(Math.random() * 4) + 3; j++) {
           a.push(getRandomSentence());
@@ -581,6 +581,13 @@ function getComponent() {
           A: a,
           type: "MCQ",
           correctAnswer: Math.floor(Math.random() * a.length),
+        });
+      } else {
+        obj.test.push({
+          Q: "سوال كتابي",
+          A: [],
+          type: "Essay",
+          correctAnswer: -1,
         });
       }
     }
@@ -601,7 +608,7 @@ let coursesIds = [];
 let studentsTokens = [];
 let urlNum = 300;
 async function main() {
-  for (let num = 0; num < 100; num++) {
+  for (let num = 0; num < 10; num++) {
     try {
       let firstName = getName();
       let lastName = getName();
@@ -654,7 +661,7 @@ async function main() {
         for (let i = 0; i < Math.round(Math.random() * 10) + 1; i++) {
           let numOfComp = Math.round(Math.random() * 10) + 1;
           let section = {
-            name: "section " + getRandomWord(),
+            name: "سيكشن " + getRandomWord(),
             start: start,
             end: start + numOfComp - 1,
             components: [],

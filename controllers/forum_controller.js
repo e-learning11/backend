@@ -75,12 +75,19 @@ async function getQuestions(req, res) {
       order: order,
       limit: Number(limit),
       offset: Number(offset),
-
       include: [
         { model: User, attributes: ["id", "firstName", "lastName", "age"] },
         { model: UserQuestionsReplies },
       ],
-      attributes: ["title", "text", "id", "tags", "votes", "UserId"],
+      attributes: [
+        "title",
+        "text",
+        "id",
+        "tags",
+        "votes",
+        "UserId",
+        "createdAt",
+      ],
     });
     let questionToSendBack = [];
     for (let question of questions) {
