@@ -636,6 +636,84 @@ async function editQuestion(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * editReply
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function editReply(req, res) {
+  try {
+    const userId = req.user.id;
+    const { replyId, text } = req.body;
+    if (!replyId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add replyId to body paramaters" }],
+        })
+      );
+    // check that this question belongs to user
+    const reply = await UserQuestionsReplies.findOne({
+      where: {
+        id: Number(replyId),
+        UserId: userId,
+      },
+    });
+    if (!reply)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no reply with this id or user doesnt own question" },
+          ],
+        })
+      );
+
+    reply.text = text || reply.text;
+    await reply.save();
+    res.status(200).send(reply).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * editComment
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function editComment(req, res) {
+  try {
+    const userId = req.user.id;
+    const { commentId, text } = req.body;
+    if (!commentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add commentId to body paramaters" }],
+        })
+      );
+    // check that this question belongs to user
+    const comment = await UserQuestionsRepliesComment.findOne({
+      where: {
+        id: Number(commentId),
+        UserId: userId,
+      },
+    });
+    if (!comment)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no comment with this id or user doesnt own question" },
+          ],
+        })
+      );
+
+    comment.text = text || comment.text;
+    await comment.save();
+    res.status(200).send(comment).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -650,4 +728,6 @@ module.exports = {
   deleteReply,
   deleteComment,
   editQuestion,
+  editReply,
+  editComment,
 };

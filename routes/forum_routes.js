@@ -28,6 +28,12 @@ router.post(
   forumController.postReply
 );
 
+router.put(
+  "/forum/question/reply",
+  authenticationModule.checkAuth,
+  forumController.editReply
+);
+
 router.delete(
   "/forum/question/reply",
   authenticationModule.checkAuth,
