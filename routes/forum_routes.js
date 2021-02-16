@@ -17,6 +17,11 @@ router.delete(
   forumController.deleteQuestion
 );
 
+router.put(
+  "/forum/question",
+  authenticationModule.checkAuth,
+  forumController.editQuestion
+);
 router.post(
   "/forum/question/reply",
   authenticationModule.checkAuth,

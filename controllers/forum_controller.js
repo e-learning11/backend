@@ -595,6 +595,47 @@ async function deleteComment(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * editQuestion
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function editQuestion(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId, text, tags, title } = req.body;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add questionId to body paramaters" }],
+        })
+      );
+    // check that this question belongs to user
+    const question = await UserQuestions.findOne({
+      where: {
+        id: Number(questionId),
+        UserId: userId,
+      },
+    });
+    if (!question)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no question with this id or user doesnt own question" },
+          ],
+        })
+      );
+
+    question.title = title || question.title;
+    question.tags = tags || question.tags;
+    question.text = text || question.text;
+    await question.save();
+    res.status(200).send(question).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -608,4 +649,5 @@ module.exports = {
   deleteQuestion,
   deleteReply,
   deleteComment,
+  editQuestion,
 };
