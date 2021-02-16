@@ -589,9 +589,18 @@ async function autoGradeTest(req, res) {
       },
       include: [{ model: Question, include: [{ model: Answer }] }],
     });
+    if (!courseSectionComponent)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no test with this id" }] })
+      );
     let grade = 0;
+    let isFinished = true;
     for (let [i, question] of courseSectionComponent.Questions.entries()) {
-      if (!CONSTANTS.AUTOGRADE_TYPE.includes(question.type)) continue;
+      if (!CONSTANTS.AUTOGRADE_TYPE.includes(question.type)) {
+        isFinished = false;
+        results.push(-1);
+        continue;
+      }
       if (question.correctAnswer == answers[i]) {
         results.push(1);
         grade += 1;
@@ -612,14 +621,22 @@ async function autoGradeTest(req, res) {
         CourseId: courseId,
         grade: grade,
         lastTimeSubmit: Date.now(),
+        isDone: isFinished,
       });
     } else {
       userGrade.lastTimeSubmit = Date.now();
       userGrade.grade = grade;
+      userGrade.isDone = isFinished;
       await userGrade.save();
     }
 
-    res.status(200).send(results).end();
+    res
+      .status(200)
+      .send({
+        results: results,
+        isDone: isFinished,
+      })
+      .end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
@@ -726,10 +743,82 @@ async function markComponentAsDone(req, res) {
           errors: [{ message: "no compoent with this id" }],
         })
       );
-    userCourse.currentComponent = Math.max(
-      userCourse.currentComponent,
-      1 + courseComponent.number
-    );
+    // check if this compoent is test
+    if (courseComponent.type == CONSTANTS.TEST) {
+      // check that user passed minimum grade
+      const userGrade = await UserTestGrade.findOne({
+        where: {
+          UserId: userId,
+          CourseId: courseId,
+          testId: componentId,
+        },
+      });
+      if (!userGrade || userGrade.grade < courseComponent.passingGrade)
+        throw new Error(
+          JSON.stringify({
+            errors: [{ message: "user didn't pass the test" }],
+          })
+        );
+    } else if (courseComponent.type == CONSTANTS.ASSIGNMENT) {
+      const userGrade = await CourseAssignment.findOne({
+        where: {
+          UserId: userId,
+          CourseId: courseId,
+          CourseSectionComponentId: componentId,
+        },
+      });
+      if (!userGrade || userGrade.grade < courseComponent.passingGrade)
+        throw new Error(
+          JSON.stringify({
+            errors: [{ message: "user didn't pass the assignment" }],
+          })
+        );
+    }
+
+    // check that user finished the last one before mark this one as complete
+    if (courseComponent.number == 1) {
+      // if first compoent then mark as done with no checks and make user go to next component
+      userCourse.currentComponent = 2;
+    } else {
+      // check that user finished compoent with number courseCompoent.number-1
+      const prevCourseComponent = await CourseSection.findOne({
+        where: {
+          CourseSectionId: courseComponent.CourseSectionId,
+          number: courseComponent.number - 1,
+        },
+      });
+      if (!prevCourseComponent)
+        throw new Error(
+          JSON.stringify({
+            errors: [
+              {
+                message:
+                  "please check that you sent the right query parameters and the correct ids",
+              },
+            ],
+          })
+        );
+      const courseUserComponent = await UserCourseComponent.findOne({
+        where: {
+          CourseSectionComponentId: prevCourseComponent.id,
+          isDone: true,
+        },
+      });
+      if (!courseUserComponent)
+        throw new Error(
+          JSON.stringify({
+            errors: [
+              {
+                message:
+                  "cannot mark this component as complete as user didn't finish the previus component",
+              },
+            ],
+          })
+        );
+
+      userCourse.currentComponent = courseComponent.number + 1;
+    }
+
     await userCourse.save({ transaction: t });
     const userCourseSectionCompoent = await UserCourseComponent.findOne({
       where: {

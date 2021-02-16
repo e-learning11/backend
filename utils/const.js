@@ -14,6 +14,7 @@ module.exports = {
   FINISHED: "finished",
   VIDEO: "Video",
   ASSIGNMENT: "Assignment",
+  TEST: "Test",
   FORUM_QUESTION: "forum_question",
   FORUM_REPLY: "forum_reply",
   FORUM_UPVOTE: "upvote",

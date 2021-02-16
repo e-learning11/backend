@@ -14,6 +14,9 @@ const UserTestGrade = sequelize.define("UserTestGrade", {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  isDone: {
+    type: DataTypes.BOOLEAN,
+  },
 });
 
 module.exports = UserTestGrade;
