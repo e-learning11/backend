@@ -536,7 +536,7 @@ async function deleteReply(req, res) {
       throw new Error(
         JSON.stringify({
           errors: [
-            { message: "no reply with this id or user doesnt own question" },
+            { message: "no reply with this id or user doesnt own reply" },
           ],
         })
       );
@@ -579,7 +579,7 @@ async function deleteComment(req, res) {
       throw new Error(
         JSON.stringify({
           errors: [
-            { message: "no comment with this id or user doesnt own question" },
+            { message: "no comment with this id or user doesnt own comment" },
           ],
         })
       );
@@ -663,7 +663,7 @@ async function editReply(req, res) {
       throw new Error(
         JSON.stringify({
           errors: [
-            { message: "no reply with this id or user doesnt own question" },
+            { message: "no reply with this id or user doesnt own reply" },
           ],
         })
       );
@@ -702,7 +702,7 @@ async function editComment(req, res) {
       throw new Error(
         JSON.stringify({
           errors: [
-            { message: "no comment with this id or user doesnt own question" },
+            { message: "no comment with this id or user doesnt own comment" },
           ],
         })
       );
