@@ -729,6 +729,34 @@ async function editComment(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getUserVote
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getUserVote(req, res) {
+  try {
+    const userId = req.user.id;
+    const { typeId, type } = req.query;
+    const userVote = await UserVote.findOne({
+      where: {
+        type: type,
+        UserId: userId,
+        typeId: Number(typeId),
+      },
+    });
+    if (!userVote) {
+      res.status(200).send("0").end();
+      return;
+    }
+    if (userVote.vote == CONSTANTS.FORUM_DOWNVOTE)
+      res.status(200).send("-1").end();
+    else res.status(200).send("1").end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -745,4 +773,5 @@ module.exports = {
   editQuestion,
   editReply,
   editComment,
+  getUserVote,
 };

@@ -70,4 +70,10 @@ router.post(
   authenticationModule.checkAuth,
   forumController.makeQuestionFeatured
 );
+
+router.get(
+  "/forum/vote",
+  authenticationModule.checkAuth,
+  forumController.getUserVote
+);
 module.exports = router;
