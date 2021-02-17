@@ -7,7 +7,11 @@ router.get(
   authenticationModule.checkAuth,
   forumController.getQuestions
 );
-router.get("/forum/questions/replies", forumController.getReplies);
+router.get(
+  "/forum/questions/replies",
+  authenticationModule.checkAuth,
+  forumController.getReplies
+);
 router.get("/forum/questions/replies/comments", forumController.getComments);
 router.post(
   "/forum/question",

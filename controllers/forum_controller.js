@@ -167,6 +167,7 @@ async function postReply(req, res) {
  */
 async function getReplies(req, res) {
   try {
+    const userId = req.user.id;
     const { limit, offset } = req.query;
     const where = {};
     if (req.query.replyId) where.id = Number(req.query.replyId);
@@ -180,7 +181,23 @@ async function getReplies(req, res) {
       offset: Number(offset),
       include: [{ model: User, attributes: ["id"] }],
     });
-    res.status(200).send(replies).end();
+    let repliesToSendBack = [];
+
+    for (let reply of replies) {
+      const trempR = reply.get();
+      const userVote = await UserVote.findOne({
+        where: {
+          type: CONSTANTS.FORUM_REPLY,
+          UserId: userId,
+          typeId: Number(reply.id),
+        },
+      });
+      if (!userVote) trempR.userVote = 0;
+      else if (userVote.vote == CONSTANTS.FORUM_DOWNVOTE) trempR.userVote = -1;
+      else trempR.userVote = 1;
+      repliesToSendBack.push(trempR);
+    }
+    res.status(200).send(repliesToSendBack).end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
