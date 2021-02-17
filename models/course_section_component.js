@@ -41,6 +41,10 @@ const CourseSectionComponent = sequelize.define("CourseSectionComponent", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  hasFile: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = CourseSectionComponent;
