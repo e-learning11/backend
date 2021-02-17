@@ -2,7 +2,11 @@ const router = require("express").Router();
 const forumController = require("../controllers/forum_controller");
 const authenticationModule = require("../utils/authentication");
 
-router.get("/forum/questions", forumController.getQuestions);
+router.get(
+  "/forum/questions",
+  authenticationModule.checkAuth,
+  forumController.getQuestions
+);
 router.get("/forum/questions/replies", forumController.getReplies);
 router.get("/forum/questions/replies/comments", forumController.getComments);
 router.post(

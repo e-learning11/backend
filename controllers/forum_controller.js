@@ -39,6 +39,7 @@ async function postQuestion(req, res) {
  */
 async function getQuestions(req, res) {
   try {
+    const userId = req.user.id;
     const { limit, offset } = req.query;
     const where = {};
     const order = [];
@@ -100,6 +101,16 @@ async function getQuestions(req, res) {
       let isAcceptedAnswer = false;
       for (let reply of question.UserQuestionsReplies)
         if (reply.isAnswer) isAcceptedAnswer = true;
+      const userVote = await UserVote.findOne({
+        where: {
+          type: CONSTANTS.FORUM_QUESTION,
+          UserId: userId,
+          typeId: Number(question.id),
+        },
+      });
+      if (!userVote) tempQ.userVote = 0;
+      else if (userVote.vote == CONSTANTS.FORUM_DOWNVOTE) tempQ.userVote = -1;
+      else tempQ.userVote = 1;
       delete tempQ.UserQuestionsReplies;
       tempQ.isAcceptedAnswer = isAcceptedAnswer;
       questionToSendBack.push(tempQ);
