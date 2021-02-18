@@ -495,7 +495,6 @@ async function getUserCourseState(req, res) {
           model: UserCourse,
           where: {
             UserId: userId,
-            type: CONSTANTS.ENROLLED,
             CourseId: courseId,
           },
         },

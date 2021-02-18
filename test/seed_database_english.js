@@ -560,7 +560,7 @@ function getType() {
 }
 
 function generateAge() {
-  return Math.floor(70 * Math.random());
+  return Math.floor(0 * Math.random());
 }
 
 function getGender() {
@@ -643,11 +643,21 @@ function getComponent() {
     return obj;
   }
 }
+
+function getQuestionForum() {
+  let obj = {
+    text: getRandomSentence(),
+    title: getRandomSentence(),
+    tags: "",
+  };
+  for (let i = 0; i < 5; i++) obj.tags += getRandomWord() + ",";
+  return obj;
+}
 let coursesIds = [];
 let studentsTokens = [];
-let urlNum = 10000;
+let urlNum = 1;
 async function main() {
-  for (let num = 0; num < 20; num++) {
+  for (let num = 0; num < 15; num++) {
     try {
       let firstName = getName();
       let lastName = getName();
@@ -672,29 +682,80 @@ async function main() {
         },
       };
       const token = await request(options);
-      if (type == "student") {
-        studentsTokens.push(token);
-        // enroll user in some random courses
-        for (let userToken of studentsTokens) {
-          for (let courseId of coursesIds) {
-            if (Math.random() > 0.5) {
-              var options = {
+
+      // enroll user in some random courses
+      for (let userToken of studentsTokens) {
+        for (let courseId of coursesIds) {
+          if (true) {
+            var options = {
+              method: "POST",
+              url: host + "/api/course/enroll?courseId=" + courseId,
+              headers: {
+                "x-auth-token": userToken,
+              },
+            };
+            await request(options);
+            for (let i = 0; i < 4; i++) {
+              // post question and replies
+              let q = getQuestionForum();
+              q.courseId = courseId;
+              options = {
                 method: "POST",
-                url: host + "/api/course/enroll?courseId=" + courseId,
+                url: host + "/api/forum/question",
                 headers: {
                   "x-auth-token": userToken,
+                  "Content-Type": "application/json",
                 },
+
+                body: JSON.stringify(q),
               };
-              await request(options);
+              let question = await request(options);
+              question = JSON.parse(question);
+              //console.log(question);
+              for (let j = 0; j < 5; j++) {
+                var options = {
+                  method: "POST",
+                  url: host + "/api/forum/question/reply",
+                  headers: {
+                    "x-auth-token": userToken,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    text: getRandomSentence(),
+                    questionId: question.id,
+                  }),
+                };
+                let reply = await request(options);
+                reply = JSON.parse(reply);
+                for (let k = 0; k < 5; k++) {
+                  var options = {
+                    method: "POST",
+                    url: host + "/api/forum/question/reply/comment",
+                    headers: {
+                      "x-auth-token": userToken,
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      text: getRandomSentence(),
+                      replyId: reply.id,
+                    }),
+                  };
+                  await request(options);
+                }
+              }
             }
           }
         }
+      }
+      if (type == "student") {
+        studentsTokens.push(token);
       } else {
+        number = 1;
         // create course by teacher
-        let gender = Math.floor(3 * Math.random()) + 1;
+        let gender = 3;
         let language = getLanguage();
         let ageMin = generateAge();
-        let age = [ageMin, ageMin + 20];
+        let age = [ageMin, ageMin + 70];
         let name = "Course " + getRandomSentence();
         let summary = getRandomSentence();
         let description = getRandomSentence();
@@ -762,5 +823,4 @@ async function main() {
     }
   }
 }
-
 main();

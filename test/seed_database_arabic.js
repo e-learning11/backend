@@ -604,11 +604,21 @@ function getComponent() {
     return obj;
   }
 }
+
+function getQuestionForum() {
+  let obj = {
+    text: getRandomSentence(),
+    title: getRandomSentence(),
+    tags: "",
+  };
+  for (let i = 0; i < 5; i++) obj.tags += getRandomWord() + ",";
+  return obj;
+}
 let coursesIds = [];
 let studentsTokens = [];
-let urlNum = 300;
+let urlNum = 350;
 async function main() {
-  for (let num = 0; num < 10; num++) {
+  for (let num = 0; num < 20; num++) {
     try {
       let firstName = getName();
       let lastName = getName();
@@ -633,15 +643,79 @@ async function main() {
         },
       };
       const token = await request(options);
+
+      for (let userToken of studentsTokens) {
+        for (let courseId of coursesIds) {
+          if (true) {
+            var options = {
+              method: "POST",
+              url: host + "/api/course/enroll?courseId=" + courseId,
+              headers: {
+                "x-auth-token": userToken,
+              },
+            };
+            await request(options);
+            for (let i = 0; i < 4; i++) {
+              // post question and replies
+              let q = getQuestionForum();
+              q.courseId = courseId;
+              options = {
+                method: "POST",
+                url: host + "/api/forum/question",
+                headers: {
+                  "x-auth-token": userToken,
+                  "Content-Type": "application/json",
+                },
+
+                body: JSON.stringify(q),
+              };
+              let question = await request(options);
+              question = JSON.parse(question);
+              //console.log(question);
+              for (let j = 0; j < 5; j++) {
+                var options = {
+                  method: "POST",
+                  url: host + "/api/forum/question/reply",
+                  headers: {
+                    "x-auth-token": userToken,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    text: getRandomSentence(),
+                    questionId: question.id,
+                  }),
+                };
+                let reply = await request(options);
+                reply = JSON.parse(reply);
+                for (let k = 0; k < 5; k++) {
+                  var options = {
+                    method: "POST",
+                    url: host + "/api/forum/question/reply/comment",
+                    headers: {
+                      "x-auth-token": userToken,
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      text: getRandomSentence(),
+                      replyId: reply.id,
+                    }),
+                  };
+                  await request(options);
+                }
+              }
+            }
+          }
+        }
+      }
       if (type == "student") {
         studentsTokens.push(token);
         // enroll user in some random courses
       } else {
         // create course by teacher
-        let gender = Math.floor(3 * Math.random()) + 1;
+        let gender = 3;
         let language = getLanguage();
         let ageMin = generateAge();
-        let age = [ageMin, ageMin + 20];
+        let age = [0, 70];
         let name = "Course " + getRandomSentence();
         let summary = getRandomSentence();
         let description = getRandomSentence();
@@ -675,7 +749,7 @@ async function main() {
 
         let courseObj = {
           gender: gender,
-          private: private,
+          private: false,
           url: url,
           age: age,
           name: name,
@@ -703,21 +777,6 @@ async function main() {
         let res = await request(options);
         res = JSON.parse(res);
         coursesIds.push(res.id);
-      }
-
-      for (let userToken of studentsTokens) {
-        for (let courseId of coursesIds) {
-          if (Math.random() > 0.5) {
-            var options = {
-              method: "POST",
-              url: host + "/api/course/enroll?courseId=" + courseId,
-              headers: {
-                "x-auth-token": userToken,
-              },
-            };
-            await request(options);
-          }
-        }
       }
     } catch (ex) {
       continue;
