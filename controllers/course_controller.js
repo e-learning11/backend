@@ -1779,7 +1779,44 @@ async function getUserEssayGrade(req, res) {
     errorHandler(req, res, ex);
   }
 }
-
+/**
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteCourse(req, res) {
+  try {
+    const userId = req.user.id;
+    const { courseId } = req.query;
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId as a query parameter" }],
+        })
+      );
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+        CourseId: Number(courseId),
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not owner of course" }],
+        })
+      );
+    await Course.destroy({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    res.status(200).send("deleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -1807,4 +1844,5 @@ module.exports = {
   getUserAutoTestGrade,
   getUserEssayGrade,
   getTestGrade,
+  deleteCourse,
 };

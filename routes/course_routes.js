@@ -127,5 +127,9 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getTestGrade
 );
-
+router.delete(
+  "/course",
+  authenticationModule.checkAuth,
+  CourseController.deleteCourse
+);
 module.exports = router;
