@@ -42,7 +42,7 @@ async function getQuestions(req, res) {
     const userId = req.user.id;
     const { limit, offset } = req.query;
     const where = {};
-    const order = [];
+    const order = ["isFeatured", "DESC"];
     let sortOrder = "DESC";
     let filterKey = null;
     let isAnswered = null;
@@ -92,6 +92,7 @@ async function getQuestions(req, res) {
         "votes",
         "UserId",
         "createdAt",
+        "isFeatured",
       ],
     });
     let questionToSendBack = [];
