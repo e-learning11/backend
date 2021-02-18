@@ -699,6 +699,48 @@ async function deleteComment(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * deleteQuestionComment
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteQuestionComment(req, res) {
+  try {
+    const userId = req.user.id;
+    const { commentId } = req.query;
+    if (!commentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add commentId to query paramaters" }],
+        })
+      );
+    // check that this comment belongs to user
+    const comment = await UserQuestionsComment.findOne({
+      where: {
+        id: Number(commentId),
+        UserId: userId,
+      },
+    });
+    if (!comment)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no comment with this id or user doesnt own comment" },
+          ],
+        })
+      );
+
+    await UserQuestionsComment.destroy({
+      where: {
+        id: Number(commentId),
+        UserId: userId,
+      },
+    });
+    res.status(200).send("deleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 
 /**
  * editQuestion
@@ -818,6 +860,45 @@ async function editComment(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * editQuestionComment
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function editQuestionComment(req, res) {
+  try {
+    const userId = req.user.id;
+    const { commentId, text } = req.body;
+    if (!commentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add commentId to body paramaters" }],
+        })
+      );
+    // check that this question belongs to user
+    const comment = await UserQuestionsComment.findOne({
+      where: {
+        id: Number(commentId),
+        UserId: userId,
+      },
+    });
+    if (!comment)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "no comment with this id or user doesnt own comment" },
+          ],
+        })
+      );
+
+    comment.text = text || comment.text;
+    await comment.save();
+    res.status(200).send(comment).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 /**
  * getUserVote
  * @param {Request} req
@@ -865,4 +946,6 @@ module.exports = {
   getUserVote,
   postQuestionComment,
   getQuestionsComments,
+  editQuestionComment,
+  deleteQuestionComment,
 };

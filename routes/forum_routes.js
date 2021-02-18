@@ -89,4 +89,9 @@ router.get(
   authenticationModule.checkAuth,
   forumController.getUserVote
 );
+router.put(
+  "/forum/question/comment",
+  authenticationModule.checkAuth,
+  forumController.editQuestionComment
+);
 module.exports = router;
