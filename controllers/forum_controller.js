@@ -42,7 +42,7 @@ async function getQuestions(req, res) {
     const userId = req.user.id;
     const { limit, offset } = req.query;
     const where = {};
-    const order = ["isFeatured", "DESC"];
+    const order = [["isFeatured", "DESC"]];
     let sortOrder = "DESC";
     let filterKey = null;
     let isAnswered = null;
