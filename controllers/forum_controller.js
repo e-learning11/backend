@@ -8,6 +8,7 @@ const UserQuestionsRepliesComment = require("../models/user_questions_reply_comm
 const sequelize = require("../database/connection").sequelize;
 const Sequelize = require("sequelize");
 const UserCourse = require("../models/user_course");
+const UserQuestionsComment = require("../models/user_questions_comments");
 /**
  * postQuestion
  * @param {Request} req
@@ -388,6 +389,65 @@ async function getComments(req, res) {
     const comments = await UserQuestionsRepliesComment.findAll({
       where: {
         UserQuestionsReplyId: Number(replyId),
+      },
+      limit: Number(limit),
+      offset: Number(offset),
+      include: [{ model: User, attributes: ["id"] }],
+    });
+    res.status(200).send(comments).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * postQuestionComment
+ * @param {Request} req
+ * @param {Response} res
+ * comment to specific question
+ */
+async function postQuestionComment(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId, text } = req.body;
+    // check reply exist
+    const reply = await UserQuestions.findOne({
+      where: {
+        id: Number(questionId),
+      },
+    });
+    if (!reply)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no question found with this id" }],
+        })
+      );
+    // check that commented user is enrolled in course ??
+    const comment = await UserQuestionsComment.create({
+      UserQuestionId: Number(questionId),
+      text: text,
+      UserId: userId,
+    });
+    res.status(200).send(comment).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+/**
+ * getQuestionsComments
+ * @param {Request} req
+ * @param {Response} res
+ * get comment to specific qyestion
+ */
+async function getQuestionsComments(req, res) {
+  try {
+    const { limit, offset, questionId } = req.query;
+
+    const comments = await UserQuestionsComment.findAll({
+      where: {
+        UserQuestionId: Number(questionId),
       },
       limit: Number(limit),
       offset: Number(offset),
@@ -803,4 +863,6 @@ module.exports = {
   editReply,
   editComment,
   getUserVote,
+  postQuestionComment,
+  getQuestionsComments,
 };

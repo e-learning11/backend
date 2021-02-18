@@ -13,6 +13,7 @@ router.get(
   forumController.getReplies
 );
 router.get("/forum/questions/replies/comments", forumController.getComments);
+router.get("/forum/question/comments", forumController.getQuestionsComments);
 router.post(
   "/forum/question",
   authenticationModule.checkAuth,
@@ -52,7 +53,11 @@ router.post(
   authenticationModule.checkAuth,
   forumController.postComment
 );
-
+router.post(
+  "/forum/question/comment",
+  authenticationModule.checkAuth,
+  forumController.postQuestionComment
+);
 router.put(
   "/forum/question/reply/comment",
   authenticationModule.checkAuth,
