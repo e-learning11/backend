@@ -94,4 +94,10 @@ router.put(
   authenticationModule.checkAuth,
   forumController.editQuestionComment
 );
+
+router.delete(
+  "/forum/question/comment",
+  authenticationModule.checkAuth,
+  forumController.deleteQuestionComment
+);
 module.exports = router;
