@@ -100,4 +100,9 @@ router.delete(
   authenticationModule.checkAuth,
   forumController.deleteQuestionComment
 );
+router.delete(
+  "/forum/question/reply/unset-answer",
+  authenticationModule.checkAuth,
+  forumController.unsetReplyAsAnswer
+);
 module.exports = router;

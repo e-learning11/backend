@@ -466,7 +466,7 @@ async function getQuestionsComments(req, res) {
 }
 
 /**
- *
+ *setReplyAsAnswer
  * @param {Request} req
  * @param {Response} res
  */
@@ -933,6 +933,59 @@ async function getUserVote(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ *unsetReplyAsAnswer
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function unsetReplyAsAnswer(req, res) {
+  try {
+    const userId = req.user.id;
+    const { questionId, replyId } = req.body;
+    // check that this question belong to this user
+    const userQuestion = await UserQuestions.findOne({
+      where: {
+        id: Number(questionId),
+        UserId: userId,
+      },
+    });
+    if (!userQuestion)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "not question owner" }],
+        })
+      );
+
+    // unset reply to true ;
+    const unsetToIsAnswer = await UserQuestionsReplies.update(
+      {
+        isAnswer: false,
+      },
+      {
+        where: {
+          id: Number(replyId),
+          UserQuestionId: Number(questionId),
+        },
+      }
+    );
+    if (unsetToIsAnswer[0] == 1)
+      res.status(200).send("reply is now not an answer").end();
+    else
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "cannot remove this reply from answered as it may not be set originally ",
+            },
+          ],
+        })
+      );
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getQuestions,
   postQuestion,
@@ -954,4 +1007,5 @@ module.exports = {
   getQuestionsComments,
   editQuestionComment,
   deleteQuestionComment,
+  unsetReplyAsAnswer,
 };
