@@ -181,7 +181,9 @@ async function getReplies(req, res) {
       where: where,
       limit: Number(limit),
       offset: Number(offset),
-      include: [{ model: User, attributes: ["id"] }],
+      include: [
+        { model: User, attributes: ["id", "firstName", "lastName", "email"] },
+      ],
     });
     let repliesToSendBack = [];
 
@@ -392,7 +394,9 @@ async function getComments(req, res) {
       },
       limit: Number(limit),
       offset: Number(offset),
-      include: [{ model: User, attributes: ["id"] }],
+      include: [
+        { model: User, attributes: ["id", "firstName", "lastName", "email"] },
+      ],
     });
     res.status(200).send(comments).end();
   } catch (ex) {
@@ -451,7 +455,9 @@ async function getQuestionsComments(req, res) {
       },
       limit: Number(limit),
       offset: Number(offset),
-      include: [{ model: User, attributes: ["id"] }],
+      include: [
+        { model: User, attributes: ["id", "firstName", "lastName", "email"] },
+      ],
     });
     res.status(200).send(comments).end();
   } catch (ex) {
