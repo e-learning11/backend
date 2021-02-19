@@ -22,4 +22,5 @@ router.delete(
   authenticationModule.checkAuth,
   userController.deleteUser
 );
+router.get("/user/public", userController.getPublicProfile);
 module.exports = router;

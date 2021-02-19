@@ -192,6 +192,46 @@ async function deleteUser(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getPublicProfile
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getPublicProfile(req, res) {
+  try {
+    const { userId } = req.query;
+    if (!userId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add userId in query parameter" }],
+        })
+      );
+    const user = await User.findOne({
+      where: {
+        id: Number(userId),
+      },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "type",
+        "gender",
+        "phone",
+        "age",
+      ],
+    });
+    if (!user)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no user with this id" }],
+        })
+      );
+    res.status(200).send(user).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 
 module.exports = {
   login,
@@ -199,4 +239,5 @@ module.exports = {
   getProfile,
   editProfile,
   deleteUser,
+  getPublicProfile,
 };
