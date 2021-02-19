@@ -490,7 +490,6 @@ async function setReplyAsAnswer(req, res) {
     // check that no answer already marked for this question
     const replyAnswer = await UserQuestionsReplies.findOne({
       where: {
-        id: Number(replyId),
         isAnswer: true,
         UserQuestionId: Number(questionId),
       },
