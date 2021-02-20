@@ -591,38 +591,59 @@ async function enrollUserInCourse(req, res) {
  * auto grade MCQ and true and false tests and return the result as array of 1 for correct answers and 0 for wrong answers
  */
 async function autoGradeTest(req, res) {
+  const t = await sequelize.transaction();
   try {
     const userId = req.user.id;
     const testId = Number(req.query.testId);
     const courseId = Number(req.query.courseId);
     const answers = req.body.answers;
     const results = [];
-    const courseSectionComponent = await CourseSectionComponent.findOne({
-      where: {
-        id: testId,
-      },
-      include: [{ model: Question, include: [{ model: Answer }] }],
-    });
-    if (!courseSectionComponent)
-      throw new Error(
-        JSON.stringify({ errors: [{ message: "no test with this id" }] })
-      );
     let grade = 0;
-    let isFinished = true;
-    for (let [i, question] of courseSectionComponent.Questions.entries()) {
+    for (let answer of answers) {
+      let question = await Question.findOne({
+        where: {
+          id: Number(answer.questionId),
+        },
+      });
+      if (!question)
+        throw new Error(
+          JSON.stringify({
+            errors: [
+              { message: "no question with this id" + answer.questionId },
+            ],
+          })
+        );
       if (!CONSTANTS.AUTOGRADE_TYPE.includes(question.type)) {
         isFinished = false;
         results.push(-1);
-        await CourseEssay.create({
-          UserId: userId,
-          CourseId: Number(courseId),
-          QuestionId: Number(question.id),
-          text: answers[i],
-          testId: Number(testId),
+        // check if essay submitted before
+        const userEssay = await CourseEssay.findOne({
+          where: {
+            UserId: userId,
+            CourseId: Number(courseId),
+            QuestionId: Number(question.id),
+            testId: Number(testId),
+          },
         });
+        if (!userEssay)
+          await CourseEssay.create(
+            {
+              UserId: userId,
+              CourseId: Number(courseId),
+              QuestionId: Number(question.id),
+              text: answer.answer,
+              testId: Number(testId),
+            },
+            { transaction: t }
+          );
+        else {
+          userEssay.isGraded = false;
+          userEssay.text = answer.answer;
+          await userEssay.save({ transaction: t });
+        }
         continue;
       }
-      if (question.correctAnswer == answers[i]) {
+      if (question.correctAnswer == answer.answer) {
         results.push(1);
         grade += 1;
       } else results.push(0);
@@ -636,23 +657,26 @@ async function autoGradeTest(req, res) {
       },
     });
     if (!userGrade) {
-      userGrade = await UserTestGrade.create({
-        UserId: userId,
-        testId: testId,
-        CourseId: courseId,
-        grade: grade,
-        lastTimeSubmit: Date.now(),
-        isDone: isFinished ? CONSTANTS.TEST_GRADED : CONSTANTS.TEST_UNGRADED,
-      });
+      userGrade = await UserTestGrade.create(
+        {
+          UserId: userId,
+          testId: testId,
+          CourseId: courseId,
+          grade: grade,
+          lastTimeSubmit: Date.now(),
+          isDone: isFinished ? CONSTANTS.TEST_GRADED : CONSTANTS.TEST_UNGRADED,
+        },
+        { transaction: t }
+      );
     } else {
       userGrade.lastTimeSubmit = Date.now();
       userGrade.grade = grade;
       userGrade.state = isFinished
         ? CONSTANTS.TEST_GRADED
         : CONSTANTS.TEST_UNGRADED;
-      await userGrade.save();
+      await userGrade.save({ transaction: t });
     }
-
+    await t.commit();
     res
       .status(200)
       .send({
@@ -661,6 +685,7 @@ async function autoGradeTest(req, res) {
       })
       .end();
   } catch (ex) {
+    await t.rollback();
     console.log(ex);
     errorHandler(req, res, ex);
   }
