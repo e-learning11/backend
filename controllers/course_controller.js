@@ -599,6 +599,7 @@ async function autoGradeTest(req, res) {
     const answers = req.body.answers;
     const results = [];
     let grade = 0;
+    let isFinished = true;
     for (let answer of answers) {
       let question = await Question.findOne({
         where: {
@@ -717,7 +718,7 @@ async function getTestState(req, res) {
     let isEssayUnsubmitted = false;
     let noOfUnsubmittedAutoGrade = 0;
     for (let [i, question] of courseSectionComponent.Questions.entries()) {
-      console.log(question.type);
+      //console.log(question.type);
       if (question.type == CONSTANTS.ESSAY_QUESTION) {
         // check for essay state
         const essaySubmission = await CourseEssay.findOne({
@@ -746,7 +747,7 @@ async function getTestState(req, res) {
 
     if (noOfUnsubmittedAutoGrade || isEssayUnsubmitted)
       testState = CONSTANTS.TEST_NOTSUBMITTED;
-    else if (noOfGradedEssays) testState = CONSTANTS.TEST_UNGRADED;
+    else if (noOfUnGradedEssays) testState = CONSTANTS.TEST_UNGRADED;
     else testState = CONSTANTS.TEST_GRADED;
     res.status(200).send({ testState: testState }).end();
   } catch (ex) {
@@ -762,13 +763,13 @@ async function getTestState(req, res) {
 async function getAssignmentState(req, res) {
   try {
     const userId = req.user.id;
-    const { courseId, courseSectionComponentId } = req.query;
+    const { courseId, assignmentId } = req.query;
     let assignmentState = CONSTANTS.TEST_NOTSUBMITTED;
     const userAssignment = await CourseAssignment.findOne({
       where: {
         UserId: userId,
         CourseId: Number(courseId),
-        CourseSectionComponentId: Number(courseSectionComponentId),
+        CourseSectionComponentId: Number(assignmentId),
       },
     });
     if (!userAssignment) assignmentState = CONSTANTS.TEST_NOTSUBMITTED;
@@ -1246,10 +1247,12 @@ async function getCourseAssignmentsSubmits(req, res) {
 async function gradeAssignmentSubmission(req, res) {
   try {
     const userId = req.user.id;
-    const { assignmentId, grade, courseId } = req.body;
-    if (!assignmentId)
+    const { assignmentSubmissionId, grade, courseId } = req.body;
+    if (!assignmentSubmissionId)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "please add assignmentId" }] })
+        JSON.stringify({
+          errors: [{ message: "please add assignmentSubmissionId" }],
+        })
       );
     if (!courseId)
       throw new Error(
@@ -1273,7 +1276,7 @@ async function gradeAssignmentSubmission(req, res) {
       );
     const assignmentSubmission = await CourseAssignment.findOne({
       where: {
-        id: Number(assignmentId),
+        id: Number(assignmentSubmissionId),
         CourseId: Number(courseId),
       },
     });
@@ -1380,10 +1383,12 @@ async function getCourseEssaysSubmits(req, res) {
 async function gradeEssaySubmission(req, res) {
   try {
     const userId = req.user.id;
-    const { essayId, grade, courseId } = req.body;
-    if (!essayId)
+    const { essaySubmissionId, grade, courseId } = req.body;
+    if (!essaySubmissionId)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "please add essayId" }] })
+        JSON.stringify({
+          errors: [{ message: "please add essaySubmissionId" }],
+        })
       );
     if (!courseId)
       throw new Error(
@@ -1407,7 +1412,7 @@ async function gradeEssaySubmission(req, res) {
       );
     const essaySubmission = await CourseEssay.findOne({
       where: {
-        id: Number(essayId),
+        id: Number(essaySubmissionId),
         CourseId: Number(courseId),
       },
     });
