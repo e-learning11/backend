@@ -19,6 +19,11 @@ const CourseEssay = sequelize.define("CourseEssay", {
   testId: {
     type: DataTypes.INTEGER,
   },
+  isGraded: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 module.exports = CourseEssay;

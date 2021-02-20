@@ -628,7 +628,7 @@ async function autoGradeTest(req, res) {
       } else results.push(0);
     }
     // check if user solved quiz or test before
-    const userGrade = await UserTestGrade.findOne({
+    let userGrade = await UserTestGrade.findOne({
       where: {
         UserId: userId,
         testId: testId,
@@ -636,30 +636,121 @@ async function autoGradeTest(req, res) {
       },
     });
     if (!userGrade) {
-      await UserTestGrade.create({
+      userGrade = await UserTestGrade.create({
         UserId: userId,
         testId: testId,
         CourseId: courseId,
         grade: grade,
         lastTimeSubmit: Date.now(),
-        isDone: isFinished,
+        isDone: isFinished ? CONSTANTS.TEST_GRADED : CONSTANTS.TEST_UNGRADED,
       });
     } else {
       userGrade.lastTimeSubmit = Date.now();
       userGrade.grade = grade;
-      userGrade.isDone = isFinished;
+      userGrade.state = isFinished
+        ? CONSTANTS.TEST_GRADED
+        : CONSTANTS.TEST_UNGRADED;
       await userGrade.save();
     }
 
     res
       .status(200)
       .send({
-        results: results,
-        isDone: isFinished,
+        results: grade,
+        testState: isFinished ? CONSTANTS.TEST_GRADED : CONSTANTS.TEST_UNGRADED,
       })
       .end();
   } catch (ex) {
     console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getTestState
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getTestState(req, res) {
+  try {
+    const userId = req.user.id;
+    const { testId, courseId } = req.query;
+    // check if there is a userTestGrade or userEssaySubmitted and check if al is graded
+    let testState = CONSTANTS.TEST_SUBMITTED;
+    const courseSectionComponent = await CourseSectionComponent.findOne({
+      where: {
+        id: Number(testId),
+      },
+      include: [{ model: Question, include: [{ model: Answer }] }],
+    });
+    if (!courseSectionComponent)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no test with this id" }] })
+      );
+    let noOfGradedEssays = 0;
+    let noOfUnGradedEssays = 0;
+    let isEssayUnsubmitted = false;
+    let noOfUnsubmittedAutoGrade = 0;
+    for (let [i, question] of courseSectionComponent.Questions.entries()) {
+      console.log(question.type);
+      if (question.type == CONSTANTS.ESSAY_QUESTION) {
+        // check for essay state
+        const essaySubmission = await CourseEssay.findOne({
+          where: {
+            UserId: userId,
+            CourseId: Number(courseId),
+            QuestionId: Number(question.id),
+            testId: Number(testId),
+          },
+        });
+        if (!essaySubmission) isEssayUnsubmitted = true;
+        else if (essaySubmission.isGraded) noOfGradedEssays++;
+        else noOfUnGradedEssays++;
+      } else {
+        // check that autogradedtest is submitted
+        const testGrade = await UserTestGrade.findOne({
+          where: {
+            UserId: userId,
+            testId: Number(testId),
+            CourseId: Number(courseId),
+          },
+        });
+        if (!testGrade) noOfUnsubmittedAutoGrade++;
+      }
+    }
+
+    if (noOfUnsubmittedAutoGrade || isEssayUnsubmitted)
+      testState = CONSTANTS.TEST_NOTSUBMITTED;
+    else if (noOfGradedEssays) testState = CONSTANTS.TEST_UNGRADED;
+    else testState = CONSTANTS.TEST_GRADED;
+    res.status(200).send({ testState: testState }).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getAssignmentState
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getAssignmentState(req, res) {
+  try {
+    const userId = req.user.id;
+    const { courseId, courseSectionComponentId } = req.query;
+    let assignmentState = CONSTANTS.TEST_NOTSUBMITTED;
+    const userAssignment = await CourseAssignment.findOne({
+      where: {
+        UserId: userId,
+        CourseId: Number(courseId),
+        CourseSectionComponentId: Number(courseSectionComponentId),
+      },
+    });
+    if (!userAssignment) assignmentState = CONSTANTS.TEST_NOTSUBMITTED;
+    else if (userAssignment.isGraded) assignmentState = CONSTANTS.TEST_GRADED;
+    else assignmentState = CONSTANTS.TEST_UNGRADED;
+    res.status(200).send({ assignmentState: assignmentState }).end();
+  } catch (ex) {
     errorHandler(req, res, ex);
   }
 }
@@ -1166,6 +1257,7 @@ async function gradeAssignmentSubmission(req, res) {
         JSON.stringify({ errors: [{ message: "no assignment with this id" }] })
       );
     assignmentSubmission.grade = Number(grade);
+    assignmentSubmission.isGraded = true;
     await assignmentSubmission.save();
     res.status(200).send(assignmentSubmission).end();
   } catch (ex) {
@@ -1218,10 +1310,18 @@ async function submitEssayAnswer(req, res) {
 async function getCourseEssaysSubmits(req, res) {
   try {
     const userId = req.user.id;
-    const { courseId, questionId, enrolledUerId, limit, offset } = req.query;
+    const {
+      courseId,
+      questionId,
+      enrolledUerId,
+      limit,
+      offset,
+      testId,
+    } = req.query;
     const where = {};
     if (questionId) where.QuestionId = Number(questionId);
     if (enrolledUerId) where.UserId = Number(enrolledUerId);
+    if (testId) where.testId = Number(testId);
     where.CourseId = Number(courseId);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -1291,6 +1391,7 @@ async function gradeEssaySubmission(req, res) {
         JSON.stringify({ errors: [{ message: "no essay with this id" }] })
       );
     essaySubmission.grade = Number(grade);
+    essaySubmission.isGraded = true;
     await essaySubmission.save();
     res.status(200).send(essaySubmission).end();
   } catch (ex) {
@@ -1845,4 +1946,6 @@ module.exports = {
   getUserEssayGrade,
   getTestGrade,
   deleteCourse,
+  getTestState,
+  getAssignmentState,
 };

@@ -132,4 +132,16 @@ router.delete(
   authenticationModule.checkAuth,
   CourseController.deleteCourse
 );
+
+router.get(
+  "/course/test/state",
+  authenticationModule.checkAuth,
+  CourseController.getTestState
+);
+
+router.get(
+  "/course/assignment/state",
+  authenticationModule.checkAuth,
+  CourseController.getAssignmentState
+);
 module.exports = router;

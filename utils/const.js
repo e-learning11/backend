@@ -25,4 +25,8 @@ module.exports = {
   COURSE_SORT_PARAMETERS: ["date", "createdAt"],
   AUTOGRADE_TYPE: ["MCQ", "TorF"],
   ESSAY_QUESTION: "Essay",
+  TEST_SUBMITTED: 0,
+  TEST_GRADED: 1,
+  TEST_UNGRADED: 2,
+  TEST_NOTSUBMITTED: 3,
 };

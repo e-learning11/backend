@@ -16,6 +16,12 @@ const CourseAssignment = sequelize.define("CourseAssignment", {
     allowNull: false,
     defaultValue: 0,
   },
+
+  isGraded: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 module.exports = CourseAssignment;
