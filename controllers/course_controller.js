@@ -1201,11 +1201,101 @@ async function markCourseAsComplete(req, res) {
       },
     });
     // check that all other course compoent are done
-
+    const course = await Course.findOne({
+      where: {
+        id: courseId,
+      },
+      attributes: [
+        "id",
+        "name",
+        "summary",
+        "description",
+        "language",
+        "date",
+        "approved",
+        "private",
+        "gender",
+        "ageMin",
+        "ageMax",
+      ],
+      include: [
+        {
+          model: CourseSection,
+          include: [
+            {
+              model: CourseSectionComponent,
+              attributes: [
+                "number",
+                "name",
+                "videoID",
+                "type",
+                "passingGrade",
+                "id",
+                "hasFile",
+              ],
+              include: [
+                {
+                  model: Question,
+                  attributes: ["id", "Q", "type"],
+                  include: [{ model: Answer }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "phone",
+            "gender",
+            "age",
+          ],
+        },
+        {
+          model: Course,
+          as: "prequisites",
+          attributes: ["id", "name", "summary"],
+        },
+      ],
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "no course with this id" }] })
+      );
+    let isDone = true;
+    for (let courseSection of course.CourseSections) {
+      for (let component of courseSection.CourseSectionComponents) {
+        // check that user finished this compoent
+        const userCourseComponent = await UserCourseComponent.findOne({
+          where: {
+            UserId: userId,
+            CourseSectionComponentId: Number(component.id),
+            isDone: true,
+          },
+        });
+        if (!userCourseComponent) isDone = false;
+      }
+    }
+    if (!isDone)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "please finish all course components in order to mark course as finished",
+            },
+          ],
+        })
+      );
     userCourse.type = CONSTANTS.FINISHED;
     await userCourse.save();
     res.status(200).send("done").end();
   } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
