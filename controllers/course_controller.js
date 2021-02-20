@@ -1,4 +1,5 @@
 const sequelize = require("../database/connection").sequelize;
+const { Op } = require("sequelize");
 const User = require("../models/user");
 const Course = require("../models/courses");
 const CourseSection = require("../models/course_section");
@@ -14,6 +15,7 @@ const CourseURL = require("../models/course_url");
 const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
 const UserCourseComponent = require("../models/user_course_component");
+const UserQuestions = require("../models/user_questions");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -1142,9 +1144,26 @@ async function getCourseOverview(req, res) {
       include: [
         {
           model: UserCourse,
+          include: [
+            {
+              model: User,
+              attributes: [
+                "id",
+                "firstName",
+                "lastName",
+                "email",
+                "gender",
+                "age",
+              ],
+            },
+          ],
           where: {
             CourseId: Number(courseId),
-            type: CONSTANTS.ENROLLED,
+
+            [Op.or]: [
+              { type: CONSTANTS.ENROLLED },
+              { type: CONSTANTS.FINISHED },
+            ],
           },
         },
       ],
@@ -1157,7 +1176,51 @@ async function getCourseOverview(req, res) {
 
     const courseToSendBack = course.get();
     courseToSendBack.image = null;
+    courseToSendBack.enrolledUsers = [];
     courseToSendBack.noOfEnrolledUsers = courseToSendBack.UserCourses.length;
+    for (let userCourses of course.UserCourses) {
+      let userObj = userCourses.User;
+      userObj.type = userCourses.type;
+      courseToSendBack.enrolledUsers.push(userObj);
+    }
+    delete courseToSendBack.UserCourses;
+    // get number of esay submits
+    const noOfEssaySubmits = await CourseEssay.count({
+      where: {
+        CourseId: Number(courseId),
+      },
+    });
+    courseToSendBack.noOfEssaySubmits = noOfEssaySubmits;
+    // get number of esay submits
+    const noOfAssignmentSubmits = await CourseAssignment.count({
+      where: {
+        CourseId: Number(courseId),
+      },
+    });
+    courseToSendBack.noOfAssignmentSubmits = noOfAssignmentSubmits;
+    // get number of ungraded essays
+    const noOfUngradedEssaySubmits = await CourseEssay.count({
+      where: {
+        CourseId: Number(courseId),
+        isGraded: false,
+      },
+    });
+    courseToSendBack.noOfUngradedEssaySubmits = noOfUngradedEssaySubmits;
+    // get number of ungraded assignment
+    const noOfUngradedAssignmentSubmits = await CourseAssignment.count({
+      where: {
+        CourseId: Number(courseId),
+        isGraded: false,
+      },
+    });
+    courseToSendBack.noOfUngradedAssignmentSubmits = noOfUngradedAssignmentSubmits;
+    // get number of d=forum question for course
+    const noOfForumQuestions = await UserQuestions.count({
+      where: {
+        CourseId: Number(courseId),
+      },
+    });
+    courseToSendBack.noOfForumQuestions = noOfForumQuestions;
     res.status(200).send(courseToSendBack).end();
   } catch (ex) {
     errorHandler(req, res, ex);
