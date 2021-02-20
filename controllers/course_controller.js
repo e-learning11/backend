@@ -1014,7 +1014,28 @@ async function markComponentAsDone(req, res) {
           testId: componentId,
         },
       });
-      if (!userGrade || userGrade.grade < courseComponent.passingGrade)
+      // get essays grades also
+      const essaysGrades = await CourseEssay.findAll({
+        where: {
+          UserId: userId,
+          CourseId: courseId,
+          testId: componentId,
+        },
+      });
+      let essayGrade = 0;
+      for (let essayGradeUser of essaysGrades) {
+        if (essayGradeUser.isGraded) essayGrade += essayGradeUser.grade;
+        else
+          throw new Error(
+            JSON.stringify({
+              errors: [{ message: "user didn't pass the test" }],
+            })
+          );
+      }
+      if (
+        !userGrade ||
+        userGrade.grade + essayGrade < courseComponent.passingGrade
+      )
         throw new Error(
           JSON.stringify({
             errors: [{ message: "user didn't pass the test" }],
