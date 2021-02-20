@@ -1308,6 +1308,12 @@ async function markCourseAsComplete(req, res) {
 async function getCourseOverview(req, res) {
   try {
     const { courseId } = req.query;
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in query parameter" }],
+        })
+      );
     const course = await Course.findOne({
       where: {
         id: Number(courseId),
@@ -1408,6 +1414,18 @@ async function submitAssignmentAnswer(req, res) {
   try {
     const userId = req.user.id;
     const { courseId, assignmentId, text } = req.body;
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in body" }],
+        })
+      );
+    if (!assignmentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add assignmentId in body" }],
+        })
+      );
     // check that user is enrolled in course
     const userCourse = await UserCourse.findOne({
       where: {
@@ -1567,6 +1585,31 @@ async function submitEssayAnswer(req, res) {
   try {
     const userId = req.user.id;
     const { courseId, questionId, text, testId } = req.body;
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in body" }],
+        })
+      );
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add questionId in body" }],
+        })
+      );
+    if (!testId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add testId in body" }],
+        })
+      );
+    if (!text)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add text in body" }],
+        })
+      );
+
     // check that user is enrolled in course
     const userCourse = await UserCourse.findOne({
       where: {
