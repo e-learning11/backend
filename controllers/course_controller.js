@@ -1357,18 +1357,26 @@ async function submitEssayAnswer(req, res) {
 async function getCourseEssaysSubmits(req, res) {
   try {
     const userId = req.user.id;
-    const {
+    let {
       courseId,
       questionId,
       enrolledUerId,
       limit,
       offset,
       testId,
+      isGraded,
+      sort,
+      sortOrder,
     } = req.query;
+    const order = [];
     const where = {};
     if (questionId) where.QuestionId = Number(questionId);
     if (enrolledUerId) where.UserId = Number(enrolledUerId);
     if (testId) where.testId = Number(testId);
+    if (isGraded) where.isGraded = isGraded == "true" ? true : false;
+    if (!(sortOrder && ["DESC", "ASC"].includes(sortOrder))) sortOrder = "DESC";
+    if (sort && ["grade", "createdAt", "updatedAt"].includes(sort))
+      order.push([[sort, sortOrder]]);
     where.CourseId = Number(courseId);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -1384,6 +1392,7 @@ async function getCourseEssaysSubmits(req, res) {
       );
     const coursesEssaysSubmits = await CourseEssay.findAll({
       where: where,
+      order: order,
       limit: Number(limit),
       offset: Number(offset),
     });
