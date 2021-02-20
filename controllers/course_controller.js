@@ -1223,17 +1223,25 @@ async function submitAssignmentAnswer(req, res) {
 async function getCourseAssignmentsSubmits(req, res) {
   try {
     const userId = req.user.id;
-    const {
+    let {
       courseId,
       courseSectionComponentId,
       enrolledUerId,
       limit,
       offset,
+      isGraded,
+      sort,
+      sortOrder,
     } = req.query;
     const where = {};
+    const order = [];
     if (courseSectionComponentId)
       where.CourseSectionComponentId = Number(courseSectionComponentId);
     if (enrolledUerId) where.UserId = Number(enrolledUerId);
+    if (isGraded) where.isGraded = isGraded == "true" ? true : false;
+    if (!(sortOrder && ["DESC", "ASC"].includes(sortOrder))) sortOrder = "DESC";
+    if (sort && ["grade", "createdAt", "updatedAt"].includes(sort))
+      order.push([[sort, sortOrder]]);
     where.CourseId = Number(courseId);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -1249,6 +1257,7 @@ async function getCourseAssignmentsSubmits(req, res) {
       );
     const coursesAssignmentsSubmits = await CourseAssignment.findAll({
       where: where,
+      order: order,
       limit: Number(limit),
       offset: Number(offset),
     });
