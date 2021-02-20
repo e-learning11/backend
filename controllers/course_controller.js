@@ -886,6 +886,18 @@ async function getTestGrade(req, res) {
 async function getAllCourses(req, res) {
   try {
     const { offset, limit } = req.query;
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
     // check for filters
     const where = {
       private: false,
@@ -955,6 +967,18 @@ async function markComponentAsDone(req, res) {
     const userId = req.user.id;
     const courseId = Number(req.query.courseId);
     const componentId = Number(req.query.componentId);
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in query parameter" }],
+        })
+      );
+    if (!componentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add componentId in query parameter" }],
+        })
+      );
     const userCourse = await UserCourse.findOne({
       where: {
         CourseId: courseId,
@@ -1114,6 +1138,18 @@ async function getCompoentStatus(req, res) {
     const userId = req.user.id;
     const courseId = Number(req.query.courseId);
     const componentId = Number(req.query.componentId);
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in query parameter" }],
+        })
+      );
+    if (!componentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add componentId in query parameter" }],
+        })
+      );
     const userCourse = await UserCourse.findOne({
       where: {
         CourseId: courseId,
@@ -1150,6 +1186,13 @@ async function markCourseAsComplete(req, res) {
   try {
     const userId = req.user.id;
     const courseId = Number(req.query.courseId);
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in query parameter" }],
+        })
+      );
+
     const userCourse = await UserCourse.findOne({
       where: {
         CourseId: courseId,
@@ -1157,6 +1200,8 @@ async function markCourseAsComplete(req, res) {
         type: CONSTANTS.ENROLLED,
       },
     });
+    // check that all other course compoent are done
+
     userCourse.type = CONSTANTS.FINISHED;
     await userCourse.save();
     res.status(200).send("done").end();
