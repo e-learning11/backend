@@ -26,6 +26,18 @@ async function getEnrolledCoursesByUser(req, res) {
   try {
     const userId = req.user.id;
     const { limit, offset } = req.query;
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
     const userCourses = await Course.findAll({
       limit: Number(limit),
       offset: Number(offset),
@@ -70,7 +82,18 @@ async function getFinishedCoursesByUser(req, res) {
   try {
     const userId = req.user.id;
     const { limit, offset } = req.query;
-
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
     const userCourses = await Course.findAll({
       limit: Number(limit),
       offset: Number(offset),
@@ -114,6 +137,18 @@ async function getCoursesCreatedByuser(req, res) {
   try {
     const userId = req.user.id;
     const { limit, offset } = req.query;
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
     const userCourses = await Course.findAll({
       limit: Number(limit),
       offset: Number(offset),
@@ -491,23 +526,24 @@ async function getUserCourseState(req, res) {
   try {
     const userId = await req.user.id;
     const courseId = Number(req.query.courseId);
-    const course = await Course.findOne({
-      include: [
-        {
-          model: UserCourse,
-          where: {
-            UserId: userId,
-            CourseId: courseId,
-          },
-        },
-      ],
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in query parameter" }],
+        })
+      );
+
+    const course = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: courseId,
+      },
     });
     if (!course) {
       res.status(204).end();
       return;
     }
-    course.image = null;
-    res.status(200).send(course.UserCourses[0]).end();
+    res.status(200).send(course).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
