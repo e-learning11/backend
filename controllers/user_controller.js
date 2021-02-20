@@ -19,9 +19,21 @@ async function login(req, res) {
         email: email,
       },
     });
+    if (!user)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no user with this email" }],
+        })
+      );
     if (await hashModule.compareStringWithHash(password, user.password)) {
       const token = authenticationModule.createToken(user.id);
       res.status(200).send(token).end();
+    } else {
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "wrong email or password" }],
+        })
+      );
     }
   } catch (ex) {
     errorHandler(req, res, ex);
@@ -49,6 +61,18 @@ async function signup(req, res) {
     //console.log(req.body, req.file);
 
     const hashedPassword = await hashModule.hashString(password);
+    // check if email duplicated better error
+    const isEmailFound = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (isEmailFound)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "this email is used before" }],
+        })
+      );
     const user = await User.create({
       firstName: firstName,
       lastName: lastName,
