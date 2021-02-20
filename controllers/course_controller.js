@@ -1158,7 +1158,7 @@ async function getCourseOverview(req, res) {
 async function submitAssignmentAnswer(req, res) {
   try {
     const userId = req.user.id;
-    const { courseId, courseSectionComponentId, text } = req.body;
+    const { courseId, assignmentId, text } = req.body;
     // check that user is enrolled in course
     const userCourse = await UserCourse.findOne({
       where: {
@@ -1171,23 +1171,28 @@ async function submitAssignmentAnswer(req, res) {
       throw new Error(
         JSON.stringify({ errors: [{ message: "user not enrolled in course" }] })
       );
+    let file = null;
+    if (req.file && req.file.buffer) file = req.file.buffer;
     // chekc if answer is laready found or not
     let answer = await CourseAssignment.findOne({
       where: {
         UserId: userId,
         CourseId: Number(courseId),
-        CourseSectionComponentId: Number(courseSectionComponentId),
+        CourseSectionComponentId: Number(assignmentId),
       },
     });
     if (!answer) {
       answer = await CourseAssignment.create({
         UserId: userId,
         CourseId: Number(courseId),
-        CourseSectionComponentId: Number(courseSectionComponentId),
+        CourseSectionComponentId: Number(assignmentId),
         text: text,
+        file: file,
       });
     } else {
       answer.text = text;
+      answer.file = file;
+      answer.isGraded = false;
       await answer.save();
     }
     res.status(200).send(answer).end();
@@ -1911,7 +1916,7 @@ async function getUserEssayGrade(req, res) {
   }
 }
 /**
- *
+ *deleteCourse
  * @param {Request} req
  * @param {Response} res
  */

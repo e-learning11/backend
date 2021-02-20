@@ -22,6 +22,9 @@ const CourseAssignment = sequelize.define("CourseAssignment", {
     allowNull: false,
     defaultValue: false,
   },
+  file: {
+    type: DataTypes.BLOB("long"),
+  },
 });
 
 module.exports = CourseAssignment;

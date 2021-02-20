@@ -60,6 +60,7 @@ router.post(
 router.post(
   "/course/assignment/submit",
   authenticationModule.checkAuth,
+  upload.single("file"),
   CourseController.submitAssignmentAnswer
 );
 
