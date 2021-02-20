@@ -717,6 +717,8 @@ async function getTestState(req, res) {
     let noOfUnGradedEssays = 0;
     let isEssayUnsubmitted = false;
     let noOfUnsubmittedAutoGrade = 0;
+    let grade = 0;
+    let firstTime = 0;
     for (let [i, question] of courseSectionComponent.Questions.entries()) {
       //console.log(question.type);
       if (question.type == CONSTANTS.ESSAY_QUESTION) {
@@ -730,8 +732,10 @@ async function getTestState(req, res) {
           },
         });
         if (!essaySubmission) isEssayUnsubmitted = true;
-        else if (essaySubmission.isGraded) noOfGradedEssays++;
-        else noOfUnGradedEssays++;
+        else if (essaySubmission.isGraded) {
+          noOfGradedEssays++;
+          grade += essaySubmission.grade;
+        } else noOfUnGradedEssays++;
       } else {
         // check that autogradedtest is submitted
         const testGrade = await UserTestGrade.findOne({
@@ -742,6 +746,10 @@ async function getTestState(req, res) {
           },
         });
         if (!testGrade) noOfUnsubmittedAutoGrade++;
+        else if (!firstTime) {
+          firstTime = 1;
+          grade += testGrade.grade;
+        }
       }
     }
 
@@ -749,7 +757,7 @@ async function getTestState(req, res) {
       testState = CONSTANTS.TEST_NOTSUBMITTED;
     else if (noOfUnGradedEssays) testState = CONSTANTS.TEST_UNGRADED;
     else testState = CONSTANTS.TEST_GRADED;
-    res.status(200).send({ testState: testState }).end();
+    res.status(200).send({ testState: testState, grade: grade }).end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
@@ -772,10 +780,16 @@ async function getAssignmentState(req, res) {
         CourseSectionComponentId: Number(assignmentId),
       },
     });
+    let grade = 0;
     if (!userAssignment) assignmentState = CONSTANTS.TEST_NOTSUBMITTED;
-    else if (userAssignment.isGraded) assignmentState = CONSTANTS.TEST_GRADED;
-    else assignmentState = CONSTANTS.TEST_UNGRADED;
-    res.status(200).send({ assignmentState: assignmentState }).end();
+    else if (userAssignment.isGraded) {
+      assignmentState = CONSTANTS.TEST_GRADED;
+      grade += userAssignment.grade;
+    } else assignmentState = CONSTANTS.TEST_UNGRADED;
+    res
+      .status(200)
+      .send({ assignmentState: assignmentState, grade: grade })
+      .end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
