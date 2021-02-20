@@ -145,4 +145,10 @@ router.get(
   authenticationModule.checkAuth,
   CourseController.getAssignmentState
 );
+
+router.get(
+  "/course/enrolled-users",
+  authenticationModule.checkAuth,
+  CourseController.getCourseEnrolledUsers
+);
 module.exports = router;

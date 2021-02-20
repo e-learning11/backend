@@ -1143,6 +1143,7 @@ async function getCourseOverview(req, res) {
       },
       include: [
         {
+          limit: 10,
           model: UserCourse,
           include: [
             {
@@ -2048,6 +2049,72 @@ async function deleteCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getCourseEnrolledUsers
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getCourseEnrolledUsers(req, res) {
+  try {
+    const userId = req.user.id;
+    const { limit, offset, courseId } = req.query;
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit as query option" }],
+        })
+      );
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId as query option" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset as query option" }],
+        })
+      );
+
+    // check that the user is owner of course
+    const userCourse = await UserCourse.findOne({
+      where: {
+        CourseId: Number(courseId),
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+      );
+    const enrolledUsers = await UserCourse.findAll({
+      limit: Number(limit),
+      offset: Number(offset),
+      include: [
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName", "email", "gender", "age"],
+        },
+      ],
+      where: {
+        CourseId: Number(courseId),
+
+        [Op.or]: [{ type: CONSTANTS.ENROLLED }, { type: CONSTANTS.FINISHED }],
+      },
+    });
+    const usersToSendBack = [];
+    for (let userCourses of enrolledUsers) {
+      let userObj = userCourses.User;
+      userObj.type = userCourses.type;
+      usersToSendBack.push(userObj);
+    }
+    res.status(200).send(usersToSendBack).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -2078,4 +2145,5 @@ module.exports = {
   deleteCourse,
   getTestState,
   getAssignmentState,
+  getCourseEnrolledUsers,
 };
