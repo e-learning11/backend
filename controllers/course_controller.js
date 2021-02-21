@@ -1480,6 +1480,10 @@ async function submitAssignmentAnswer(req, res) {
       );
     let file = null;
     if (req.file && req.file.buffer) file = req.file.buffer;
+    if (!file)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "must upload file" }] })
+      );
     // chekc if answer is laready found or not
     let answer = await CourseAssignment.findOne({
       where: {
@@ -1495,11 +1499,13 @@ async function submitAssignmentAnswer(req, res) {
         CourseSectionComponentId: Number(assignmentId),
         text: text,
         file: file,
+        contentType: req.file.mimetype,
       });
     } else {
       answer.text = text;
       answer.file = file;
       answer.isGraded = false;
+      answer.contentType = req.file.mimetype;
       await answer.save();
     }
     res.status(200).send(answer).end();

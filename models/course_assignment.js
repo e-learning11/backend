@@ -25,6 +25,9 @@ const CourseAssignment = sequelize.define("CourseAssignment", {
   file: {
     type: DataTypes.BLOB("long"),
   },
+  contentType: {
+    type: DataTypes.TEXT,
+  },
 });
 
 module.exports = CourseAssignment;
