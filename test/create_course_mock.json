@@ -1,13 +1,12 @@
 {
   "gender": 3,
   "private": false,
-  "url": "url1",
   "age": [0, 20],
   "name": "Explore Vue 3 (Including Router and Vuex)",
   "summary": "Learn HTML, CSS , Javascript and Much more in this Free Course, Made for you and your knowledge",
   "description": " Learn HTML, CSS , Javascript and Much more in this Free Course. Made for you and your knowledge. Hello and Welcome to the Course, This is your instructor saluting you.",
 
-  "prerequisites": [40],
+  "prerequisites": [],
   "language": "English",
   "date": "1/1/2021",
 
@@ -27,7 +26,8 @@
           "number": 2,
           "videoID": "https://player.vimeo.com/video/363540035",
           "type": "Video",
-          "name": "Vue Router and Its uses: An Intro to the Same name"
+          "name": "Vue Router and Its uses: An Intro to the Same name",
+          "File": true
         },
         {
           "number": 3,
@@ -132,7 +132,8 @@
           "passingGrade": 100,
           "number": 6,
           "name": "First Assignment",
-          "type": "Assignment"
+          "type": "Assignment",
+          "File": true
         }
       ]
     },
@@ -144,7 +145,8 @@
         {
           "number": 7,
           "name": "First Assignment",
-          "type": "Assignment"
+          "type": "Assignment",
+          "File": true
         }
       ]
     },
@@ -156,7 +158,8 @@
         {
           "number": 8,
           "name": "First Assignment",
-          "type": "Assignment"
+          "type": "Assignment",
+          "File": true
         }
       ]
     },
@@ -168,7 +171,8 @@
         {
           "number": 9,
           "name": "First Assignment",
-          "type": "Assignment"
+          "type": "Assignment",
+          "File": true
         }
       ]
     }

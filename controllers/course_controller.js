@@ -333,6 +333,20 @@ async function createCourse(req, res) {
 
       for (let component of section.components) {
         let file = null;
+        let contentType = "";
+        if (
+          (!component.File && component.type == CONSTANTS.ASSIGNMENT) ||
+          (component.type == CONSTANTS.ASSIGNMENT &&
+            !req.files["assignmentFile"][assignmentFileIndex])
+        ) {
+          throw new Error(
+            JSON.stringify({
+              errors: [
+                { message: "every assignment must have a file attached to it" },
+              ],
+            })
+          );
+        }
         if (
           component.File &&
           (component.type == CONSTANTS.VIDEO ||
@@ -340,9 +354,13 @@ async function createCourse(req, res) {
         ) {
           if (component.type == CONSTANTS.VIDEO) {
             file = req.files["vidoeFile"][videoFileIndex].buffer;
+            contentType = req.files["vidoeFile"][videoFileIndex].mimetype;
             videoFileIndex++;
           } else {
             file = req.files["assignmentFile"][assignmentFileIndex].buffer;
+            contentType =
+              req.files["assignmentFile"][assignmentFileIndex].mimetype;
+
             assignmentFileIndex++;
           }
         }
@@ -356,6 +374,7 @@ async function createCourse(req, res) {
             file: file,
             passingGrade: component.passingGrade,
             hasFile: file == null ? false : true,
+            contentType: contentType,
           },
           { transaction: t }
         );
@@ -2158,8 +2177,10 @@ async function getComponentFile(req, res) {
       throw new Error(
         JSON.stringify({ errors: [{ message: "no component with this id" }] })
       );
-    res.end(component.file, "binary");
+    res.header("Content-Type", component.contentType);
+    res.status(200).send(component.file).end();
   } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
