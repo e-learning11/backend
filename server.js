@@ -18,6 +18,7 @@ const userRouter = require("./routes/user_router");
 const courseRouter = require("./routes/course_routes");
 const imageRouter = require("./routes/image_routes");
 const forumRouter = require("./routes/forum_routes");
+const adminRouter = require("./routes/admin_routes");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -25,6 +26,7 @@ app.use("/api", userRouter);
 app.use("/api", courseRouter);
 app.use("/api", imageRouter);
 app.use("/api", forumRouter);
+app.use("/api", adminRouter);
 server.listen(process.env.PORT || 3000, () => {
   console.log(`application is running on port ${process.env.PORT || 3000}`);
 });

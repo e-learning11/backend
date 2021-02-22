@@ -29,7 +29,33 @@ async function checkUserApproval(req, res, next) {
     res.status(400).send("error has occured");
   }
 }
+/**
+ * checkUserAdmin
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Object} next
+ * check that user is approved from admin
+ */
+async function checkUserAdmin(req, res, next) {
+  try {
+    const id = req.user.id;
+    const user = await User.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) throw new Error();
+    if (user.type != CONSTANTS.ADMIN) {
+      res.status(400).send("user is not admin");
+    } else {
+      next();
+    }
+  } catch (ex) {
+    res.status(400).send("error has occured");
+  }
+}
 
 module.exports = {
   checkUserApproval,
+  checkUserAdmin,
 };

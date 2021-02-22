@@ -196,9 +196,28 @@ async function getUserFullInfo(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteUser(req, res) {
+  try {
+    const userId = Number(req.query.userId);
+    await User.destroy({
+      where: {
+        id: userId,
+      },
+    });
 
+    res.status(200).send("deleted user").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
   getUserFullInfo,
+  deleteUser,
 };
