@@ -73,6 +73,14 @@ async function signup(req, res) {
           errors: [{ message: "this email is used before" }],
         })
       );
+    if (![CONSTANTS.TEACHER, CONSTANTS.STUDENT].includes(type))
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "the allowed types are only student and teacher" },
+          ],
+        })
+      );
     const user = await User.create({
       firstName: firstName,
       lastName: lastName,
@@ -85,7 +93,11 @@ async function signup(req, res) {
       gender: gender,
       age: age || -1,
     });
-
+    // if teacher then dont send any token
+    if (type == CONSTANTS.TEACHER) {
+      res.status(204).end();
+      return;
+    }
     const token = authenticationModule.createToken(user.id);
     res.status(200).send(token).end();
   } catch (ex) {
