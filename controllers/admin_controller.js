@@ -229,10 +229,30 @@ async function createNewsPost(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * deleteNewsPost
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteNewsPost(req, res) {
+  try {
+    const userId = req.user.id;
+    const { postId } = req.body;
+    await NewsPost.destroy({
+      id: postId,
+      UserId: userId,
+    });
+    res.status(200).send("deleted").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
   getUserFullInfo,
   deleteUser,
   createNewsPost,
+  deleteNewsPost,
 };

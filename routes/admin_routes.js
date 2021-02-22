@@ -49,6 +49,13 @@ router.post(
   "/admin/post",
   authenticationModule.checkAuth,
   middleware.checkUserAdmin,
+  upload.single("image"),
   adminController.createNewsPost
+);
+router.delete(
+  "/admin/post",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.deleteNewsPost
 );
 module.exports = router;
