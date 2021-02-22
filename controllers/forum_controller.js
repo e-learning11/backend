@@ -613,7 +613,20 @@ async function deleteQuestion(req, res) {
           errors: [{ message: "no question with this id " }],
         })
       );
-    if (question.UserId != userId && user.type != CONSTANTS.ADMIN)
+    // check if this is the teacher
+    const courseId = question.CourseId;
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: courseId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (
+      question.UserId != userId &&
+      user.type != CONSTANTS.ADMIN &&
+      !userCourse
+    )
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not owner of question" }],
@@ -656,6 +669,7 @@ async function deleteReply(req, res) {
       where: {
         id: Number(replyId),
       },
+      include: [{ model: UserQuestions }],
     });
     if (!reply)
       throw new Error(
@@ -663,7 +677,16 @@ async function deleteReply(req, res) {
           errors: [{ message: "no reply with this id " }],
         })
       );
-    if (reply.UserId != userId && user.type != CONSTANTS.ADMIN)
+    // check if this is the teacher
+    const courseId = reply.UserQuestion.CourseId;
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: courseId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (reply.UserId != userId && user.type != CONSTANTS.ADMIN && !userCourse)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not owner of reply" }],
@@ -705,6 +728,9 @@ async function deleteComment(req, res) {
       where: {
         id: Number(commentId),
       },
+      include: [
+        { model: UserQuestionsReplies, include: [{ model: UserQuestions }] },
+      ],
     });
     if (!comment)
       throw new Error(
@@ -714,7 +740,16 @@ async function deleteComment(req, res) {
           ],
         })
       );
-    if (comment.UserId != userId && user.type != CONSTANTS.ADMIN)
+    // check if this is the teacher
+    const courseId = comment.UserQuestionsReply.UserQuestion.CourseId;
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: courseId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (comment.UserId != userId && user.type != CONSTANTS.ADMIN && !userCourse)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not owner of comment" }],
@@ -727,6 +762,7 @@ async function deleteComment(req, res) {
     });
     res.status(200).send("deleted successfully").end();
   } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
@@ -755,6 +791,7 @@ async function deleteQuestionComment(req, res) {
       where: {
         id: Number(commentId),
       },
+      include: [{ model: UserQuestions }],
     });
     if (!comment)
       throw new Error(
@@ -762,7 +799,16 @@ async function deleteQuestionComment(req, res) {
           errors: [{ message: "no comment with this id" }],
         })
       );
-    if (comment.UserId != userId && user.type != CONSTANTS.ADMIN)
+    // check if this is the teacher
+    const courseId = comment.UserQuestion.CourseId;
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: courseId,
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (comment.UserId != userId && user.type != CONSTANTS.ADMIN && !userCourse)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not owner of comment" }],
