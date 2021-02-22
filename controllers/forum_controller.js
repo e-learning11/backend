@@ -474,6 +474,11 @@ async function setReplyAsAnswer(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, replyId } = req.body;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
     // check that this question belong to this user
     const userQuestion = await UserQuestions.findOne({
       where: {
@@ -481,7 +486,7 @@ async function setReplyAsAnswer(req, res) {
         UserId: userId,
       },
     });
-    if (!userQuestion)
+    if (!userQuestion && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "not question owner" }],
@@ -540,7 +545,7 @@ async function makeQuestionFeatured(req, res) {
         id: userId,
       },
     });
-    if (user.type != CONSTANTS.TEACHER)
+    if (user.type != CONSTANTS.TEACHER && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not a teacher" }],
@@ -554,7 +559,7 @@ async function makeQuestionFeatured(req, res) {
         type: CONSTANTS.CREATED,
       },
     });
-    if (!course)
+    if (!course && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not the owner for the course" }],
@@ -585,6 +590,11 @@ async function deleteQuestion(req, res) {
   try {
     const userId = req.user.id;
     const { questionId } = req.query;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
     if (!questionId)
       throw new Error(
         JSON.stringify({
@@ -595,22 +605,24 @@ async function deleteQuestion(req, res) {
     const question = await UserQuestions.findOne({
       where: {
         id: Number(questionId),
-        UserId: userId,
       },
     });
     if (!question)
       throw new Error(
         JSON.stringify({
-          errors: [
-            { message: "no question with this id or user doesnt own question" },
-          ],
+          errors: [{ message: "no question with this id " }],
+        })
+      );
+    if (question.UserId != userId && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not owner of question" }],
         })
       );
 
     await UserQuestions.destroy({
       where: {
         id: Number(questionId),
-        UserId: userId,
       },
     });
     res.status(200).send("deleted successfully").end();
@@ -628,6 +640,11 @@ async function deleteReply(req, res) {
   try {
     const userId = req.user.id;
     const { replyId } = req.query;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
     if (!replyId)
       throw new Error(
         JSON.stringify({
@@ -638,22 +655,23 @@ async function deleteReply(req, res) {
     const reply = await UserQuestionsReplies.findOne({
       where: {
         id: Number(replyId),
-        UserId: userId,
       },
     });
     if (!reply)
       throw new Error(
         JSON.stringify({
-          errors: [
-            { message: "no reply with this id or user doesnt own reply" },
-          ],
+          errors: [{ message: "no reply with this id " }],
         })
       );
-
+    if (reply.UserId != userId && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not owner of reply" }],
+        })
+      );
     await UserQuestionsReplies.destroy({
       where: {
         id: Number(replyId),
-        UserId: userId,
       },
     });
     res.status(200).send("deleted successfully").end();
@@ -671,6 +689,11 @@ async function deleteComment(req, res) {
   try {
     const userId = req.user.id;
     const { commentId } = req.query;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
     if (!commentId)
       throw new Error(
         JSON.stringify({
@@ -681,7 +704,6 @@ async function deleteComment(req, res) {
     const comment = await UserQuestionsRepliesComment.findOne({
       where: {
         id: Number(commentId),
-        UserId: userId,
       },
     });
     if (!comment)
@@ -692,11 +714,15 @@ async function deleteComment(req, res) {
           ],
         })
       );
-
+    if (comment.UserId != userId && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not owner of comment" }],
+        })
+      );
     await UserQuestionsRepliesComment.destroy({
       where: {
         id: Number(commentId),
-        UserId: userId,
       },
     });
     res.status(200).send("deleted successfully").end();
@@ -713,6 +739,11 @@ async function deleteQuestionComment(req, res) {
   try {
     const userId = req.user.id;
     const { commentId } = req.query;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
     if (!commentId)
       throw new Error(
         JSON.stringify({
@@ -723,22 +754,23 @@ async function deleteQuestionComment(req, res) {
     const comment = await UserQuestionsComment.findOne({
       where: {
         id: Number(commentId),
-        UserId: userId,
       },
     });
     if (!comment)
       throw new Error(
         JSON.stringify({
-          errors: [
-            { message: "no comment with this id or user doesnt own comment" },
-          ],
+          errors: [{ message: "no comment with this id" }],
         })
       );
-
+    if (comment.UserId != userId && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user is not owner of comment" }],
+        })
+      );
     await UserQuestionsComment.destroy({
       where: {
         id: Number(commentId),
-        UserId: userId,
       },
     });
     res.status(200).send("deleted successfully").end();
