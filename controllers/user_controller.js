@@ -25,7 +25,18 @@ async function login(req, res) {
           errors: [{ message: "no user with this email" }],
         })
       );
+
     if (await hashModule.compareStringWithHash(password, user.password)) {
+      // ceck if teacher and not approved dont send any token
+      if (user.type == CONSTANTS.TEACHER && !user.approved) {
+        res
+          .status(400)
+          .send(
+            "Your account is not approved yet by the Admin, please wait till approval and try again later."
+          )
+          .end();
+        return;
+      }
       const token = authenticationModule.createToken(user.id);
       res.status(200).send(token).end();
     } else {
