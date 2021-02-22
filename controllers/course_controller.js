@@ -136,7 +136,8 @@ async function getFinishedCoursesByUser(req, res) {
 async function getCoursesCreatedByuser(req, res) {
   try {
     const userId = req.user.id;
-    const { limit, offset } = req.query;
+    const { limit, offset, approved } = req.query;
+    const where = {};
     if (!limit)
       throw new Error(
         JSON.stringify({
@@ -149,9 +150,11 @@ async function getCoursesCreatedByuser(req, res) {
           errors: [{ message: "please add offset in query parameter" }],
         })
       );
+    if (approved) where.approved = approved == "true" ? true : false;
     const userCourses = await Course.findAll({
       limit: Number(limit),
       offset: Number(offset),
+      where: where,
       include: [
         {
           model: UserCourse,
