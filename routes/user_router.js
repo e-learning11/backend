@@ -23,17 +23,20 @@ router.post("/signup", upload.single("image"), userController.signup);
 router.get(
   "/user/profile",
   authenticationModule.checkAuth,
+  middleware.checkUserApproval,
   userController.getProfile
 );
 router.put(
   "/user/profile/edit",
   authenticationModule.checkAuth,
+  middleware.checkUserApproval,
   upload.single("image"),
   userController.editProfile
 );
 router.delete(
   "/user",
   authenticationModule.checkAuth,
+  middleware.checkUserApproval,
   userController.deleteUser
 );
 router.get("/user/public", userController.getPublicProfile);
