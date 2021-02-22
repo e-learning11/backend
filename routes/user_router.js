@@ -2,6 +2,7 @@ const router = require("express").Router();
 const userController = require("../controllers/user_controller");
 const authenticationModule = require("../utils/authentication");
 const multer = require("multer");
+const middleware = require("../utils/middleware");
 const upload = multer({
   fileFilter: (req, file, next) => {
     if (!file) next(null, true);

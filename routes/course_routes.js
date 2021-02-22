@@ -175,4 +175,10 @@ router.get(
   middleware.checkUserApproval,
   CourseController.getCourseEnrolledUsers
 );
+router.post(
+  "/course/assign/teacher",
+  authenticationModule.checkAuth,
+  middleware.checkUserApproval,
+  CourseController.assignTeacherToCourse
+);
 module.exports = router;

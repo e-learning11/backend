@@ -2390,6 +2390,74 @@ async function getCourseEnrolledUsers(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * assignTeacherToCourse
+ * @param {Request} req
+ * @param {Response} res
+ * course owner assign other teacher in course
+ */
+async function assignTeacherToCourse(req, res) {
+  try {
+    const userId = req.user.id;
+    const { courseId, teacherId } = req.body;
+    if (!courseId || !teacherId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            { message: "please add limit courseId and teacherId to body" },
+          ],
+        })
+      );
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    const userCourse = await UserCourse.findOne({
+      where: {
+        UserId: userId,
+        CourseId: Number(courseId),
+        type: CONSTANTS.CREATED,
+      },
+    });
+    if (!userCourse && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "user not course owner" }],
+        })
+      );
+    const teacher = await User.findOne({
+      where: {
+        id: Number(teacherId),
+      },
+    });
+    if (!teacher || teacher.type != CONSTANTS.TEACHER)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no teacher with this teacherId" }],
+        })
+      );
+    const course = await Course.findOne({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no course with this courseId" }],
+        })
+      );
+    await UserCourse.create({
+      type: CONSTANTS.CREATED,
+      UserId: Number(teacherId),
+      CourseId: Number(courseId),
+    });
+    res.status(200).send("added successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -2421,4 +2489,5 @@ module.exports = {
   getTestState,
   getAssignmentState,
   getCourseEnrolledUsers,
+  assignTeacherToCourse,
 };
