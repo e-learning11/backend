@@ -49,6 +49,10 @@ const CourseSectionComponent = sequelize.define("CourseSectionComponent", {
     type: DataTypes.TEXT,
     defaultValue: "",
   },
+  description: {
+    type: DataTypes.TEXT,
+    defaultValue: "",
+  },
 });
 
 module.exports = CourseSectionComponent;

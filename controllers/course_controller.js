@@ -375,6 +375,7 @@ async function createCourse(req, res) {
             passingGrade: component.passingGrade,
             hasFile: file == null ? false : true,
             contentType: contentType,
+            description: component.description,
           },
           { transaction: t }
         );
@@ -487,6 +488,7 @@ async function getCourseFullInfo(req, res) {
                 "passingGrade",
                 "id",
                 "hasFile",
+                "description",
               ],
               include: [
                 {
