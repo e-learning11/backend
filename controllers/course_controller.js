@@ -198,6 +198,7 @@ async function getRandomCourses(req, res) {
       limit: count,
       where: {
         private: false,
+        approved: true,
       },
     });
     const coursesToSendBack = [];
@@ -592,6 +593,7 @@ async function enrollUserInCourse(req, res) {
     const course = await Course.findOne({
       where: {
         id: courseId,
+        approved: true,
       },
     });
     if (user.type != CONSTANTS.STUDENT)
@@ -925,6 +927,7 @@ async function getAllCourses(req, res) {
     // check for filters
     const where = {
       private: false,
+      approved: true,
     };
     const order = [];
     let sortOrder = "DESC";
@@ -2287,6 +2290,11 @@ async function deleteCourse(req, res) {
   try {
     const userId = req.user.id;
     const { courseId } = req.query;
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
     if (!courseId)
       throw new Error(
         JSON.stringify({
@@ -2300,7 +2308,7 @@ async function deleteCourse(req, res) {
         CourseId: Number(courseId),
       },
     });
-    if (!userCourse)
+    if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not owner of course" }],
