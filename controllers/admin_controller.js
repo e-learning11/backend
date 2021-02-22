@@ -206,6 +206,21 @@ async function deleteUser(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * createNewsPost
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function createNewsPost(req, res) {
+  try {
+    const userId = req.user.id;
+    const { text, title } = req.body;
+    let file = null;
+    if (req.file) file = req.file.buffer;
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,

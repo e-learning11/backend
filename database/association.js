@@ -16,6 +16,8 @@ const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
 const UserCourseComponent = require("../models/user_course_component");
 const UserQuestionsComment = require("../models/user_questions_comments");
+const NewsPost = require("../models/news_post");
+
 CourseSection.hasMany(CourseSectionComponent, { onDelete: "CASCADE" });
 CourseSectionComponent.belongsTo(CourseSection);
 Course.hasMany(CourseSection, { onDelete: "CASCADE" });
@@ -98,3 +100,6 @@ UserCourseComponent.belongsTo(User);
 
 CourseSectionComponent.hasMany(UserCourseComponent, { onDelete: "CASCADE" });
 UserCourseComponent.belongsTo(CourseSectionComponent);
+
+User.hasMany(NewsPost, { onDelete: "CASCADE" });
+NewsPost.belongsTo(User);
