@@ -45,4 +45,10 @@ router.delete(
   middleware.checkUserAdmin,
   adminController.deleteUser
 );
+router.post(
+  "/admin/post",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.createNewsPost
+);
 module.exports = router;

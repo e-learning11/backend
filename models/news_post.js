@@ -12,7 +12,7 @@ const NewsPost = sequelize.define("NewsPost", {
   },
   image: {
     type: DataTypes.BLOB("medium"),
-    allowNull: false,
+    allowNull: true,
   },
 });
 

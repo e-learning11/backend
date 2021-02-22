@@ -13,7 +13,7 @@ const UserTestGrade = require("../models/user_grades");
 const CourseURL = require("../models/course_url");
 const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
-
+const NewsPost = require("../models/news_post");
 /**
  * approveUser
  * @param {Request} req
@@ -217,6 +217,14 @@ async function createNewsPost(req, res) {
     const { text, title } = req.body;
     let file = null;
     if (req.file) file = req.file.buffer;
+    const newsPost = await NewsPost.create({
+      title: title,
+      text: text,
+      image: file,
+      UserId: userId,
+    });
+    newsPost.image = null;
+    res.status(200).send(newsPost).end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
@@ -226,4 +234,5 @@ module.exports = {
   approveUser,
   getUserFullInfo,
   deleteUser,
+  createNewsPost,
 };
