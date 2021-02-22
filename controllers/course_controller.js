@@ -2082,7 +2082,7 @@ async function editFullCourse(req, res) {
           componentDB.type = component.type;
           componentDB.passingGrade = component.passingGrade;
           componentDB.CourseSectionId = sectionId;
-          componentDB.file = file;
+          componentDB.file = file ? file : componentDB.file;
           await componentDB.save({ transaction: t });
         } else {
           const componentDB = await CourseSectionComponent.create(
