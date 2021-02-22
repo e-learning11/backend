@@ -128,6 +128,10 @@ const User = sequelize.define("User", {
       },
     },
   },
+  resetPassword: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  },
 });
 
 module.exports = User;
