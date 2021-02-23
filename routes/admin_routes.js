@@ -65,5 +65,10 @@ router.get(
   middleware.checkUserAdmin,
   adminController.getAllUsers
 );
-
+router.get(
+  "/admin/requests",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.getAllRequests
+);
 module.exports = router;

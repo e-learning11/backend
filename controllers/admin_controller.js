@@ -358,6 +358,84 @@ async function approveDeleteCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getAllRequests
+ * @param {Request} req
+ * @param {Response} res
+ * get all requests that admin needs to approve to
+ */
+async function getAllRequests(req, res) {
+  try {
+    const {
+      limitTeacher,
+      offsetTeacher,
+      limitCourse,
+      offsetCourse,
+    } = req.query;
+    if (!offsetTeacher)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offsetTeacher in query parameter" }],
+        })
+      );
+    if (!limitTeacher)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limitTeacher in query parameter" }],
+        })
+      );
+    if (!offsetCourse)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offsetCourse in query parameter" }],
+        })
+      );
+    if (!limitCourse)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limitCourse in query parameter" }],
+        })
+      );
+    const teacherApproval = await User.findAll({
+      where: {
+        approved: false,
+        type: CONSTANTS.TEACHER,
+      },
+      attributes: ["id", "age", "firstName", "lastName", "gender", "email"],
+
+      limit: Number(limitTeacher),
+      offset: Number(offsetTeacher),
+    });
+    const coursesApproval = await Course.findAll({
+      where: {
+        approved: false,
+      },
+      attributes: ["id", "name", "summary"],
+
+      limit: Number(limitCourse),
+      offset: Number(offsetCourse),
+    });
+
+    const courseDeleteion = await Course.findAll({
+      where: {
+        deleteRequest: true,
+      },
+      attributes: ["id", "name", "summary"],
+      limit: Number(limitCourse),
+      offset: Number(offsetCourse),
+    });
+    res
+      .status(200)
+      .send({
+        teachersApproval: teacherApproval,
+        courseApproval: coursesApproval,
+        courseDeletion: courseDeleteion,
+      })
+      .end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
@@ -367,4 +445,5 @@ module.exports = {
   deleteNewsPost,
   getAllUsers,
   approveDeleteCourse,
+  getAllRequests,
 };
