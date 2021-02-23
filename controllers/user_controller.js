@@ -5,6 +5,8 @@ const errorHandler = require("../utils/error");
 const UserCourse = require("../models/user_course");
 const CONSTANTS = require("../utils/const");
 const Course = require("../models/courses");
+const uuid = require("uuid");
+const mail = require("../utils/mail");
 /**
  * login
  * @param {Request} req
@@ -280,6 +282,88 @@ async function getPublicProfile(req, res) {
   }
 }
 
+/**
+ * forgetPassword
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function forgetPassword(req, res) {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({
+      where: { email: email },
+    });
+    if (!user)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no user with this email" }],
+        })
+      );
+    const token = String(uuid.v4());
+    user.token = token;
+    user.resetPassword = true;
+    user.tokenDate = Date.now();
+    mail.sendMail(email, token);
+    await user.save();
+    res.status(200).send("sent email").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * resetPassword
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function resetPassword(req, res) {
+  try {
+    const { token, password } = req.body;
+    if (!token)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no token was provided" }],
+        })
+      );
+    if (!password)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no password was provided" }],
+        })
+      );
+    const user = await User.findOne({
+      where: {
+        token: token,
+        resetPassword: true,
+      },
+    });
+    if (!user)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no user with this token" }],
+        })
+      );
+    // check that token didnt expire
+    const elapsedTime = (Date.now() - user.tokenDate) / 36e5;
+    if (elapsedTime > 5) {
+      user.resetPassword = false;
+      await user.save();
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "token has expired" }],
+        })
+      );
+    }
+
+    user.token = "";
+    user.resetPassword = false;
+    user.password = await hashModule.hashString(password);
+    await user.save();
+    res.status(200).send("password changed successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   login,
   signup,
@@ -287,4 +371,7 @@ module.exports = {
   editProfile,
   deleteUser,
   getPublicProfile,
+  forgetPassword,
+  resetPassword,
+  resetPassword,
 };

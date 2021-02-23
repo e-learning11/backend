@@ -133,6 +133,14 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: false,
   },
+  token: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  tokenDate: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 });
 
 module.exports = User;
