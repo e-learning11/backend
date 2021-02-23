@@ -473,6 +473,78 @@ async function getTeacherApprovalRequests(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getCourseApprovalRequests
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getCourseApprovalRequests(req, res) {
+  try {
+    const { limit, offset } = req.query;
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
+
+    const coursesApproval = await Course.findAll({
+      where: {
+        approved: false,
+      },
+      attributes: ["id", "name", "summary"],
+
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+
+    res.status(200).send(coursesApproval).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+/**
+ * getCourseDeletionRequests
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getCourseDeletionRequests(req, res) {
+  try {
+    const { limit, offset } = req.query;
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
+
+    const coursesDeletion = await Course.findAll({
+      where: {
+        deleteRequest: true,
+      },
+      attributes: ["id", "name", "summary"],
+
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+
+    res.status(200).send(coursesDeletion).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
@@ -484,4 +556,6 @@ module.exports = {
   approveDeleteCourse,
   getAllRequests,
   getTeacherApprovalRequests,
+  getCourseApprovalRequests,
+  getCourseDeletionRequests,
 };

@@ -77,4 +77,16 @@ router.get(
   middleware.checkUserAdmin,
   adminController.getTeacherApprovalRequests
 );
+router.get(
+  "/admin/course/approval/requests",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.getCourseApprovalRequests
+);
+router.get(
+  "/admin/course/deletion/requests",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.getCourseDeletionRequests
+);
 module.exports = router;
