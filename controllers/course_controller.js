@@ -2389,7 +2389,12 @@ async function getCourseEnrolledUsers(req, res) {
         type: CONSTANTS.CREATED,
       },
     });
-    if (!userCourse)
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({ errors: [{ message: "user not owner of course" }] })
       );
