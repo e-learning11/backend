@@ -237,7 +237,7 @@ async function createCourse(req, res) {
         id: userId,
       },
     });
-    if (user.type != CONSTANTS.TEACHER)
+    if (user.type != CONSTANTS.TEACHER && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "not a teacher" }],
