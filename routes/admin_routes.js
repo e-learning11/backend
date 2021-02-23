@@ -71,4 +71,10 @@ router.get(
   middleware.checkUserAdmin,
   adminController.getAllRequests
 );
+router.get(
+  "/admin/teacher/requests",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.getTeacherApprovalRequests
+);
 module.exports = router;

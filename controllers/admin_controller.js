@@ -436,6 +436,43 @@ async function getAllRequests(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * getTeacherApprovalRequests
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getTeacherApprovalRequests(req, res) {
+  try {
+    const { limit, offset } = req.query;
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
+
+    const teacherApproval = await User.findAll({
+      where: {
+        approved: false,
+        type: CONSTANTS.TEACHER,
+      },
+      attributes: ["id", "age", "firstName", "lastName", "gender", "email"],
+
+      limit: Number(limit),
+      offset: Number(offset),
+    });
+
+    res.status(200).send(teacherApproval).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
@@ -446,4 +483,5 @@ module.exports = {
   getAllUsers,
   approveDeleteCourse,
   getAllRequests,
+  getTeacherApprovalRequests,
 };
