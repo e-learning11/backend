@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Course = require("../models/courses");
+const NewsPost = require("../models/news_post");
 const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
 const path = require("path");
@@ -28,6 +29,14 @@ async function getImage(req, res) {
         });
         if (course.image) res.end(course.image, "binary");
         else res.sendFile(path.join(__dirname, "../assets/images/course.jpg"));
+        break;
+      }
+      case CONSTANTS.NEWS: {
+        const newsPost = await NewsPost.findOne({
+          where: { id: Number(id) },
+        });
+        if (newsPost.image) res.end(newsPost.image, "binary");
+        else res.sendFile(path.join(__dirname, "../assets/images/news.jpeg"));
         break;
       }
       default:

@@ -29,4 +29,5 @@ module.exports = {
   TEST_GRADED: 1,
   TEST_UNGRADED: 2,
   TEST_NOTSUBMITTED: 3,
+  NEWS: "news",
 };
