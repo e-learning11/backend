@@ -131,6 +131,7 @@ const User = sequelize.define("User", {
   resetPassword: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   },
 });
 

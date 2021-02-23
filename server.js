@@ -13,6 +13,7 @@ var cors = require("cors");
 const server = http.createServer(app);
 require("./database/connection").connectDB();
 require("./database/association");
+require("./utils/add_admin")();
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/user_router");
 const courseRouter = require("./routes/course_routes");
