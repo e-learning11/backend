@@ -58,4 +58,11 @@ router.delete(
   middleware.checkUserAdmin,
   adminController.deleteNewsPost
 );
+
+router.get(
+  "/admin/users",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.getAllUsers
+);
 module.exports = router;

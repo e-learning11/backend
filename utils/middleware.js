@@ -40,7 +40,6 @@ async function checkUserApproval(req, res, next) {
 async function checkUserAdmin(req, res, next) {
   try {
     const id = req.user.id;
-    console.log("admin"), id;
     const user = await User.findOne({
       where: {
         id: id,

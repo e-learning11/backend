@@ -34,7 +34,6 @@ module.exports = async function () {
     });
     const pass = await hashModule.hashString(process.env.ADMIN_PASSWORD);
 
-    console.log("check", await hashModule.compareStringWithHash(pass));
     await User.create({
       type: CONSTANTS.ADMIN,
       email: process.env.ADMIN_EMAIL,
