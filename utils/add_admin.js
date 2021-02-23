@@ -5,7 +5,6 @@ module.exports = async function () {
   const admin = await User.findOne({
     where: {
       type: CONSTANTS.ADMIN,
-      email: String(process.env.ADMIN_EMAIL),
     },
   });
   if (!admin) {
@@ -21,29 +20,11 @@ module.exports = async function () {
       gender: 1,
       approved: true,
     });
-  } else if (
-    !(await hashModule.compareStringWithHash(
-      String(process.env.ADMIN_PASSWORD),
-      admin.password
-    ))
-  ) {
-    await User.destroy({
-      where: {
-        id: admin.id,
-      },
-    });
+  } else {
     const pass = await hashModule.hashString(process.env.ADMIN_PASSWORD);
 
-    await User.create({
-      type: CONSTANTS.ADMIN,
-      email: process.env.ADMIN_EMAIL,
-      password: pass,
-      firstName: "admin",
-      lastName: "admin",
-      phone: "0000000000",
-      age: 0,
-      gender: 1,
-      approved: true,
-    });
+    admin.email = process.env.ADMIN_EMAIL;
+    admin.password = pass;
+    await admin.save();
   }
 };

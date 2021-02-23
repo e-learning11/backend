@@ -245,8 +245,7 @@ async function deleteNewsPost(req, res) {
     const userId = req.user.id;
     const { postId } = req.body;
     await NewsPost.destroy({
-      id: postId,
-      UserId: userId,
+      where: { id: postId, UserId: userId },
     });
     res.status(200).send("deleted").end();
   } catch (ex) {
