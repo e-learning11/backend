@@ -319,6 +319,45 @@ async function getAllUsers(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ *approveDeleteCourse
+ * @param {Request} req
+ * @param {Response} res
+ *
+ */
+async function approveDeleteCourse(req, res) {
+  try {
+    const { courseId } = req.query;
+
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId as a query parameter" }],
+        })
+      );
+    const course = await Course.findOne({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no course with this id" }],
+        })
+      );
+
+    await Course.destroy({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    res.status(200).send("delleted successfully").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
@@ -327,4 +366,5 @@ module.exports = {
   createNewsPost,
   deleteNewsPost,
   getAllUsers,
+  approveDeleteCourse,
 };

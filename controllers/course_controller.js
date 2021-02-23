@@ -2285,16 +2285,13 @@ async function getUserEssayGrade(req, res) {
  *deleteCourse
  * @param {Request} req
  * @param {Response} res
+ * issue delete request to admin
  */
 async function deleteCourse(req, res) {
   try {
     const userId = req.user.id;
     const { courseId } = req.query;
-    const user = await User.findOne({
-      where: {
-        id: userId,
-      },
-    });
+
     if (!courseId)
       throw new Error(
         JSON.stringify({
@@ -2308,18 +2305,20 @@ async function deleteCourse(req, res) {
         CourseId: Number(courseId),
       },
     });
-    if (!userCourse && user.type != CONSTANTS.ADMIN)
+    if (!userCourse)
       throw new Error(
         JSON.stringify({
           errors: [{ message: "user is not owner of course" }],
         })
       );
-    await Course.destroy({
+    const course = await Course.findOne({
       where: {
         id: Number(courseId),
       },
     });
-    res.status(200).send("deleted successfully").end();
+    course.deleteRequest = true;
+    await course.save();
+    res.status(200).send("issued delete request to admins").end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }

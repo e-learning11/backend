@@ -97,6 +97,11 @@ const Course = sequelize.define("Course", {
       },
     },
   },
+  deleteRequest: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 module.exports = Course;

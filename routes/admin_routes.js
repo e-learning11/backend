@@ -36,7 +36,7 @@ router.delete(
   "/admin/course",
   authenticationModule.checkAuth,
   middleware.checkUserAdmin,
-  CourseController.deleteCourse
+  adminController.approveDeleteCourse
 );
 
 router.delete(
@@ -65,4 +65,5 @@ router.get(
   middleware.checkUserAdmin,
   adminController.getAllUsers
 );
+
 module.exports = router;
