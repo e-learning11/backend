@@ -19,6 +19,32 @@ async function postQuestion(req, res) {
   try {
     const userId = req.user.id;
     const { text, tags, courseId, title } = req.body;
+    // check that user is either teacher owner of course or admin or student enrolled in course
+    const userEnrolled = await UserCourse.findOne({
+      where: {
+        [Sequelize.Op.or]: [
+          { type: CONSTANTS.ENROLLED },
+          { type: CONSTANTS.FINISHED },
+          { type: CONSTANTS.CREATED },
+        ],
+      },
+    });
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!userEnrolled && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "user cannot post questions in this forumas he is not the owner teacher or not an enrolled student",
+            },
+          ],
+        })
+      );
     const question = await UserQuestions.create({
       UserId: userId,
       text: text,
@@ -152,6 +178,49 @@ async function postReply(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, text } = req.body;
+
+    // check that user is either teacher owner of course or admin or student enrolled in course
+    const userEnrolled = await UserCourse.findOne({
+      where: {
+        [Sequelize.Op.or]: [
+          { type: CONSTANTS.ENROLLED },
+          { type: CONSTANTS.FINISHED },
+          { type: CONSTANTS.CREATED },
+        ],
+      },
+    });
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!userEnrolled && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "user cannot post questions in this forumas he is not the owner teacher or not an enrolled student",
+            },
+          ],
+        })
+      );
+
+    const question = UserQuestions.findOne({
+      where: {
+        id: Number(questionId),
+      },
+    });
+    if (!question)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "no question with this id",
+            },
+          ],
+        })
+      );
     const reply = await UserQuestionsReplies.create({
       UserQuestionId: Number(questionId),
       text: text,
@@ -361,6 +430,31 @@ async function postComment(req, res) {
   try {
     const userId = req.user.id;
     const { replyId, text } = req.body;
+    const userEnrolled = await UserCourse.findOne({
+      where: {
+        [Sequelize.Op.or]: [
+          { type: CONSTANTS.ENROLLED },
+          { type: CONSTANTS.FINISHED },
+          { type: CONSTANTS.CREATED },
+        ],
+      },
+    });
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!userEnrolled && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "user cannot post questions in this forumas he is not the owner teacher or not an enrolled student",
+            },
+          ],
+        })
+      );
     // check reply exist
     const reply = await UserQuestionsReplies.findOne({
       where: {
@@ -423,6 +517,31 @@ async function postQuestionComment(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, text } = req.body;
+    const userEnrolled = await UserCourse.findOne({
+      where: {
+        [Sequelize.Op.or]: [
+          { type: CONSTANTS.ENROLLED },
+          { type: CONSTANTS.FINISHED },
+          { type: CONSTANTS.CREATED },
+        ],
+      },
+    });
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!userEnrolled && user.type != CONSTANTS.ADMIN)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "user cannot post questions in this forumas he is not the owner teacher or not an enrolled student",
+            },
+          ],
+        })
+      );
     // check reply exist
     const reply = await UserQuestions.findOne({
       where: {
