@@ -26,6 +26,7 @@ async function checkUserApproval(req, res, next) {
       next();
     }
   } catch (ex) {
+    console.log(ex);
     res.status(400).send("error has occured");
   }
 }
@@ -39,6 +40,7 @@ async function checkUserApproval(req, res, next) {
 async function checkUserAdmin(req, res, next) {
   try {
     const id = req.user.id;
+    console.log("admin"), id;
     const user = await User.findOne({
       where: {
         id: id,
@@ -51,6 +53,7 @@ async function checkUserAdmin(req, res, next) {
       next();
     }
   } catch (ex) {
+    console.log(ex);
     res.status(400).send("error has occured");
   }
 }

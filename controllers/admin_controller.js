@@ -28,6 +28,7 @@ async function approveUser(req, res) {
       where: {
         id: userId,
       },
+      attributes: ["id", "firstName", "lastName", "age", "type", "gender"],
     });
     if (!user || user.type != CONSTANTS.ADMIN)
       throw new Error(
@@ -39,6 +40,7 @@ async function approveUser(req, res) {
       where: {
         id: Number(id),
       },
+      attributes: ["id", "firstName", "lastName", "age", "type", "gender"],
     });
     if (!userToBeApproved)
       throw new Error(
@@ -50,6 +52,7 @@ async function approveUser(req, res) {
     await userToBeApproved.save();
     res.status(200).send(userToBeApproved).end();
   } catch (ex) {
+    console.log(ex);
     errorHandler(req, res, ex);
   }
 }
@@ -67,6 +70,7 @@ async function approveCourse(req, res) {
       where: {
         id: userId,
       },
+      attributes: ["id", "firstName", "lastName", "age", "type", "gender"],
     });
     if (!user || user.type != CONSTANTS.ADMIN)
       throw new Error(
@@ -78,6 +82,7 @@ async function approveCourse(req, res) {
       where: {
         id: Number(id),
       },
+      attributes: ["id", "name", "summary"],
     });
     if (!courseToBeApproved)
       throw new Error(

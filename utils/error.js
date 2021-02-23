@@ -5,6 +5,7 @@
  * @param {Error} error
  */
 module.exports = function (req, res, error) {
+  console.log(error);
   try {
     // console.log(typeof error);
     if (typeof error.message == "string") {
