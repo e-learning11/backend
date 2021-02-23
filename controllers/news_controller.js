@@ -23,6 +23,7 @@ async function getNewsPost(req, res) {
     const newsPosts = await NewsPost.findAll({
       limit: Number(limit),
       offset: Number(offset),
+      attributes: ["text", "title"],
     });
     res.status(200).send(newsPosts).end();
   } catch (ex) {
