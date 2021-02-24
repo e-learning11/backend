@@ -7,6 +7,7 @@ const CONSTANTS = require("../utils/const");
 const Course = require("../models/courses");
 const uuid = require("uuid");
 const mail = require("../utils/mail");
+const Sequelize = require("sequelize");
 /**
  * login
  * @param {Request} req
@@ -399,24 +400,92 @@ async function getAllTeachers(req, res) {
     if (req.query.email) where.email = req.query.email;
     if (req.query.firstName) where.firstName = req.query.firstName;
     if (req.query.lastName) where.lastName = req.query.lastName;
-    const users = await User.findAll({
-      where: where,
-      limit: Number(limit),
-      offset: Number(offset),
-      order: order,
-      attributes: [
-        "id",
-        "email",
-        "firstName",
-        "lastName",
-        "age",
-        "gender",
-        "type",
-        "phone",
-        "createdAt",
-      ],
-    });
-    res.status(200).send(users).end();
+    if (req.query.fullname) {
+      // not satisfied with this way, can be improved by not passing full name
+      const names = String(req.query.fullname).split(" ");
+      const usersToSendBack = [];
+      for (let name of names) {
+        where.firstName = { [Sequelize.Op.like]: `%${name}%` };
+        const users1 = await User.findAll({
+          where: where,
+          limit: Number(limit),
+          offset: Number(offset),
+          order: order,
+          attributes: [
+            "id",
+            "email",
+            "firstName",
+            "lastName",
+            "age",
+            "gender",
+            "type",
+            "phone",
+            "createdAt",
+          ],
+        });
+        delete where.firstName;
+        where.lastName = { [Sequelize.Op.like]: `%${req.query.fullname}%` };
+        const users2 = await User.findAll({
+          where: where,
+          limit: Number(limit),
+          offset: Number(offset),
+          order: order,
+          attributes: [
+            "id",
+            "email",
+            "firstName",
+            "lastName",
+            "age",
+            "gender",
+            "type",
+            "phone",
+            "createdAt",
+          ],
+        });
+
+        for (let user of users1) {
+          let exist = false;
+          for (let u of usersToSendBack) {
+            if (u.id == user.id) {
+              exist = true;
+              break;
+            }
+          }
+          if (!exist) usersToSendBack.push(user);
+        }
+        for (let user of users2) {
+          let exist = false;
+          for (let u of usersToSendBack) {
+            if (u.id == user.id) {
+              exist = true;
+              break;
+            }
+          }
+          if (!exist) usersToSendBack.push(user);
+        }
+      }
+
+      res.status(200).send(usersToSendBack).end();
+    } else {
+      const users = await User.findAll({
+        where: where,
+        limit: Number(limit),
+        offset: Number(offset),
+        order: order,
+        attributes: [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "age",
+          "gender",
+          "type",
+          "phone",
+          "createdAt",
+        ],
+      });
+      res.status(200).send(users).end();
+    }
   } catch (ex) {
     errorHandler(req, res, ex);
   }
