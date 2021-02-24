@@ -386,7 +386,7 @@ async function getAllTeachers(req, res) {
           errors: [{ message: "please add limit in query parameter" }],
         })
       );
-    const where = { type: CONSTANTS.TEACHER };
+    const where = { type: CONSTANTS.TEACHER, approved: true };
     const order = [];
     let sortOrder = "DESC";
     if (req.query.userId) where.id = Number(req.query.userId);
@@ -414,7 +414,6 @@ async function getAllTeachers(req, res) {
         "type",
         "phone",
         "createdAt",
-        "approved",
       ],
     });
     res.status(200).send(users).end();
