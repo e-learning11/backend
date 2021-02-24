@@ -545,6 +545,88 @@ async function getCourseDeletionRequests(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * rejectUser
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function rejectUser(req, res) {
+  try {
+    const { userId } = req.body;
+    if (!userId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add userId in body parameter" }],
+        })
+      );
+    await User.destroy({
+      where: {
+        id: Number(userId),
+      },
+    });
+    res.status(200).send("user rejected from website successfully");
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * rejectCourse
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function rejectCoursecreation(req, res) {
+  try {
+    const { courseId } = req.body;
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in body parameter" }],
+        })
+      );
+    await Course.destroy({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    res.status(200).send("course rejected from website successfully");
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+/**
+ * rejectCourseDeletion
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function rejectCourseDeletion(req, res) {
+  try {
+    const { courseId } = req.body;
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in body parameter" }],
+        })
+      );
+    const course = await Course.findOne({
+      where: {
+        id: Number(courseId),
+      },
+    });
+    if (!course)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId in body parameter" }],
+        })
+      );
+    course.deleteRequest = false;
+    await course.save();
+    res.status(200).send("request to delete course was rejected successfully");
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
@@ -558,4 +640,7 @@ module.exports = {
   getTeacherApprovalRequests,
   getCourseApprovalRequests,
   getCourseDeletionRequests,
+  rejectUser,
+  rejectCourseDeletion,
+  rejectCoursecreation,
 };

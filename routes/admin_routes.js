@@ -89,4 +89,23 @@ router.get(
   middleware.checkUserAdmin,
   adminController.getCourseDeletionRequests
 );
+
+router.delete(
+  "/admin/user/approval",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.rejectUser
+);
+router.delete(
+  "/admin/course/approval",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.rejectCoursecreation
+);
+router.delete(
+  "/admin/course/deletion",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.rejectCourseDeletion
+);
 module.exports = router;
