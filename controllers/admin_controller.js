@@ -627,6 +627,35 @@ async function rejectCourseDeletion(req, res) {
     errorHandler(req, res, ex);
   }
 }
+/**
+ * editNewsPost
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function editNewsPost(req, res) {
+  try {
+    const { postId, text, title } = req.body;
+    if (!postId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add postId in body parameter" }],
+        })
+      );
+    const newsPost = await NewsPost.findOne({
+      where: {
+        id: postId,
+      },
+    });
+    newsPost.text = text || newsPost.text;
+    newsPost.title = title || newsPost.title;
+    newsPost.image = req?.file?.buffer || newsPost.image;
+    await newsPost.save();
+    newsPost.image = null;
+    res.status(200).send(newsPost).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   approveCourse,
   approveUser,
@@ -643,4 +672,5 @@ module.exports = {
   rejectUser,
   rejectCourseDeletion,
   rejectCoursecreation,
+  editNewsPost,
 };
