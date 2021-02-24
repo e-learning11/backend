@@ -7,7 +7,9 @@ const errorHandler = require("../utils/error");
  */
 async function getNewsPost(req, res) {
   try {
-    const { offset, limit } = req.query;
+    const { offset, limit, postId } = req.query;
+    const where = {};
+    if (postId) where.id = Number(postId);
     if (!offset)
       throw new Error(
         JSON.stringify({
@@ -23,7 +25,8 @@ async function getNewsPost(req, res) {
     const newsPosts = await NewsPost.findAll({
       limit: Number(limit),
       offset: Number(offset),
-      attributes: ["text", "title"],
+      attributes: ["text", "title", "id"],
+      where: where,
     });
     res.status(200).send(newsPosts).end();
   } catch (ex) {
