@@ -41,6 +41,7 @@ router.delete(
   userController.deleteUser
 );
 router.get("/user/public", userController.getPublicProfile);
+router.get("/teachers", userController.getAllTeachers);
 
 router.post("/user/forget-password", userController.forgetPassword);
 router.post("/user/reset-password", userController.resetPassword);

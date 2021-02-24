@@ -364,6 +364,64 @@ async function resetPassword(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * getAllTeachers
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getAllTeachers(req, res) {
+  try {
+    const limit = req.query.limit;
+    const offset = req.query.offset;
+    if (!offset)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add offset in query parameter" }],
+        })
+      );
+    if (!limit)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add limit in query parameter" }],
+        })
+      );
+    const where = { type: CONSTANTS.TEACHER };
+    const order = [];
+    let sortOrder = "DESC";
+    if (req.query.userId) where.id = Number(req.query.userId);
+    if (req.query.sortOrder && ["ASC", "DESC"].includes(req.query.sortOrder))
+      sortOrder = req.query.sortOrder;
+    if (req.query.sort && ["createdAt", "age"].includes(req.query.sort))
+      order.push([req.query.sort, sortOrder]);
+    if (req.query.age) where.age = Number(req.query.age);
+    if (req.query.gender) where.gender = Number(req.query.gender);
+    if (req.query.email) where.email = req.query.email;
+    if (req.query.firstName) where.firstName = req.query.firstName;
+    if (req.query.lastName) where.lastName = req.query.lastName;
+    const users = await User.findAll({
+      where: where,
+      limit: Number(limit),
+      offset: Number(offset),
+      order: order,
+      attributes: [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "age",
+        "gender",
+        "type",
+        "phone",
+        "createdAt",
+        "approved",
+      ],
+    });
+    res.status(200).send(users).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   login,
   signup,
@@ -374,4 +432,5 @@ module.exports = {
   forgetPassword,
   resetPassword,
   resetPassword,
+  getAllTeachers,
 };
