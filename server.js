@@ -13,7 +13,6 @@ var cors = require("cors");
 const server = http.createServer(app);
 require("./database/connection").connectDB();
 require("./database/association");
-require("./utils/add_admin")();
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/user_router");
 const courseRouter = require("./routes/course_routes");
@@ -30,6 +29,7 @@ app.use("/api", imageRouter);
 app.use("/api", forumRouter);
 app.use("/api", adminRouter);
 app.use("/api", newsRouter);
+require("./utils/add_admin")();
 server.listen(process.env.PORT || 3000, () => {
   console.log(`application is running on port ${process.env.PORT || 3000}`);
 });
