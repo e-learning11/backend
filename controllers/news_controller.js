@@ -9,6 +9,7 @@ async function getNewsPost(req, res) {
   try {
     const { offset, limit, postId } = req.query;
     const where = {};
+    const order = [["id", "DESC"]];
     if (postId) where.id = Number(postId);
     if (!offset)
       throw new Error(
@@ -25,6 +26,7 @@ async function getNewsPost(req, res) {
     const newsPosts = await NewsPost.findAll({
       limit: Number(limit),
       offset: Number(offset),
+      order: order,
       attributes: ["text", "title", "id"],
       where: where,
     });
