@@ -1,0 +1,160 @@
+{
+  "gender": 3,
+  "private": false,
+  "age": [0, 70],
+  "name": "Explore HTML",
+  "summary": "Learn HTML,",
+  "description": " Learn HTML for web development",
+  "prerequisites": [],
+  "language": "English",
+  "date": "",
+  "noOfAssignmentFiles": 3,
+  "noOfVideoFiles": 2,
+  "imagePath": "/mnt/CMP/projects/elearning-backend/test/courses/images/html.png",
+  "sections": [
+    {
+      "name": "Introduction",
+      "start": 1,
+      "end": 3,
+      "components": [
+        {
+          "number": 1,
+          "videoID": "https://player.vimeo.com/video/380886323",
+          "type": "Video",
+          "name": "Introduction",
+          "File": false,
+          "description": "intro to html"
+        },
+        {
+          "number": 2,
+          "videoID": "https://player.vimeo.com/video/380886323",
+          "type": "Video",
+          "name": "Why learn html",
+          "File": true,
+          "description": "HTML is not hard and is essential to learn, and in this video i am telling you why its so essential for your success in your live, you can even earn up tp 1,000,000$ a year"
+        },
+        {
+          "number": 3,
+          "videoID": "https://player.vimeo.com/video/380886323",
+          "type": "Video",
+          "name": "HTML IS A PROGRAMMING LANGUAGE",
+          "File": false,
+          "description": "Programming languages VS HTML"
+        }
+      ]
+    },
+    {
+      "name": "Let's Test Your Knowledge",
+      "start": 4,
+      "end": 5,
+      "components": [
+        {
+          "passingGrade": 2,
+          "number": 4,
+          "type": "Test",
+          "description": "this is your first quiz",
+          "test": [
+            {
+              "Q": "What is HTML?",
+              "A": [
+                "programming language",
+                "markup language",
+                "none of the above"
+              ],
+              "correctAnswer": 1,
+              "type": "MCQ"
+            },
+            {
+              "Q": "HTML is the same as C++?",
+              "A": ["True", "False"],
+              "correctAnswer": 1,
+              "type": "TorF"
+            }
+          ],
+          "name": "Quiz 1"
+        },
+        {
+          "number": 5,
+          "type": "Test",
+          "passingGrade": 0,
+          "description": "this is your first survey, there is no right answer",
+          "test": [
+            {
+              "Q": "Are you enjoying this Course ????????????",
+              "A": ["True", "False"],
+              "type": "TorF",
+              "correctAnswer": 0
+            }
+          ],
+          "name": "Survey 1"
+        }
+      ]
+    },
+    {
+      "name": "First Assignment",
+      "start": 6,
+      "end": 6,
+      "components": [
+        {
+          "passingGrade": 100,
+          "number": 6,
+          "name": "First Assignment",
+          "type": "Assignment",
+          "description": "this is your first assignment",
+          "File": true
+        }
+      ]
+    },
+    {
+      "name": "Second Assignment",
+      "start": 7,
+      "end": 7,
+      "components": [
+        {
+          "number": 7,
+          "name": "Second Assignment",
+          "type": "Assignment",
+          "File": true,
+          "description": "this is your second assignment"
+        }
+      ]
+    },
+    {
+      "name": "Third Assignment",
+      "start": 8,
+      "end": 8,
+      "components": [
+        {
+          "number": 8,
+          "name": "Third Assignment",
+          "type": "Assignment",
+          "File": true,
+          "description": "this is your third assignment"
+        }
+      ]
+    },
+    {
+      "name": "What did you learn this far.....",
+      "start": 9,
+      "end": 10,
+      "components": [
+        {
+          "number": 9,
+          "videoID": "https://player.vimeo.com/video/380886323",
+          "type": "Video",
+          "name": "overview on you work",
+          "File": false,
+          "description": "recap for all your work in this course"
+        },
+        {
+          "number": 10,
+          "videoID": "https://player.vimeo.com/video/380886323",
+          "type": "Video",
+          "name": "conclusion",
+          "File": true,
+          "description": "Hope You enjoyed the course"
+        }
+      ]
+    }
+  ]
+}

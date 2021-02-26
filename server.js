@@ -30,6 +30,10 @@ app.use("/api", forumRouter);
 app.use("/api", adminRouter);
 app.use("/api", newsRouter);
 require("./utils/add_admin")();
+
+/////////
+require("./test/insert_directly_todb");
+///////
 server.listen(process.env.PORT || 3000, () => {
   console.log(`application is running on port ${process.env.PORT || 3000}`);
 });
