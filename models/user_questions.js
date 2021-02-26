@@ -24,14 +24,14 @@ const UserQuestions = sequelize.define("UserQuestions", {
     validate: {
       len: {
         args: [1, 100000],
-        msg: "reply must be at least 1 charachter",
+        msg: "question must be at least 1 charachter",
       },
     },
   },
   tags: {
     allowNull: false,
     type: DataTypes.TEXT,
-    alidate: {
+    validate: {
       notNull: {
         msg: "please enter tags",
       },
