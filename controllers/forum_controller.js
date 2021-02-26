@@ -960,6 +960,7 @@ async function deleteQuestion(req, res) {
  * @param {Response} res
  */
 async function deleteReply(req, res) {
+  const t = await sequelize.transaction();
   try {
     const userId = req.user.id;
     const { replyId } = req.query;
@@ -1012,13 +1013,23 @@ async function deleteReply(req, res) {
           errors: [{ message: "user is not owner of reply" }],
         })
       );
+    await UserVote.destroy({
+      where: {
+        type: CONSTANTS.FORUM_REPLY,
+        typeId: Number(replyId),
+      },
+      transaction: t,
+    });
     await UserQuestionsReplies.destroy({
       where: {
         id: Number(replyId),
       },
+      transaction: t,
     });
+    await t.commit();
     res.status(200).send("deleted successfully").end();
   } catch (ex) {
+    await t.rollback();
     errorHandler(req, res, ex);
   }
 }
