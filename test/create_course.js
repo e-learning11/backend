@@ -18,9 +18,11 @@ const UserCourseComponent = require("../models/user_course_component");
 const UserQuestions = require("../models/user_questions");
 
 async function createCourse(userId, course, image, req) {
+  console.log("start creating course");
   const t = await sequelize.transaction();
-
+  console.log("start trans");
   try {
+    console.log("enter trans");
     const {
       name,
       summary,
@@ -68,6 +70,7 @@ async function createCourse(userId, course, image, req) {
       },
       { transaction: t }
     );
+    console.log("creater course");
     if (url)
       await CourseURL.create(
         {
@@ -78,6 +81,7 @@ async function createCourse(userId, course, image, req) {
           transaction: t,
         }
       );
+    console.log("create course url");
     for (let prequisiteId of prerequisites) {
       await Prequisite.create(
         {
@@ -95,6 +99,7 @@ async function createCourse(userId, course, image, req) {
       },
       { transaction: t }
     );
+    console.log("create userCourse");
     let videoFileIndex = 0;
     let assignmentFileIndex = 0;
     for (let section of sections) {
@@ -107,7 +112,7 @@ async function createCourse(userId, course, image, req) {
         },
         { transaction: t }
       );
-
+      console.log("create course section");
       for (let component of section.components) {
         let file = null;
         let contentType = "";
@@ -156,6 +161,7 @@ async function createCourse(userId, course, image, req) {
           },
           { transaction: t }
         );
+        console.log("create section compoenet");
         if (component.test) {
           for (let question of component.test) {
             let correctAnswer = null;
@@ -174,6 +180,7 @@ async function createCourse(userId, course, image, req) {
               },
               { transaction: t }
             );
+            console.log("create question");
             if (question.A) {
               for (let answer of question.A) {
                 let answerObj = await Answer.create(
@@ -183,6 +190,7 @@ async function createCourse(userId, course, image, req) {
                   },
                   { transaction: t }
                 );
+                console.log("create answer");
               }
             }
           }
@@ -195,8 +203,8 @@ async function createCourse(userId, course, image, req) {
     return courseObj;
   } catch (ex) {
     //console.log(req.files["image"][0]);
-    await t.rollback();
     console.log(ex);
+    await t.rollback();
     return -1;
   }
 }

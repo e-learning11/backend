@@ -43,7 +43,7 @@ async function postQuestion(userId, body) {
       CourseId: Number(courseId),
       title: title,
     });
-    //console.log(question);
+    console.log(question);
     return question;
   } catch (ex) {
     console.log(ex);

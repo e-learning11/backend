@@ -44,30 +44,16 @@ const users = [
   44,
 ];
 const teachers = [2, 6, 8, 12];
-
+const courses = [51, 52, 53, 62];
 async function main() {
   for (let n = 1; n <= 4; n++) {
     try {
-      const course1 = require("./courses/course" + n + ".json");
-
-      const image = fs.readFileSync(course1.imagePath);
-      course1.date = Date.now();
-      const req = { files: { assignmentFile: [], vidoeFile: [] } };
-      for (let i = 0; i < course1.noOfAssignmentFiles; i++) {
-        req.files.assignmentFile.push(reqFile);
-      }
-      for (let i = 0; i < course1.noOfVideoFiles; i++) {
-        req.files.vidoeFile.push(reqFile);
-      }
-      const teacherId = teachers[n - 1];
-      const course = await createCourse(teacherId, course1, image, req);
-      if (course == -1) continue;
-      console.log(course);
-      const enrolledUsers = [];
-      for (let userId of users) {
-        if (await enrollUserInCourse(course.id, userId))
-          enrolledUsers.push(userId);
-      }
+      const course = { id: courses[n - 1] };
+      const enrolledUsers = users;
+      //   for (let userId of users) {
+      //     if (await enrollUserInCourse(course.id, userId))
+      //       enrolledUsers.push(userId);
+      //   }
       if (enrolledUsers.length != 0) {
         for (let question of forum.questions) {
           let userId =
