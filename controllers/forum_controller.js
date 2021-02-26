@@ -19,6 +19,46 @@ async function postQuestion(req, res) {
   try {
     const userId = req.user.id;
     const { text, tags, courseId, title } = req.body;
+    if (!text)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be text in the body",
+            },
+          ],
+        })
+      );
+    if (!tags)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be tags in the body",
+            },
+          ],
+        })
+      );
+    if (!title)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be title in the body",
+            },
+          ],
+        })
+      );
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be courseId in the body",
+            },
+          ],
+        })
+      );
     // check that user is either teacher owner of course or admin or student enrolled in course
     const userEnrolled = await UserCourse.findOne({
       where: {
@@ -178,7 +218,26 @@ async function postReply(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, text } = req.body;
-
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be questionId in the body",
+            },
+          ],
+        })
+      );
+    if (!text)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be text in the body",
+            },
+          ],
+        })
+      );
     // check that user is either teacher owner of course or admin or student enrolled in course
     const userEnrolled = await UserCourse.findOne({
       where: {
@@ -293,6 +352,36 @@ async function postUpvote(req, res) {
   try {
     const userId = req.user.id;
     let { type, typeId, vote } = req.body;
+    if (!vote)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be vote in the body",
+            },
+          ],
+        })
+      );
+    if (!type)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be type in the body",
+            },
+          ],
+        })
+      );
+    if (!typeId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be typeId in the body",
+            },
+          ],
+        })
+      );
     typeId = Number(typeId);
     // check if user has voted this vote before
     const userVote = await UserVote.findOne({
@@ -430,6 +519,26 @@ async function postComment(req, res) {
   try {
     const userId = req.user.id;
     const { replyId, text } = req.body;
+    if (!replyId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be replyId in the body",
+            },
+          ],
+        })
+      );
+    if (!text)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be text in the body",
+            },
+          ],
+        })
+      );
     const userEnrolled = await UserCourse.findOne({
       where: {
         [Sequelize.Op.or]: [
@@ -517,6 +626,26 @@ async function postQuestionComment(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, text } = req.body;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be questionId in the body",
+            },
+          ],
+        })
+      );
+    if (!text)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be text in the body",
+            },
+          ],
+        })
+      );
     const userEnrolled = await UserCourse.findOne({
       where: {
         [Sequelize.Op.or]: [
@@ -605,6 +734,26 @@ async function setReplyAsAnswer(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, replyId } = req.body;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be questionId in the body",
+            },
+          ],
+        })
+      );
+    if (!replyId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be replyId in the body",
+            },
+          ],
+        })
+      );
     const user = await User.findOne({
       where: {
         id: userId,
@@ -670,6 +819,26 @@ async function makeQuestionFeatured(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, courseId, isFeatured } = req.body;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be questionId in the body",
+            },
+          ],
+        })
+      );
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be courseId in the body",
+            },
+          ],
+        })
+      );
     // check that user is teacher
     const user = await User.findOne({
       where: {
@@ -721,6 +890,16 @@ async function deleteQuestion(req, res) {
   try {
     const userId = req.user.id;
     const { questionId } = req.query;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be questionId in query parameters",
+            },
+          ],
+        })
+      );
     const user = await User.findOne({
       where: {
         id: userId,
@@ -784,6 +963,16 @@ async function deleteReply(req, res) {
   try {
     const userId = req.user.id;
     const { replyId } = req.query;
+    if (!replyId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be replyId in query parameters",
+            },
+          ],
+        })
+      );
     const user = await User.findOne({
       where: {
         id: userId,
@@ -843,6 +1032,16 @@ async function deleteComment(req, res) {
   try {
     const userId = req.user.id;
     const { commentId } = req.query;
+    if (!commentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be commentId in query parameters",
+            },
+          ],
+        })
+      );
     const user = await User.findOne({
       where: {
         id: userId,
@@ -906,6 +1105,16 @@ async function deleteQuestionComment(req, res) {
   try {
     const userId = req.user.id;
     const { commentId } = req.query;
+    if (!commentId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be commentId in query parameters",
+            },
+          ],
+        })
+      );
     const user = await User.findOne({
       where: {
         id: userId,
@@ -1151,6 +1360,26 @@ async function unsetReplyAsAnswer(req, res) {
   try {
     const userId = req.user.id;
     const { questionId, replyId } = req.body;
+    if (!questionId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be questionId in the body",
+            },
+          ],
+        })
+      );
+    if (!replyId)
+      throw new Error(
+        JSON.stringify({
+          errors: [
+            {
+              message: "there must be replyId in the body",
+            },
+          ],
+        })
+      );
     // check that this question belong to this user
     const userQuestion = await UserQuestions.findOne({
       where: {
