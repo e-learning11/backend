@@ -43,7 +43,7 @@ async function postQuestion(userId, body) {
       CourseId: Number(courseId),
       title: title,
     });
-    console.log(question);
+    //console.log(question);
     return question;
   } catch (ex) {
     console.log(ex);
@@ -103,7 +103,7 @@ async function postReply(userId, body) {
       UserId: userId,
       isAnswer: false,
     });
-    console.log(reply);
+    //console.log(reply);
     return reply;
   } catch (ex) {
     console.log(ex);
@@ -156,7 +156,7 @@ async function postComment(userId, body) {
       text: text,
       UserId: userId,
     });
-    console.log(comment);
+    //console.log(comment);
     return comment;
   } catch (ex) {
     console.log(ex);
@@ -210,7 +210,7 @@ async function postQuestionComment(userId, body) {
       text: text,
       UserId: userId,
     });
-    console.log(comment);
+    //console.log(comment);
     return comment;
   } catch (ex) {
     console.log(ex);

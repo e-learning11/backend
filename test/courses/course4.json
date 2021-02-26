@@ -1,0 +1,154 @@
+{
+  "gender": 3,
+  "private": false,
+  "age": [0, 70],
+  "name": "استكشف تطوير المواقع الالكترونيه",
+  "summary": "تعلمات لغات الويب,",
+  "description": "تعلم احدث تقنيات الويب",
+  "prerequisites": [],
+  "language": "Arabic",
+  "date": "",
+  "noOfAssignmentFiles": 3,
+  "noOfVideoFiles": 2,
+  "imagePath": "/mnt/CMP/projects/elearning-backend/test/courses/images/web.jpeg",
+  "sections": [
+    {
+      "name": "المقدمه",
+      "start": 1,
+      "end": 3,
+      "components": [
+        {
+          "number": 1,
+          "videoID": "https://player.vimeo.com/video/80914562",
+          "type": "Video",
+          "name": "مقدمه للكورس",
+          "File": false,
+          "description": "البدايه"
+        },
+        {
+          "number": 2,
+          "videoID": "https://player.vimeo.com/video/80914562",
+          "type": "Video",
+          "name": "لماذا اتعلم الويب",
+          "File": true,
+          "description": "لا صعوبه في التعلم"
+        },
+        {
+          "number": 3,
+          "videoID": "https://player.vimeo.com/video/80914562",
+          "type": "Video",
+          "name": "البرمجه هي المستقبل",
+          "File": false,
+          "description": "المستقبل الالكتروني"
+        }
+      ]
+    },
+    {
+      "name": "وقت اختبار علي ما تعلمت",
+      "start": 4,
+      "end": 5,
+      "components": [
+        {
+          "passingGrade": 2,
+          "number": 4,
+          "type": "Test",
+          "description": "الاختبار الاول",
+          "test": [
+            {
+              "Q": "ما هي البرمجه؟",
+              "A": ["برمجه", "اكل", "نوم"],
+              "correctAnswer": 0,
+              "type": "MCQ"
+            },
+            {
+              "Q": "هل كانت هناك برمجه من 10000 سنه ؟؟",
+              "A": ["True", "False"],
+              "correctAnswer": 1,
+              "type": "TorF"
+            }
+          ],
+          "name": "الاختبار الاول"
+        },
+        {
+          "number": 5,
+          "type": "Test",
+          "passingGrade": 0,
+          "description": "شاركنا بتجربتك",
+          "test": [
+            {
+              "Q": "ما هي تجربتك مع هذا الكورس",
+              "type": "Essay"
+            }
+          ],
+          "name": "شارك تجربتك"
+        }
+      ]
+    },
+    {
+      "name": "الواجب الاول",
+      "start": 6,
+      "end": 6,
+      "components": [
+        {
+          "passingGrade": 100,
+          "number": 6,
+          "name": "الواجب الاول",
+          "type": "Assignment",
+          "description": "اول واجب لك",
+          "File": true
+        }
+      ]
+    },
+    {
+      "name": "الواجب الثاني",
+      "start": 7,
+      "end": 7,
+      "components": [
+        {
+          "number": 7,
+          "name": "Second Assignment",
+          "type": "Assignment",
+          "File": true,
+          "description": "الواجب الثاني"
+        }
+      ]
+    },
+    {
+      "name": "الواجب الثالث",
+      "start": 8,
+      "end": 8,
+      "components": [
+        {
+          "number": 8,
+          "name": "الواجب الثالث",
+          "type": "Assignment",
+          "File": true,
+          "description": "الواجب الثالث"
+        }
+      ]
+    },
+    {
+      "name": "ماذا تعلمنا حتي الان",
+      "start": 9,
+      "end": 10,
+      "components": [
+        {
+          "number": 9,
+          "videoID": "https://player.vimeo.com/video/80914562",
+          "type": "Video",
+          "name": "مراجعه علي ما تعلمنا",
+          "File": false,
+          "description": "مراجعه"
+        },
+        {
+          "number": 10,
+          "videoID": "https://player.vimeo.com/video/80914562",
+          "type": "Video",
+          "name": "النهايه",
+          "File": true,
+          "description": "النهايه"
+        }
+      ]
+    }
+  ]
+}

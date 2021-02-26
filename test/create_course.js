@@ -1,13 +1,21 @@
 const sequelize = require("../database/connection").sequelize;
+const { Op } = require("sequelize");
+const User = require("../models/user");
 const Course = require("../models/courses");
 const CourseSection = require("../models/course_section");
 const CourseSectionComponent = require("../models/course_section_component");
 const UserCourse = require("../models/user_course");
+const errorHandler = require("../utils/error");
 const CONSTANTS = require("../utils/const");
 const Question = require("../models/question");
 const Answer = require("../models/answer");
 const Prequisite = require("../models/course_prequisite");
+const UserTestGrade = require("../models/user_grades");
 const CourseURL = require("../models/course_url");
+const CourseAssignment = require("../models/course_assignment");
+const CourseEssay = require("../models/course_essay");
+const UserCourseComponent = require("../models/user_course_component");
+const UserQuestions = require("../models/user_questions");
 
 async function createCourse(userId, course, image, req) {
   const t = await sequelize.transaction();
@@ -183,16 +191,80 @@ async function createCourse(userId, course, image, req) {
     }
     await t.commit();
     courseObj.image = null;
-    console.log(courseObj);
+    //console.log(courseObj);
     return courseObj;
   } catch (ex) {
     //console.log(req.files["image"][0]);
-    t.rollback();
+    await t.rollback();
     console.log(ex);
     return -1;
   }
 }
+async function enrollUserInCourse(courseId, userId) {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    const course = await Course.findOne({
+      where: {
+        id: courseId,
+        approved: true,
+      },
+    });
+    if (user.type != CONSTANTS.STUDENT)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "must be a student" }] })
+      );
+    if (course.gender != CONSTANTS.BOTH && course.gender != user.gender)
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "gender difference" }] })
+      );
+    //console.log(user.id, course.ageMin, user.age, course.ageMax);
+    if (!(user.age >= course.ageMin && user.age <= course.ageMax))
+      throw new Error(
+        JSON.stringify({ errors: [{ message: "age difference" }] })
+      );
+    // check if user meets the required prequisites
+    const coursePrequisites = await Prequisite.findAll({
+      where: {
+        CourseId: courseId,
+      },
+    });
+    const userFinishedCourses = await UserCourse.findAll({
+      where: {
+        UserId: userId,
+        type: CONSTANTS.FINISHED,
+      },
+    });
+    //console.log(coursePrequisites, userFinishedCourses);
+    for (let prequisite of coursePrequisites) {
+      let found = false;
+      for (let userFinishedCourse of userFinishedCourses) {
+        if (userFinishedCourse.CourseId == prequisite.prequisiteId)
+          found = true;
+      }
+      if (!found)
+        throw new Error(
+          JSON.stringify({
+            errors: [{ message: "doesnt match course requirements" }],
+          })
+        );
+    }
+    const enrolledCourseState = await UserCourse.create({
+      UserId: userId,
+      CourseId: courseId,
+      type: CONSTANTS.ENROLLED,
 
+      currentComponent: 1,
+    });
+    return 1;
+  } catch (ex) {
+    return 0;
+  }
+}
 module.exports = {
   createCourse,
+  enrollUserInCourse,
 };

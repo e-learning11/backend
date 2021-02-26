@@ -1,0 +1,161 @@
+{
+  "gender": 3,
+  "private": false,
+  "age": [0, 70],
+  "name": "Explore CSS",
+  "summary": "Learn CSS,",
+  "description": " Learn CSS for web development",
+  "prerequisites": [],
+  "language": "English",
+  "date": "",
+  "noOfAssignmentFiles": 2,
+  "noOfVideoFiles": 2,
+  "imagePath": "/mnt/CMP/projects/elearning-backend/test/courses/images/css.png",
+  "sections": [
+    {
+      "name": "Introduction",
+      "start": 1,
+      "end": 4,
+      "components": [
+        {
+          "number": 1,
+          "videoID": "https://player.vimeo.com/video/55534079",
+          "type": "Video",
+          "name": "Introduction",
+          "File": true,
+          "description": "intro to CSS"
+        },
+        {
+          "number": 2,
+          "videoID": "https://player.vimeo.com/video/55534079",
+          "type": "Video",
+          "name": "Why learn CSS",
+          "File": false,
+          "description": "CSS is not hard "
+        },
+        {
+          "number": 3,
+          "videoID": "https://player.vimeo.com/video/55534079",
+          "type": "Video",
+          "name": "CSS IS NOT A PROGRAMMING LANGUAGE",
+          "File": false,
+          "description": "Programming languages VS CSS"
+        },
+        {
+          "number": 4,
+          "videoID": "https://player.vimeo.com/video/55534079",
+          "type": "Video",
+          "name": "CSS crash course",
+          "File": false,
+          "description": "Programming  CSS"
+        }
+      ]
+    },
+    {
+      "name": "Let's Test Your Knowledge",
+      "start": 5,
+      "end": 6,
+      "components": [
+        {
+          "passingGrade": 2,
+          "number": 5,
+          "type": "Test",
+          "description": "this is your first quiz",
+          "test": [
+            {
+              "Q": "What is CSS?",
+              "A": [
+                "programming language",
+                "markup language",
+                "styling language"
+              ],
+              "correctAnswer": 2,
+              "type": "MCQ"
+            },
+            {
+              "Q": "CSS is the same as C++?",
+              "A": ["True", "False"],
+              "correctAnswer": 1,
+              "type": "TorF"
+            },
+            {
+              "Q": "CSS is the same as html?",
+              "A": ["True", "False"],
+              "correctAnswer": 1,
+              "type": "TorF"
+            }
+          ],
+          "name": "Quiz 1"
+        },
+        {
+          "number": 6,
+          "type": "Test",
+          "passingGrade": 0,
+          "description": "this is your first survey, there is no right answer",
+          "test": [
+            {
+              "Q": "Are you enjoying this Course ????????????",
+              "A": ["True", "False"],
+              "type": "TorF",
+              "correctAnswer": 0
+            }
+          ],
+          "name": "Survey 1"
+        }
+      ]
+    },
+    {
+      "name": "First Assignment",
+      "start": 7,
+      "end": 7,
+      "components": [
+        {
+          "passingGrade": 100,
+          "number": 7,
+          "name": "First Assignment",
+          "type": "Assignment",
+          "description": "this is your first assignment",
+          "File": true
+        }
+      ]
+    },
+    {
+      "name": "What did you learn this far.....",
+      "start": 8,
+      "end": 9,
+      "components": [
+        {
+          "number": 8,
+          "videoID": "https://player.vimeo.com/video/55534079",
+          "type": "Video",
+          "name": "overview on you work",
+          "File": false,
+          "description": "recap for all your work in this course"
+        },
+        {
+          "number": 9,
+          "videoID": "https://player.vimeo.com/video/55534079",
+          "type": "Video",
+          "name": "conclusion",
+          "File": true,
+          "description": "Hope You enjoyed the course"
+        }
+      ]
+    },
+    {
+      "name": "Last Assignment",
+      "start": 10,
+      "end": 10,
+      "components": [
+        {
+          "passingGrade": 100,
+          "number": 10,
+          "name": "Last Assignment",
+          "type": "Assignment",
+          "description": "this is your Last assignment",
+          "File": true
+        }
+      ]
+    }
+  ]
+}

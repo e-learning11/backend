@@ -1,0 +1,76 @@
+{
+  "questions": [
+    {
+      "tags": "programming,question,web",
+      "title": "what is programming ?",
+      "text": "what is the meaning of programming or even deeper how can you use programming to improve your life ??? ",
+      "courseId": "",
+      "replies": [
+        {
+          "text": "i dont know",
+          "questionId": "",
+          "comments": [
+            {
+              "replyId": "",
+              "text": "then why did you even replied LOL!"
+            },
+            {
+              "replyId": "",
+              "text": "you shouldn't have replied honestly"
+            },
+            {
+              "replyId": "",
+              "text": "I hate you get out of this beutiful site"
+            }
+          ]
+        },
+        {
+          "text": "programming is life bro, you gotta learn till the end",
+          "questionId": "",
+          "comments": [
+            {
+              "replyId": "",
+              "text": "you are a legend"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tags": "programming,question,web,css,js,arabic,english",
+      "title": "how to print in the console?",
+      "text": "how to print all even numbers on console ",
+      "courseId": "",
+      "replies": [
+        {
+          "text": "you can't do that, you have to learn PHP",
+          "questionId": "",
+          "comments": [
+            {
+              "replyId": "",
+              "text": "wrong"
+            },
+            {
+              "replyId": "",
+              "text": "spam"
+            },
+            {
+              "replyId": "",
+              "text": "downvote him guys"
+            }
+          ]
+        },
+        {
+          "text": "numb34%2 == 0 ? console.log( Number ) : continue",
+          "questionId": "",
+          "comments": [
+            {
+              "replyId": "",
+              "text": "you are a legend"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

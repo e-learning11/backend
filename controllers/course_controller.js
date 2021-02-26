@@ -422,7 +422,7 @@ async function createCourse(req, res) {
   } catch (ex) {
     //console.log(req.files["image"][0]);
     console.log(ex);
-    t.rollback();
+    await t.rollback();
     errorHandler(req, res, ex);
   }
 }
@@ -481,6 +481,7 @@ async function getCourseFullInfo(req, res) {
       include: [
         {
           model: CourseSection,
+          order: [["id", "ASC"]],
           include: [
             {
               model: CourseSectionComponent,
@@ -499,6 +500,7 @@ async function getCourseFullInfo(req, res) {
                   model: Question,
                   attributes: ["id", "Q", "type"],
                   include: [{ model: Answer }],
+                  order: [["id", "ASC"]],
                 },
               ],
             },
@@ -520,6 +522,7 @@ async function getCourseFullInfo(req, res) {
           model: Course,
           as: "prequisites",
           attributes: ["id", "name", "summary"],
+          order: [["id", "ASC"]],
         },
       ],
     });
