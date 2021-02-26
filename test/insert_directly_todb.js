@@ -57,7 +57,10 @@ async function main() {
       if (enrolledUsers.length != 0) {
         for (let question of forum.questions) {
           let userId =
-            enrolledUsers[Math.floor(enrolledUsers.length * Math.random())];
+            enrolledUsers[
+              Math.floor((enrolledUsers.length - 1) * Math.random())
+            ];
+          console.log(userId);
           const q = await postQuestion(userId, {
             text: question.text,
             courseId: course.id,
