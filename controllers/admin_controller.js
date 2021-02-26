@@ -390,7 +390,7 @@ async function approveDeleteCourse(req, res) {
       transaction: t,
     });
     await t.commit();
-    res.status(200).send("delleted successfully").end();
+    res.status(200).send("deleted successfully").end();
   } catch (ex) {
     await t.rollback();
     errorHandler(req, res, ex);
