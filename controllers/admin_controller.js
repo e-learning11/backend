@@ -14,6 +14,9 @@ const CourseURL = require("../models/course_url");
 const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
 const NewsPost = require("../models/news_post");
+const UserQuestion = require("../models/user_questions");
+const UserQuestionsReplies = require("../models/user_question_replies");
+const UserVote = require("../models/user_votes");
 /**
  * approveUser
  * @param {Request} req
@@ -327,6 +330,7 @@ async function getAllUsers(req, res) {
  *
  */
 async function approveDeleteCourse(req, res) {
+  const t = await sequelize.transaction();
   try {
     const { courseId } = req.query;
 
@@ -347,14 +351,48 @@ async function approveDeleteCourse(req, res) {
           errors: [{ message: "no course with this id" }],
         })
       );
+    // delete all votes in the forum for this course
+    const questions = await UserQuestion.findAll({
+      where: {
+        CourseId: courseId,
+      },
+    });
+    for (let question of questions) {
+      const replies = await UserQuestionsReplies.findAll({
+        where: {
+          UserQuestionId: question.id,
+        },
+      });
+      // delete reply votes
+      for (let reply of replies) {
+        await UserVote.destroy({
+          where: {
+            type: CONSTANTS.FORUM_REPLY,
+            typeId: reply.id,
+          },
+          transaction: t,
+        });
+      }
+      // delete question vote
+      await UserVote.destroy({
+        where: {
+          type: CONSTANTS.FORUM_QUESTION,
+          typeId: question.id,
+        },
+        transaction: t,
+      });
+    }
 
     await Course.destroy({
       where: {
         id: Number(courseId),
       },
+      transaction: t,
     });
+    await t.commit();
     res.status(200).send("delleted successfully").end();
   } catch (ex) {
+    await t.rollback();
     errorHandler(req, res, ex);
   }
 }
