@@ -887,6 +887,7 @@ async function makeQuestionFeatured(req, res) {
  * @param {Response} res
  */
 async function deleteQuestion(req, res) {
+  const t = await sequelize.transaction();
   try {
     const userId = req.user.id;
     const { questionId } = req.query;
@@ -942,14 +943,39 @@ async function deleteQuestion(req, res) {
           errors: [{ message: "user is not owner of question" }],
         })
       );
-
+    const replies = await UserQuestionsReplies.findAll({
+      where: {
+        UserQuestionId: Number(questionId),
+      },
+    });
+    // delete reply votes
+    for (let reply of replies) {
+      await UserVote.destroy({
+        where: {
+          type: CONSTANTS.FORUM_REPLY,
+          typeId: reply.id,
+        },
+        transaction: t,
+      });
+    }
+    // delete question vote
+    await UserVote.destroy({
+      where: {
+        type: CONSTANTS.FORUM_QUESTION,
+        typeId: Number(questionId),
+      },
+      transaction: t,
+    });
     await UserQuestions.destroy({
       where: {
         id: Number(questionId),
       },
+      transaction: t,
     });
+    await t.commit();
     res.status(200).send("deleted successfully").end();
   } catch (ex) {
+    await t.rollback();
     errorHandler(req, res, ex);
   }
 }
