@@ -62,7 +62,7 @@ async function main() {
             text: question.text,
             courseId: course.id,
             title: question.title,
-            tags: question.tagss,
+            tags: question.tags,
           });
           if (q != -1) {
             for (let reply of question.replies) {

@@ -29,8 +29,13 @@ const UserQuestions = sequelize.define("UserQuestions", {
     },
   },
   tags: {
-    allowNull: true,
+    allowNull: false,
     type: DataTypes.TEXT,
+    alidate: {
+      notNull: {
+        msg: "please enter tags",
+      },
+    },
   },
   isFeatured: {
     type: DataTypes.BOOLEAN,
