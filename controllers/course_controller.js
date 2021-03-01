@@ -1875,6 +1875,7 @@ async function editCourseBasicInfo(req, res) {
       ageMin,
       ageMax,
       url,
+      nonBlocking,
     } = req.body;
 
     // check that the user is owner of course
@@ -1907,6 +1908,7 @@ async function editCourseBasicInfo(req, res) {
     course.ageMin = Number(ageMin) || course.ageMin;
     course.ageMax = Number(ageMax) || course.ageMax;
     course.image = req.file?.buffer ? req.file.buffer : course.image;
+    course.nonBlocking = nonBlocking != null ? nonBlocking : course.nonBlocking;
 
     if (String(private) == "true") {
       if (url) {
@@ -1997,6 +1999,7 @@ async function editFullCourse(req, res) {
       language,
       date,
       sections,
+      nonBlocking,
     } = JSON.parse(req.body.json);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -2033,6 +2036,7 @@ async function editFullCourse(req, res) {
     course.private = private;
     course.ageMax = Number(age[1]);
     course.ageMin = Number(age[0]);
+    course.nonBlocking = nonBlocking != null ? nonBlocking : course.nonBlocking;
     // check if url exist before
     const courseURL = url
       ? await CourseURL.findOne({
