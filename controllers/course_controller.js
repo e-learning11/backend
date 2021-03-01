@@ -478,6 +478,7 @@ async function getCourseFullInfo(req, res) {
         "private",
         "gender",
         "ageMin",
+        "nonBlocking",
         "ageMax",
       ],
       include: [
@@ -2472,9 +2473,7 @@ async function assignTeacherToCourse(req, res) {
     if (!courseId || !teacherId)
       throw new Error(
         JSON.stringify({
-          errors: [
-            { message: "please add limit courseId and teacherId to body" },
-          ],
+          errors: [{ message: "please add  courseId and teacherId to body" }],
         })
       );
     const user = await User.findOne({
@@ -2527,6 +2526,48 @@ async function assignTeacherToCourse(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+/**
+ * getUserFinishedCourseComponents
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function getUserFinishedCourseComponents(req, res) {
+  try {
+    const userId = req.user.id;
+    const courseId = Number(req.query.courseId);
+    if (!courseId)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "please add courseId as query parameter" }],
+        })
+      );
+
+    const userFinishedComponents = await UserCourseComponent.findAll({
+      where: {
+        UserId: userId,
+      },
+      include: [
+        {
+          model: CourseSectionComponent,
+          attributes: ["id", "number"],
+          include: [
+            {
+              model: CourseSection,
+              attributes: ["id", "CourseId"],
+              where: {
+                CourseId: courseId,
+              },
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).send(userFinishedComponents).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
 module.exports = {
   getEnrolledCoursesByUser,
   getCoursesCreatedByuser,
@@ -2559,4 +2600,5 @@ module.exports = {
   getAssignmentState,
   getCourseEnrolledUsers,
   assignTeacherToCourse,
+  getUserFinishedCourseComponents,
 };

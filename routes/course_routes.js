@@ -181,4 +181,10 @@ router.post(
   middleware.checkUserApproval,
   CourseController.assignTeacherToCourse
 );
+
+router.get(
+  "/course/user/finished-components",
+  authenticationModule.checkAuth,
+  CourseController.getUserFinishedCourseComponents
+);
 module.exports = router;
