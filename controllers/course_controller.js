@@ -824,7 +824,14 @@ async function getTestState(req, res) {
       testState = CONSTANTS.TEST_NOTSUBMITTED;
     else if (noOfUnGradedEssays) testState = CONSTANTS.TEST_UNGRADED;
     else testState = CONSTANTS.TEST_GRADED;
-    res.status(200).send({ testState: testState, grade: grade }).end();
+    res
+      .status(200)
+      .send({
+        testState: testState,
+        grade: grade,
+        isPassed: grade >= courseSectionComponent.passingGrade ? true : false,
+      })
+      .end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
@@ -879,6 +886,12 @@ async function getTestGrade(req, res) {
         CourseId: courseId,
       },
     });
+
+    const test = await CourseSectionComponent.findOne({
+      where: {
+        id: testId,
+      },
+    });
     if (!userAutoGrade)
       throw new Error(
         JSON.stringify({
@@ -900,6 +913,7 @@ async function getTestGrade(req, res) {
     res.status(200).send({
       autoGrades: autoGrade,
       essayGrades: essayGrades,
+      isPassed: autoGrade >= test.passingGrade ? true : false,
     });
   } catch (ex) {
     console.log(ex);
