@@ -256,6 +256,7 @@ async function createCourse(req, res) {
       gender,
       private,
       url,
+      nonBlocking,
     } = JSON.parse(req.body.json);
     // check that url is unique
     if (url) {
@@ -292,6 +293,7 @@ async function createCourse(req, res) {
         gender: gender,
         image: imageReq,
         private: private,
+        nonBlocking: nonBlocking,
       },
       { transaction: t }
     );
