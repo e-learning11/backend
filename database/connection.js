@@ -17,6 +17,10 @@ const sequelize = new Sequelize(
   }
 );
 module.exports.sequelize = sequelize;
+/**
+ * connectDB
+ * connects to Database server
+ */
 module.exports.connectDB = async function () {
   try {
     await sequelize.authenticate();

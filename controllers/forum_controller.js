@@ -696,7 +696,6 @@ async function postQuestionComment(req, res) {
 }
 
 /**
-/**
  * getQuestionsComments
  * @param {Request} req
  * @param {Response} res

@@ -10,9 +10,6 @@ const Question = require("../models/question");
 const Answer = require("../models/answer");
 const Prequisite = require("../models/course_prequisite");
 const UserTestGrade = require("../models/user_grades");
-const CourseURL = require("../models/course_url");
-const CourseAssignment = require("../models/course_assignment");
-const CourseEssay = require("../models/course_essay");
 const NewsPost = require("../models/news_post");
 const UserQuestion = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
@@ -191,12 +188,13 @@ async function getUserFullInfo(req, res) {
           errors: [{ message: "user not found" }],
         })
       );
+    res.status(200).send(userFullInfo).end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
 }
 /**
- *
+ *deleteUser
  * @param {Request} req
  * @param {Response} res
  */

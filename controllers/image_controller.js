@@ -8,7 +8,7 @@ const path = require("path");
  * getImage
  * @param {Request} req
  * @param {Response} res
- * stream imaghe based on the id of its owner
+ * stream image based on the id of its owner
  */
 async function getImage(req, res) {
   try {
