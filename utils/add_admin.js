@@ -1,6 +1,9 @@
 const User = require("../models/user");
 const CONSTANTS = require("./const");
 const hashModule = require("./hash");
+/**
+ * addAdmin
+ */
 module.exports = async function () {
   const admin = await User.findOne({
     where: {

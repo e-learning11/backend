@@ -1,5 +1,5 @@
 /**
- *
+ *errorHandler
  * @param {Request} req
  * @param {Response} res
  * @param {Error} error
