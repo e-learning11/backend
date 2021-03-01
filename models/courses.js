@@ -102,6 +102,11 @@ const Course = sequelize.define("Course", {
     allowNull: false,
     defaultValue: false,
   },
+  nonBlocking: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 module.exports = Course;

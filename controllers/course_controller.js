@@ -1087,9 +1087,16 @@ async function markComponentAsDone(req, res) {
         );
     }
 
+    // if course in no blocking no need to check if user has finished the content before it
     // check that user finished the last one before mark this one as complete
-
-    if (courseComponent.number == 1) {
+    const course = await Course.findOne({
+      where: {
+        id: courseId,
+      },
+    });
+    if (course.nonBlocking) {
+      userCourse.currentComponent = courseComponent.number + 1;
+    } else if (courseComponent.number == 1) {
       // if first compoent then mark as done with no checks and make user go to next component
       userCourse.currentComponent = 2;
     } else {

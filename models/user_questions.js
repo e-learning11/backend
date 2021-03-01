@@ -10,6 +10,7 @@ const UserQuestions = sequelize.define("UserQuestions", {
   title: {
     type: DataTypes.TEXT,
     allowNull: false,
+
     validate: {
       len: {
         args: [1, 500],
@@ -31,11 +32,6 @@ const UserQuestions = sequelize.define("UserQuestions", {
   tags: {
     allowNull: false,
     type: DataTypes.TEXT,
-    validate: {
-      notNull: {
-        msg: "please enter tags",
-      },
-    },
   },
   isFeatured: {
     type: DataTypes.BOOLEAN,
