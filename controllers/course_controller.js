@@ -1289,38 +1289,18 @@ async function markCourseAsComplete(req, res) {
       where: {
         id: courseId,
       },
-      attributes: [
-        "id",
-        "name",
-        "summary",
-        "description",
-        "language",
-        "date",
-        "approved",
-        "private",
-        "gender",
-        "ageMin",
-        "ageMax",
-      ],
+      attributes: ["id", "approved", "private"],
       include: [
         {
           model: CourseSection,
           include: [
             {
               model: CourseSectionComponent,
-              attributes: [
-                "number",
-                "name",
-                "videoID",
-                "type",
-                "passingGrade",
-                "id",
-                "hasFile",
-              ],
+              attributes: ["number", "id"],
               include: [
                 {
                   model: Question,
-                  attributes: ["id", "Q", "type"],
+                  attributes: ["id"],
                   include: [{ model: Answer }],
                 },
               ],
@@ -1329,20 +1309,12 @@ async function markCourseAsComplete(req, res) {
         },
         {
           model: User,
-          attributes: [
-            "id",
-            "firstName",
-            "lastName",
-            "email",
-            "phone",
-            "gender",
-            "age",
-          ],
+          attributes: ["id"],
         },
         {
           model: Course,
           as: "prequisites",
-          attributes: ["id", "name", "summary"],
+          attributes: ["id"],
         },
       ],
     });
