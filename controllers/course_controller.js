@@ -16,6 +16,7 @@ const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
 const UserCourseComponent = require("../models/user_course_component");
 const UserQuestions = require("../models/user_questions");
+const authenticationModule = require("../utils/authentication");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -533,6 +534,46 @@ async function getCourseFullInfo(req, res) {
       throw new Error(
         JSON.stringify({ errors: [{ message: "no course with this id" }] })
       );
+
+    // if course approved is false then return only to admin or teacher who created the course
+    if (!course.approved) {
+      const userId = authenticationModule.getUserIdFromRequest(req);
+
+      if (userId == -1)
+        throw new Error(
+          JSON.stringify({
+            errors: [
+              {
+                message:
+                  "this course is not approved yet and only the teacher who created it or the admin can view it",
+              },
+            ],
+          })
+        );
+      const user = await User.findOne({
+        where: {
+          id: userId,
+        },
+      });
+      const userCourse = await UserCourse.findOne({
+        where: {
+          UserId: userId,
+          CourseId: course.id,
+          type: CONSTANTS.CREATED,
+        },
+      });
+      if (!userCourse && user.type != CONSTANTS.ADMIN)
+        throw new Error(
+          JSON.stringify({
+            errors: [
+              {
+                message:
+                  "this course is not approved yet and only the teacher who created it or the admin can view it",
+              },
+            ],
+          })
+        );
+    }
     // console.log(course.get());
     let courseToSendBack = course.get();
     courseToSendBack.image = null;

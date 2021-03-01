@@ -1,6 +1,12 @@
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_KEY || "test";
-
+/**
+ * checkAuth
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Function} next
+ * check that user is authenticated by checking the token
+ */
 // used to check authentication as middleware
 function checkAuth(req, res, next) {
   const token = req.header("x-auth-token");
@@ -16,6 +22,11 @@ function checkAuth(req, res, next) {
     return res.status(400).send("Invalid Token");
   }
 }
+
+/**
+ * createToken
+ * @param {Number} userId
+ */
 // create jwt token from payload
 function createToken(userId) {
   const token = jwt.sign({ id: userId }, secretKey, {
@@ -24,7 +35,25 @@ function createToken(userId) {
   return token;
 }
 
+/**
+ * getUserIdFromRequest
+ * @param {Request} req
+ */
+function getUserIdFromRequest(req) {
+  const token = req.header("x-auth-token");
+  if (!token) {
+    return -1;
+  }
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    return decoded.id;
+  } catch (ex) {
+    return -1;
+  }
+}
 module.exports = {
   checkAuth,
   createToken,
+  getUserIdFromRequest,
 };
