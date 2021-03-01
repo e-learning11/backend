@@ -304,7 +304,17 @@ async function forgetPassword(req, res) {
     user.token = token;
     user.resetPassword = true;
     user.tokenDate = Date.now();
-    mail.sendMail(email, token);
+    const emailToSend = {
+      from: process.env.SENDING_MAIL,
+      to: email,
+      title: "Reset Password",
+      text: `Reset your password with this token:\n ${token}
+      please note that the token is valid for only 5 hours`,
+      html: `<p>Reset your password with this token:\n <b>${token}</b>
+      <p>please note that the token is valid for only <b>5</b> hours</p>`,
+      subject: "Reset Password",
+    };
+    await mail.sendMail(emailToSend);
     await user.save();
     res.status(200).send("sent email").end();
   } catch (ex) {

@@ -10,19 +10,13 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_LOGIN_PASSWORD,
   },
 });
-
-async function sendMail(email, token) {
+/**
+ * sendMail
+ * @param {Object} email
+ */
+async function sendMail(email) {
   try {
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-      from: process.env.SENDING_MAIL, // sender address
-      to: email, // list of receivers
-      subject: "Reset Password", // Subject line
-      text: `Reset your password with this token:\n ${token}
-      please note that the token is valid for only 5 hours`, // plain text body
-      html: `<p>Reset your password with this token:\n <b>${token}</b>
-      <p>please note that the token is valid for only <b>5</b> hours</p>`, // html body
-    });
+    let info = await transporter.sendMail(email);
   } catch (ex) {
     throw new Error(
       JSON.stringify({
