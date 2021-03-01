@@ -90,7 +90,7 @@ const User = sequelize.define("User", {
     },
   },
   image: {
-    type: DataTypes.BLOB("long"),
+    type: DataTypes.BLOB("medium"),
     allowNull: true,
   },
   approved: {

@@ -3,7 +3,7 @@ const sequelize = require("../database/connection").sequelize;
 
 const Course = sequelize.define("Course", {
   name: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       notNull: {
@@ -12,7 +12,7 @@ const Course = sequelize.define("Course", {
     },
   },
   summary: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       notNull: {
@@ -21,7 +21,7 @@ const Course = sequelize.define("Course", {
     },
   },
   description: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       notNull: {
@@ -30,7 +30,7 @@ const Course = sequelize.define("Course", {
     },
   },
   language: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       notNull: {
@@ -48,7 +48,7 @@ const Course = sequelize.define("Course", {
     },
   },
   image: {
-    type: DataTypes.BLOB("long"),
+    type: DataTypes.BLOB("medium"),
     allowNull: true,
   },
   approved: {

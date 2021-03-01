@@ -3,11 +3,11 @@ const sequelize = require("../database/connection").sequelize;
 
 const NewsPost = sequelize.define("NewsPost", {
   title: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   text: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   image: {

@@ -34,7 +34,7 @@ const CourseSectionComponent = sequelize.define("CourseSectionComponent", {
     },
   },
   file: {
-    type: DataTypes.BLOB("long"),
+    type: DataTypes.BLOB("medium"),
     allowNull: true,
   },
   passingGrade: {

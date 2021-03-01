@@ -3,7 +3,7 @@ const sequelize = require("../database/connection").sequelize;
 
 const CourseAssignment = sequelize.define("CourseAssignment", {
   text: {
-    type: DataTypes.TEXT("long"),
+    type: DataTypes.TEXT,
     allowNull: false,
     validate: {
       notNull: {
@@ -23,7 +23,7 @@ const CourseAssignment = sequelize.define("CourseAssignment", {
     defaultValue: false,
   },
   file: {
-    type: DataTypes.BLOB("long"),
+    type: DataTypes.BLOB("medium"),
   },
   contentType: {
     type: DataTypes.TEXT,
