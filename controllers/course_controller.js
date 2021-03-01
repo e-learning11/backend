@@ -745,11 +745,20 @@ async function autoGradeTest(req, res) {
       await userGrade.save({ transaction: t });
     }
     await t.commit();
+    const courseSectionComponent = await CourseSectionComponent.findOne({
+      where: {
+        id: testId,
+      },
+    });
     res
       .status(200)
       .send({
         results: grade,
         testState: isFinished ? CONSTANTS.TEST_GRADED : CONSTANTS.TEST_UNGRADED,
+        isPassed:
+          isFinished && grade >= courseSectionComponent.passingGrade
+            ? true
+            : false,
       })
       .end();
   } catch (ex) {
