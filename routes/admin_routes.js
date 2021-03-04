@@ -7,7 +7,7 @@ const multer = require("multer");
 const upload = multer({
   fileFilter: (req, file, next) => {
     if (!file) next(null, true);
-    if (
+    else if (
       file.mimetype == "image/png" ||
       file.mimetype == "image/jpg" ||
       file.mimetype == "image/jpeg"
