@@ -32,4 +32,5 @@ module.exports = {
   NEWS: "news",
   USER_IMAGE_OPTIONS: { width: 320, height: 320, fit: "fill" },
   COURSE_IMAGE_OPTIONS: { width: 1280, height: 720, fit: "fill" },
+  NEWS_POST_IMAGE_OPTIONS: { width: 1280, height: 720, fit: "fill" },
 };

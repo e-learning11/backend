@@ -14,6 +14,7 @@ const NewsPost = require("../models/news_post");
 const UserQuestion = require("../models/user_questions");
 const UserQuestionsReplies = require("../models/user_question_replies");
 const UserVote = require("../models/user_votes");
+const imageHelper = require("../utils/image");
 /**
  * approveUser
  * @param {Request} req
@@ -223,6 +224,10 @@ async function createNewsPost(req, res) {
     const { text, title } = req.body;
     let file = null;
     if (req.file) file = req.file.buffer;
+    file = await imageHelper.modifyImage(
+      file,
+      CONSTANTS.NEWS_POST_IMAGE_OPTIONS
+    );
     const newsPost = await NewsPost.create({
       title: title,
       text: text,
@@ -682,9 +687,14 @@ async function editNewsPost(req, res) {
         id: postId,
       },
     });
+    let file = req?.file?.buffer;
+    file = await imageHelper.modifyImage(
+      file,
+      CONSTANTS.NEWS_POST_IMAGE_OPTIONS
+    );
     newsPost.text = text || newsPost.text;
     newsPost.title = title || newsPost.title;
-    newsPost.image = req?.file?.buffer || newsPost.image;
+    newsPost.image = file || newsPost.image;
     await newsPost.save();
     newsPost.image = null;
     res.status(200).send(newsPost).end();
