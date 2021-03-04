@@ -8,6 +8,7 @@ const Course = require("../models/courses");
 const uuid = require("uuid");
 const mail = require("../utils/mail");
 const Sequelize = require("sequelize");
+const imageHelper = require("../utils/image");
 /**
  * login
  * @param {Request} req
@@ -95,6 +96,11 @@ async function signup(req, res) {
           ],
         })
       );
+    let imageFile = req.file?.buffer;
+    imageFile = await imageHelper.modifyImage(
+      imageFile,
+      CONSTANTS.USER_IMAGE_OPTIONS
+    );
     const user = await User.create({
       firstName: firstName,
       lastName: lastName,
@@ -102,7 +108,7 @@ async function signup(req, res) {
       password: hashedPassword,
       phone: phone,
       type: type,
-      image: req.file?.buffer,
+      image: imageFile,
       approved: false,
       gender: gender,
       age: age || -1,
@@ -174,6 +180,10 @@ async function editProfile(req, res) {
     let imageFile = req.file;
     if (imageFile && imageFile.buffer) imageFile = imageFile.buffer;
     else imageFile = null;
+    imageFile = await imageHelper.modifyImage(
+      imageFile,
+      CONSTANTS.USER_IMAGE_OPTIONS
+    );
     const user = await User.findOne({
       where: {
         id: userId,
