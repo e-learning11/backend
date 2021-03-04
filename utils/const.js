@@ -30,6 +30,6 @@ module.exports = {
   TEST_UNGRADED: 2,
   TEST_NOTSUBMITTED: 3,
   NEWS: "news",
-  USER_IMAGE_OPTIONS: { width: 320, height: 320 },
-  COURSE_IMAGE_OPTIONS: { width: 1280, height: 720 },
+  USER_IMAGE_OPTIONS: { width: 320, height: 320, fit: "fill" },
+  COURSE_IMAGE_OPTIONS: { width: 1280, height: 720, fit: "fill" },
 };

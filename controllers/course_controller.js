@@ -17,6 +17,7 @@ const CourseEssay = require("../models/course_essay");
 const UserCourseComponent = require("../models/user_course_component");
 const UserQuestions = require("../models/user_questions");
 const authenticationModule = require("../utils/authentication");
+const imageHelper = require("../utils/image");
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -280,7 +281,10 @@ async function createCourse(req, res) {
     if (imageReq && req.files["image"][0] && req.files["image"][0].buffer)
       imageReq = req.files["image"][0].buffer;
     else imageReq = null;
-
+    imageReq = await imageHelper.modifyImage(
+      imageReq,
+      CONSTANTS.COURSE_IMAGE_OPTIONS
+    );
     let courseObj = await Course.create(
       {
         name: name,
@@ -1913,6 +1917,11 @@ async function editCourseBasicInfo(req, res) {
         id: courseId,
       },
     });
+    let imageFile = req.file?.buffer;
+    imageFile = await imageHelper.modifyImage(
+      imageFile,
+      CONSTANTS.COURSE_IMAGE_OPTIONS
+    );
     course.name = name || course.name;
     course.summary = summary || course.summary;
     course.language = language || course.language;
@@ -1920,7 +1929,7 @@ async function editCourseBasicInfo(req, res) {
     course.gender = Number(gender) || course.gender;
     course.ageMin = Number(ageMin) || course.ageMin;
     course.ageMax = Number(ageMax) || course.ageMax;
-    course.image = req.file?.buffer ? req.file.buffer : course.image;
+    course.image = imageFile ? imageFile : course.image;
     course.nonBlocking = nonBlocking != null ? nonBlocking : course.nonBlocking;
 
     if (String(private) == "true") {
@@ -2071,12 +2080,18 @@ async function editFullCourse(req, res) {
     });
 
     // check if image changed
+    let imageFile = null;
     if (
       req.files["image"] &&
       req.files["image"][0] &&
       req.files["image"][0].buffer
     )
-      course.image = await req.files["image"][0].buffer;
+      imageFile = req.files["image"][0].buffer;
+    imageFile = await imageHelper.modifyImage(
+      imageFile,
+      CONSTANTS.COURSE_IMAGE_OPTIONS
+    );
+    course.image = imageFile ? imageFile : course.image;
     await course.save({ transaction: t });
     // remove old prequistes
     await Prequisite.destroy({

@@ -2,8 +2,22 @@ const router = require("express").Router();
 const CourseController = require("../controllers/course_controller");
 const authenticationModule = require("../utils/authentication");
 const multer = require("multer");
-const upload = multer();
 const middleware = require("../utils/middleware");
+const upload = multer({
+  fileFilter: (req, file, next) => {
+    if (!file) next(null, true);
+    else if (file.fieldname != "image") next(null, true);
+    else if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      next(null, true);
+    } else {
+      return next(new Error("Only .png, .jpg and .jpeg format allowed!"));
+    }
+  },
+});
 router.get(
   "/courses/enrolled",
   authenticationModule.checkAuth,
