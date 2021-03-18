@@ -515,16 +515,23 @@ async function getCourseFullInfo(req, res) {
           ],
         },
         {
-          model: User,
-          attributes: [
-            "id",
-            "firstName",
-            "lastName",
-            "email",
-            "phone",
-            "gender",
-            "age",
-          ],
+          model: UserCourse,
+          where: {
+            type: CONSTANTS.CREATED,
+          },
+          include: {
+            model: User,
+            attributes: [
+              "id",
+              "firstName",
+              "lastName",
+              "email",
+              "phone",
+              "gender",
+              "age",
+              "type",
+            ],
+          },
         },
         {
           model: Course,
@@ -581,11 +588,14 @@ async function getCourseFullInfo(req, res) {
     // console.log(course.get());
     let courseToSendBack = course.get();
     courseToSendBack.image = null;
-    courseToSendBack.instructor = course.Users[0];
+    console.log(course.UserCourses);
+    courseToSendBack.instructors = [];
+    for (let user of course.UserCourses)
+      courseToSendBack.instructors.push(user.User);
     //console.log(course.instructor);
     courseToSendBack.Users = null;
     delete courseToSendBack.Users;
-    courseToSendBack.instructor.UserCourse = null;
+    courseToSendBack.UserCourses = null;
     res.status(200).send(courseToSendBack).end();
   } catch (ex) {
     console.log(ex);
