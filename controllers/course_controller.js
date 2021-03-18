@@ -588,7 +588,7 @@ async function getCourseFullInfo(req, res) {
     // console.log(course.get());
     let courseToSendBack = course.get();
     courseToSendBack.image = null;
-    console.log(course.UserCourses);
+    //console.log(course.UserCourses);
     courseToSendBack.instructors = [];
     for (let user of course.UserCourses)
       courseToSendBack.instructors.push(user.User);
