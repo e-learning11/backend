@@ -1174,6 +1174,34 @@ async function markComponentAsDone(req, res) {
       where: {
         id: courseId,
       },
+      attributes: ["id", "approved", "private", "nonBlocking"],
+      include: [
+        {
+          model: CourseSection,
+          include: [
+            {
+              model: CourseSectionComponent,
+              attributes: ["number", "id"],
+              include: [
+                {
+                  model: Question,
+                  attributes: ["id"],
+                  include: [{ model: Answer }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["id"],
+        },
+        {
+          model: Course,
+          as: "prequisites",
+          attributes: ["id"],
+        },
+      ],
     });
     if (course.nonBlocking) {
       userCourse.currentComponent = courseComponent.number + 1;
@@ -1257,7 +1285,30 @@ async function markComponentAsDone(req, res) {
       userCourseSectionCompoent.isDone = true;
       await userCourseSectionCompoent.save({ transaction: t });
     }
+
     await t.commit();
+    // check if finished all component then set course as complete
+    // check that all other course compoent are done
+
+    let isDone = true;
+    for (let courseSection of course.CourseSections) {
+      for (let component of courseSection.CourseSectionComponents) {
+        // check that user finished this compoent
+        const userCourseComponent = await UserCourseComponent.findOne({
+          where: {
+            UserId: userId,
+            CourseSectionComponentId: Number(component.id),
+            isDone: true,
+          },
+        });
+        if (!userCourseComponent) isDone = false;
+      }
+    }
+    if (isDone) {
+      userCourse.type = CONSTANTS.FINISHED;
+      await userCourse.save();
+    }
+
     res.status(200).send(String(userCourse.currentComponent)).end();
   } catch (ex) {
     //console.log(ex);
