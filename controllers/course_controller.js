@@ -612,8 +612,6 @@ async function getCourseFullInfo(req, res) {
             });
 
             component.done = compStatus ? true : false;
-
-            console.log(component);
           }
         }
       }
