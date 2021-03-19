@@ -2113,6 +2113,7 @@ async function editFullCourse(req, res) {
       date,
       sections,
       nonBlocking,
+      deleted
     } = JSON.parse(req.body.json);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -2350,6 +2351,34 @@ async function editFullCourse(req, res) {
               }
             }
           }
+        }
+      }
+    }
+
+    // delete componenrt/sections/questions from course 
+    if(deleted){
+      for(let deleteItem of deleted){
+        if(deleteItem.type == CONSTANTS.COURSE_SECTION){
+          await CourseSection.destroy({
+            where:{
+              id:deleteItem.id
+            },
+            transaction:t
+          })
+        }else if(deleteItem.type == CONSTANTS.COURSE_COMPONENT){
+          await CourseSectionComponent.destroy({
+            where:{
+              id:deleteItem.id
+            },
+            transaction:t
+          })
+        }else if(deleteItem.type == CONSTANTS.COURSE_QUESTION){
+          await Question.destroy({
+            where:{
+              id:deleteItem.id
+            },
+            transaction:t
+          })
         }
       }
     }
