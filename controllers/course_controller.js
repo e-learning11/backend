@@ -490,6 +490,7 @@ async function getCourseFullInfo(req, res) {
         {
           model: CourseSection,
           order: [["id", "ASC"]],
+          separate: true,
           include: [
             {
               model: CourseSectionComponent,
@@ -505,6 +506,7 @@ async function getCourseFullInfo(req, res) {
               ],
               include: [
                 {
+                  separate: true,
                   model: Question,
                   attributes: ["id", "Q", "type"],
                   include: [{ model: Answer }],
@@ -585,8 +587,38 @@ async function getCourseFullInfo(req, res) {
           })
         );
     }
-    // console.log(course.get());
+    // add component status if user is enrolled in course
     let courseToSendBack = course.get();
+    const userId = authenticationModule.getUserIdFromRequest(req);
+    if (userId) {
+      const userCourse = await UserCourse.findOne({
+        where: {
+          type: CONSTANTS.ENROLLED,
+          CourseId: course.id,
+          UserId: userId,
+        },
+      });
+      if (userCourse) {
+        // get each comp status
+        for (let section of courseToSendBack.CourseSections) {
+          for (let component of section.CourseSectionComponents) {
+            component = component.get();
+            let compStatus = await UserCourseComponent.findOne({
+              where: {
+                UserId: userId,
+                isDone: true,
+                CourseSectionComponentId: component.id,
+              },
+            });
+
+            component.done = compStatus ? true : false;
+
+            console.log(component);
+          }
+        }
+      }
+    }
+    // console.log(course.get());
     courseToSendBack.image = null;
     //console.log(course.UserCourses);
     courseToSendBack.instructors = [];
