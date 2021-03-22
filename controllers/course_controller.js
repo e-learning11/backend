@@ -2141,6 +2141,7 @@ async function editFullCourse(req, res) {
       throw new Error(
         JSON.stringify({ errors: [{ message: "no course exist with id" }] })
       );
+    course.approved = false;
     course.name = name;
     course.gender = Number(gender);
     course.summary = summary;
