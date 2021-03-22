@@ -2292,7 +2292,7 @@ async function editFullCourse(req, res) {
               CourseSectionId: sectionId,
               file: file,
               passingGrade: component.passingGrade,
-              hasFile = component.File ? true : false
+              hasFile : component.File ? true : false
             },
             { transaction: t }
           );
