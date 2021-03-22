@@ -2280,6 +2280,7 @@ async function editFullCourse(req, res) {
           componentDB.passingGrade = component.passingGrade;
           componentDB.CourseSectionId = sectionId;
           componentDB.file = file ? file : componentDB.file;
+          componentDB.hasFile = component.File ? true : componentDB.hasFile;
           await componentDB.save({ transaction: t });
         } else {
           const componentDB = await CourseSectionComponent.create(
@@ -2291,6 +2292,7 @@ async function editFullCourse(req, res) {
               CourseSectionId: sectionId,
               file: file,
               passingGrade: component.passingGrade,
+              hasFile = component.File ? true : false
             },
             { transaction: t }
           );
