@@ -1,12 +1,7 @@
-if (process.env.NODE_ENV == "local") {
-  require("dotenv").config({
-    path: "./.env",
-  });
-} else {
-  require("dotenv").config({
-    path: "./.env1",
-  });
-}
+require("dotenv").config({
+  path: "./.env",
+});
+
 const app = require("express")();
 const http = require("http");
 var cors = require("cors");
