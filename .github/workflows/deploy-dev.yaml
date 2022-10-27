@@ -41,4 +41,4 @@ jobs:
           echo "$remote_key" > ~/.ssh/gh_actions_key
           chmod 600 ~/.ssh/gh_actions_key
           scp -i ~/.ssh/gh_actions_key -o "StrictHostKeyChecking=no" -r ${PWD}/* ${remote_user}@${remote_host}:${remote_dir}/.
-          ssh -i ~/.ssh/gh_actions_key ${remote_user}@${remote_host} "cd ${remote_dir} && npm i && pm2 restart elearning-dev"
+          ssh -i ~/.ssh/gh_actions_key ${remote_user}@${remote_host} "cd ${remote_dir} && npm i && pm2 restart elearning-backend"
