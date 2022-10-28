@@ -593,7 +593,7 @@ async function getCourseFullInfo(req, res) {
     if (userId) {
       const userCourse = await UserCourse.findOne({
         where: {
-          type: CONSTANTS.ENROLLED,
+          [Op.or]: [{ type: CONSTANTS.ENROLLED }, { type: CONSTANTS.FINISHED }],
           CourseId: course.id,
           UserId: userId,
         },
@@ -1374,7 +1374,7 @@ async function getCompoentStatus(req, res) {
       where: {
         CourseId: courseId,
         UserId: userId,
-        type: CONSTANTS.ENROLLED,
+        [Op.or]: [{ type: CONSTANTS.ENROLLED }, { type: CONSTANTS.FINISHED }],
       },
     });
     if (!userCourse)
@@ -2155,10 +2155,10 @@ async function editFullCourse(req, res) {
     // check if url exist before
     const courseURL = url
       ? await CourseURL.findOne({
-          where: {
-            url: url,
-          },
-        })
+        where: {
+          url: url,
+        },
+      })
       : null;
     if (courseURL && courseURL.CourseId != Number(courseId))
       throw new Error(
@@ -2292,7 +2292,7 @@ async function editFullCourse(req, res) {
               CourseSectionId: sectionId,
               file: file,
               passingGrade: component.passingGrade,
-              hasFile : component.File ? true : false
+              hasFile: component.File ? true : false
             },
             { transaction: t }
           );
@@ -2359,28 +2359,28 @@ async function editFullCourse(req, res) {
     }
 
     // delete componenrt/sections/questions from course 
-    if(deleted){
-      for(let deleteItem of deleted){
-        if(deleteItem.type == CONSTANTS.COURSE_SECTION){
+    if (deleted) {
+      for (let deleteItem of deleted) {
+        if (deleteItem.type == CONSTANTS.COURSE_SECTION) {
           await CourseSection.destroy({
-            where:{
-              id:deleteItem.id
+            where: {
+              id: deleteItem.id
             },
-            transaction:t
+            transaction: t
           })
-        }else if(deleteItem.type == CONSTANTS.COURSE_COMPONENT){
+        } else if (deleteItem.type == CONSTANTS.COURSE_COMPONENT) {
           await CourseSectionComponent.destroy({
-            where:{
-              id:deleteItem.id
+            where: {
+              id: deleteItem.id
             },
-            transaction:t
+            transaction: t
           })
-        }else if(deleteItem.type == CONSTANTS.COURSE_QUESTION){
+        } else if (deleteItem.type == CONSTANTS.COURSE_QUESTION) {
           await Question.destroy({
-            where:{
-              id:deleteItem.id
+            where: {
+              id: deleteItem.id
             },
-            transaction:t
+            transaction: t
           })
         }
       }
