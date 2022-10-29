@@ -202,6 +202,7 @@ async function getRandomCourses(req, res) {
         private: false,
         approved: true,
       },
+      order: sequelize.literal('rand()')
     });
     const coursesToSendBack = [];
     for (let course of courses) {
