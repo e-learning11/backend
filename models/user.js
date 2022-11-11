@@ -133,6 +133,15 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: false,
   },
+  confirmationCode: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  activated: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   token: {
     type: DataTypes.TEXT,
     allowNull: true,
