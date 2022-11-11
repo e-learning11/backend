@@ -31,8 +31,18 @@ async function login(req, res) {
       );
 
     if (await hashModule.compareStringWithHash(password, user.password)) {
+      // Check if the the accounted is activated
+      if (user.activated === false) {
+        res
+          .status(400)
+          .send(
+            "Pending Verification, Please verify your email by clicking the link sent to you"
+          )
+          .end();
+        return;
+      }
       // ceck if teacher and not approved dont send any token
-      if (user.type == CONSTANTS.TEACHER && !user.approved) {
+      else if (user.type == CONSTANTS.TEACHER && !user.approved) {
         res
           .status(400)
           .send(
