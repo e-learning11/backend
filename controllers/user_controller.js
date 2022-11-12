@@ -112,19 +112,19 @@ async function signup(req, res) {
       CONSTANTS.USER_IMAGE_OPTIONS
     );
 
-    // Create the link that is sent in the email
-    const link = "TestLink.com";
     // Create token Send Confirmation mail
     const confirmationCode = String(uuid.v4());
+    // Create the link that is sent in the email
+    const link = `${process.env.FRONT_END_DOMAIN}/confirmemail/${confirmationCode}`;
     const emailToSend = {
       from: process.env.SENDING_MAIL,
       to: email,
-      title: "Shabaab Alaaksa User Confirmation",
-      text: `Please click on this link to verify your email:\n
-      الرجاء الضغط على اللينك لتأكيد البريد الالكترونى \n
-      ${link}`,
-      html: `<p>Please click on this link to verify your email:\n <p/> <p>الرجاء الضغط على اللينك لتأكيد البريد الالكترونى<p/> <a>${link}</a>`,
-      subject: "Shabaab Alaaksa User Confirmation",
+      title: "Shabaab Alaaksa Email Confirmation",
+      html: `<h1>Email Confirmation - تأكيد البريد الالكترونى</h1>
+      <h2>Hello ${firstName}</h2>
+      <p>Please click on the link to verify your email - الرجاء الضغط على اللينك لتأكيد البريد الالكترونى <p/>  
+      <a href="${link}">Click here - اضغط هنا</a>`,
+      subject: "Shabaab Alaaksa Email Confirmation",
     };
     await mail.sendMail(emailToSend);
 
