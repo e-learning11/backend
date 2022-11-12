@@ -111,6 +111,24 @@ async function signup(req, res) {
       imageFile,
       CONSTANTS.USER_IMAGE_OPTIONS
     );
+
+    // Create the link that is sent in the email
+    const link = "TestLink.com";
+    // Create token Send Confirmation mail
+    const confirmationCode = String(uuid.v4());
+    const emailToSend = {
+      from: process.env.SENDING_MAIL,
+      to: email,
+      title: "Shabaab Alaaksa User Confirmation",
+      text: `Please click on this link to verify your email:\n
+      الرجاء الضغط على اللينك لتأكيد البريد الالكترونى \n
+      ${link}`,
+      html: `<p>Please click on this link to verify your email:\n <p/> <p>الرجاء الضغط على اللينك لتأكيد البريد الالكترونى<p/> <a>${link}</a>`,
+      subject: "Shabaab Alaaksa User Confirmation",
+    };
+    await mail.sendMail(emailToSend);
+
+    // Create the user in the database
     const user = await User.create({
       firstName: firstName,
       lastName: lastName,
@@ -122,14 +140,12 @@ async function signup(req, res) {
       approved: false,
       gender: gender,
       age: age || -1,
+      confirmationCode: confirmationCode,
+      activated: false
     });
-    // if teacher then dont send any token
-    if (type == CONSTANTS.TEACHER) {
-      res.status(204).end();
-      return;
-    }
-    const token = authenticationModule.createToken(user.id);
-    res.status(200).send(token).end();
+
+    // Send response
+    res.status(200).send("Verify email").end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
