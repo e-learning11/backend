@@ -36,7 +36,7 @@ async function login(req, res) {
         res
           .status(400)
           .send(
-            "Pending Verification, Please verify your email by clicking the link sent to you"
+            "Not Verified"
           )
           .end();
         return;
@@ -46,7 +46,7 @@ async function login(req, res) {
         res
           .status(400)
           .send(
-            "Your account is not approved yet by the Admin, please wait till approval and try again later."
+            "Not Approved"
           )
           .end();
         return;
