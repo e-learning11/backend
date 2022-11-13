@@ -44,4 +44,7 @@ router.get("/teachers", userController.getAllTeachers);
 
 router.post("/user/forget-password", userController.forgetPassword);
 router.post("/user/reset-password", userController.resetPassword);
+
+router.post("/user/confirm-email", userController.confirmEmail);
+
 module.exports = router;

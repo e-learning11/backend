@@ -536,6 +536,33 @@ async function getAllTeachers(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+
+/**
+ * confirmEmail
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function confirmEmail(req, res) {
+  try {
+    const { confirmationCode } = req.body;
+    const user = await User.findOne({
+      where: { confirmationCode: confirmationCode },
+    });
+    if (!user)
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: "no user with this email" }],
+        })
+      );
+    user.activated = true;
+    await user.save();
+    res.status(200).send("Email Confrimed").end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
 module.exports = {
   login,
   signup,
@@ -547,4 +574,5 @@ module.exports = {
   resetPassword,
   resetPassword,
   getAllTeachers,
+  confirmEmail,
 };
