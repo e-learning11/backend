@@ -15,6 +15,7 @@ const imageRouter = require("./routes/image_routes");
 const forumRouter = require("./routes/forum_routes");
 const adminRouter = require("./routes/admin_routes");
 const newsRouter = require("./routes/news_routes");
+const statsRouter = require("./routes/stats_routes");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -24,6 +25,7 @@ app.use("/api", imageRouter);
 app.use("/api", forumRouter);
 app.use("/api", adminRouter);
 app.use("/api", newsRouter);
+app.use("/api", statsRouter);
 require("./utils/add_admin")();
 
 server.listen(process.env.PORT || 3000, () => {
