@@ -702,6 +702,44 @@ async function editNewsPost(req, res) {
     errorHandler(req, res, ex);
   }
 }
+
+
+/**
+ * getCertificates
+ * @param {Request} req
+ * @param {Response} res
+ */
+ async function getCertificates(req, res) {
+  try {
+    const count = await UserCourse.count({
+      where: { type: CONSTANTS.FINISHED },
+    });
+
+    const certificates = await UserCourse.findAll({
+      where: { type: CONSTANTS.FINISHED },
+      include: [
+        {
+          model: User,
+          attributes: [
+            'firstName',
+            'lastName',
+            'email',
+          ],
+          include: [{ model: Course, attributes: ['name'] }],
+        },
+      ],
+    });
+
+    const stats = {
+      count,
+      certificates,
+    };
+    res.status(200).send(stats).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
 module.exports = {
   approveCourse,
   approveUser,
@@ -719,4 +757,5 @@ module.exports = {
   rejectCourseDeletion,
   rejectCoursecreation,
   editNewsPost,
+  getCertificates
 };

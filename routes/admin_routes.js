@@ -115,4 +115,10 @@ router.delete(
   middleware.checkUserAdmin,
   adminController.rejectCourseDeletion
 );
+router.get(
+  "/admin/Allcertificates",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.getCertificates
+);
 module.exports = router;
