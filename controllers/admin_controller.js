@@ -268,59 +268,67 @@ async function getAllUsers(req, res) {
   try {
     const limit = req.query.limit;
     const offset = req.query.offset;
-    if (!offset)
-      throw new Error(
-        JSON.stringify({
-          errors: [{ message: 'please add offset in query parameter' }],
-        }),
-      );
-    if (!limit)
-      throw new Error(
-        JSON.stringify({
-          errors: [{ message: 'please add limit in query parameter' }],
-        }),
-      );
-    const where = {};
-    const order = [];
-    let sortOrder = 'DESC';
-    if (req.query.userId) where.id = Number(req.query.userId);
-    if (
-      req.query.type &&
-      [CONSTANTS.ADMIN, CONSTANTS.TEACHER, CONSTANTS.STUDENT].includes(
-        req.query.type,
+
+    if (!offset || !limit) {
+      const users = await User.findAll({
+        where: {
+          type: {
+            [Sequelize.Op.not]: CONSTANTS.ADMIN,
+          },
+        },
+        attributes: [
+          'email',
+          'firstName',
+          'lastName',
+          'age',
+          'gender',
+          'type',
+          'phone',
+          'activated',
+        ],
+      });
+      res.status(200).send(users).end();
+    } else {
+      const where = {};
+      const order = [];
+      let sortOrder = 'DESC';
+      if (req.query.userId) where.id = Number(req.query.userId);
+      if (
+        req.query.type &&
+        [CONSTANTS.ADMIN, CONSTANTS.TEACHER, CONSTANTS.STUDENT].includes(
+          req.query.type,
+        )
       )
-    )
-      where.type = req.query.type;
-    if (req.query.sortOrder && ['ASC', 'DESC'].includes(req.query.sortOrder))
-      sortOrder = req.query.sortOrder;
-    if (req.query.sort && ['createdAt', 'age'].includes(req.query.sort))
-      order.push([req.query.sort, sortOrder]);
-    if (req.query.age) where.age = Number(req.query.age);
-    if (req.query.gender) where.gender = Number(req.query.gender);
-    if (req.query.email) where.email = req.query.email;
-    if (req.query.firstName) where.firstName = req.query.firstName;
-    if (req.query.lastName) where.lastName = req.query.lastName;
-    if (req.query.approved)
-      where.approved = req.query.approved == 'true' ? true : false;
-    const users = await User.findAll({
-      where: where,
-      limit: Number(limit),
-      offset: Number(offset),
-      order: order,
-      attributes: [
-        'id',
-        'email',
-        'firstName',
-        'lastName',
-        'age',
-        'gender',
-        'type',
-        'phone',
-        'createdAt',
-        'approved',
-      ],
-    });
-    res.status(200).send(users).end();
+        where.type = req.query.type;
+      if (req.query.sortOrder && ['ASC', 'DESC'].includes(req.query.sortOrder))
+        sortOrder = req.query.sortOrder;
+      if (req.query.sort && ['createdAt', 'age'].includes(req.query.sort))
+        order.push([req.query.sort, sortOrder]);
+      if (req.query.age) where.age = Number(req.query.age);
+      if (req.query.gender) where.gender = Number(req.query.gender);
+      if (req.query.email) where.email = req.query.email;
+      if (req.query.firstName) where.firstName = req.query.firstName;
+      if (req.query.lastName) where.lastName = req.query.lastName;
+      if (req.query.approved)
+        where.approved = req.query.approved == 'true' ? true : false;
+      const users = await User.findAll({
+        where: where,
+        limit: Number(limit),
+        offset: Number(offset),
+        order: order,
+        attributes: [
+          'email',
+          'firstName',
+          'lastName',
+          'age',
+          'gender',
+          'type',
+          'phone',
+          'activated',
+        ],
+      });
+      res.status(200).send(users).end();
+    }
   } catch (ex) {
     errorHandler(req, res, ex);
   }
