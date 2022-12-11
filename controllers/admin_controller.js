@@ -273,7 +273,7 @@ async function getAllUsers(req, res) {
       const users = await User.findAll({
         where: {
           type: {
-            [Sequelize.Op.not]: CONSTANTS.ADMIN,
+            [sequelize.Op.not]: CONSTANTS.ADMIN,
           },
         },
         attributes: [
