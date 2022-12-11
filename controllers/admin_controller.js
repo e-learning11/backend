@@ -1,4 +1,5 @@
 const sequelize = require('../database/connection').sequelize;
+const { Op } = require("sequelize");
 const User = require('../models/user');
 const Course = require('../models/courses');
 const CourseSection = require('../models/course_section');
@@ -273,7 +274,7 @@ async function getAllUsers(req, res) {
       const users = await User.findAll({
         where: {
           type: {
-            [sequelize.Op.not]: CONSTANTS.ADMIN,
+            [Op.ne]: CONSTANTS.ADMIN,
           },
         },
         attributes: [
