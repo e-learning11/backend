@@ -1,5 +1,5 @@
 const sequelize = require('../database/connection').sequelize;
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
 const User = require('../models/user');
 const Course = require('../models/courses');
 const CourseSection = require('../models/course_section');
@@ -278,6 +278,7 @@ async function getAllUsers(req, res) {
           },
         },
         attributes: [
+          'id',
           'email',
           'firstName',
           'lastName',
@@ -318,6 +319,7 @@ async function getAllUsers(req, res) {
         offset: Number(offset),
         order: order,
         attributes: [
+          'id',
           'email',
           'firstName',
           'lastName',
