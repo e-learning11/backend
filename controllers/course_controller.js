@@ -16,6 +16,7 @@ const CourseAssignment = require("../models/course_assignment");
 const CourseEssay = require("../models/course_essay");
 const UserCourseComponent = require("../models/user_course_component");
 const UserQuestions = require("../models/user_questions");
+const CourseCategory = require("../models/course_category");
 const authenticationModule = require("../utils/authentication");
 const imageHelper = require("../utils/image");
 /**
@@ -1091,6 +1092,22 @@ async function getAllCourses(req, res) {
       });
     }
     res.send(coursesToSendBack).end();
+  } catch (ex) {
+    console.log(ex);
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * getAllCourseCategories
+ * @param {Request} req
+ * @param {Response} res
+ * get all courses categories
+ */
+async function getAllCourseCategories(req, res) {
+  try {
+    const CourseCategories = await CourseCategory.findAll();
+    res.send(CourseCategories).end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
@@ -2734,6 +2751,7 @@ module.exports = {
   enrollUserInCourse,
   autoGradeTest,
   getAllCourses,
+  getAllCourseCategories,
   markComponentAsDone,
   markCourseAsComplete,
   getFinishedCoursesByUser,

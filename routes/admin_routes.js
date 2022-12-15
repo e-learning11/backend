@@ -51,6 +51,12 @@ router.post(
   upload.single("image"),
   adminController.createNewsPost
 );
+router.post(
+  "/admin/category",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.createCourseCategory
+);
 
 router.put(
   "/admin/post",
@@ -64,6 +70,12 @@ router.delete(
   authenticationModule.checkAuth,
   middleware.checkUserAdmin,
   adminController.deleteNewsPost
+);
+router.delete(
+  "/admin/category",
+  authenticationModule.checkAuth,
+  middleware.checkUserAdmin,
+  adminController.deleteCourseCategory
 );
 
 router.get(

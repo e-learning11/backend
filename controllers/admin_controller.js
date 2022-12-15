@@ -15,6 +15,7 @@ const NewsPost = require('../models/news_post');
 const UserQuestion = require('../models/user_questions');
 const UserQuestionsReplies = require('../models/user_question_replies');
 const UserVote = require('../models/user_votes');
+const CourseCategory = require('../models/course_category');
 const imageHelper = require('../utils/image');
 /**
  * approveUser
@@ -243,6 +244,30 @@ async function createNewsPost(req, res) {
 }
 
 /**
+ * createCourseCategory
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function createCourseCategory(req, res) {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: 'please add name in the body' }],
+        }),
+      );
+    }
+    const courseCategory = await CourseCategory.create({
+      name: name,
+    });
+    res.status(200).send(courseCategory).end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
  * deleteNewsPost
  * @param {Request} req
  * @param {Response} res
@@ -253,6 +278,30 @@ async function deleteNewsPost(req, res) {
     const { postId } = req.body;
     await NewsPost.destroy({
       where: { id: postId, UserId: userId },
+    });
+    res.status(200).send('deleted').end();
+  } catch (ex) {
+    errorHandler(req, res, ex);
+  }
+}
+
+/**
+ * deleteCourseCategory
+ * @param {Request} req
+ * @param {Response} res
+ */
+async function deleteCourseCategory(req, res) {
+  try {
+    const { categoryID } = req.body;
+    if (!categoryID) {
+      throw new Error(
+        JSON.stringify({
+          errors: [{ message: 'please add categoryID in the body' }],
+        }),
+      );
+    }
+    await CourseCategory.destroy({
+      where: { id: categoryID },
     });
     res.status(200).send('deleted').end();
   } catch (ex) {
@@ -760,4 +809,6 @@ module.exports = {
   rejectCoursecreation,
   editNewsPost,
   getCertificates,
+  deleteCourseCategory,
+  createCourseCategory
 };
