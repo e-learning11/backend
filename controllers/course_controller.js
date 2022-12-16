@@ -53,6 +53,11 @@ async function getEnrolledCoursesByUser(req, res) {
             type: CONSTANTS.ENROLLED,
           },
         },
+        {
+          model: CourseCategory,
+          attributes: ['id', 'name'],
+          order: [['name', 'ASC']],
+        },
       ],
     });
     const coursesToSendBack = [];
@@ -167,6 +172,11 @@ async function getCoursesCreatedByuser(req, res) {
             type: CONSTANTS.CREATED,
           },
         },
+        {
+          model: CourseCategory,
+          attributes: ['id', 'name'],
+          order: [['name', 'ASC']],
+        },
       ],
     });
     const coursesToSendBack = [];
@@ -205,6 +215,13 @@ async function getRandomCourses(req, res) {
         approved: true,
       },
       order: sequelize.literal('rand()'),
+      include: [
+        {
+          model: CourseCategory,
+          attributes: ['id', 'name'],
+          order: [['name', 'ASC']],
+        },
+      ],
     });
     const coursesToSendBack = [];
     for (let course of courses) {
@@ -218,6 +235,7 @@ async function getRandomCourses(req, res) {
         ageMin: course.ageMin,
         ageMax: course.ageMax,
         private: course.private,
+        CourseCategories: course.CourseCategories
       });
     }
     res.status(200).send(coursesToSendBack).end();
