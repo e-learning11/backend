@@ -17,6 +17,6 @@ module.exports = function (req, res, error) {
     res.status(400).send(errorMessage).end();
   } catch (ex) {
     console.log(ex);
-    res.status(400).send("error has occured").end();
+    res.status(400).send(error).end();
   }
 };

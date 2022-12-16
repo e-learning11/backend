@@ -557,8 +557,6 @@ async function getCourseFullInfo(req, res) {
         {
           model: CourseCategory,
           as: "categories",
-          attributes: ["id", "name"],
-          order: [["name", "ASC"]],
         },
       ],
     });
