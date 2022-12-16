@@ -17,6 +17,7 @@ const CourseEssay = require("../models/course_essay");
 const UserCourseComponent = require("../models/user_course_component");
 const UserQuestions = require("../models/user_questions");
 const CourseCategory = require("../models/course_category");
+const CategoryOfCourse = require('../models/category_of_course');
 const authenticationModule = require("../utils/authentication");
 const imageHelper = require("../utils/image");
 /**
@@ -261,6 +262,7 @@ async function createCourse(req, res) {
       private,
       url,
       nonBlocking,
+      categories
     } = JSON.parse(req.body.json);
     // check that url is unique
     if (url) {
@@ -319,6 +321,15 @@ async function createCourse(req, res) {
         {
           CourseId: courseObj.id,
           prequisiteId: Number(prequisiteId),
+        },
+        { transaction: t }
+      );
+    }
+    for (let categoryID of categories) {
+      await CategoryOfCourse.create(
+        {
+          CourseId: courseObj.id,
+          CourseCategoryId: Number(categoryID),
         },
         { transaction: t }
       );
@@ -542,6 +553,12 @@ async function getCourseFullInfo(req, res) {
           as: "prequisites",
           attributes: ["id", "name", "summary"],
           order: [["id", "ASC"]],
+        },
+        {
+          model: CourseCategory,
+          as: "categories",
+          attributes: ["id", "name"],
+          order: [["name", "ASC"]],
         },
       ],
     });
@@ -1045,6 +1062,7 @@ async function getAllCourses(req, res) {
       private: false,
       approved: true,
     };
+    const categoryWhere = {};
     const order = [];
     let sortOrder = "DESC";
     if (req.query.language) where.language = req.query.language;
@@ -1052,6 +1070,7 @@ async function getAllCourses(req, res) {
     if (req.query.date) where.date = req.query.date;
     if (req.query.gender) where.gender = Number(req.query.gender);
     if (req.query.courseId) where.id = Number(req.query.courseId);
+    if (req.query.categoryID) categoryWhere.id = Number(req.query.categoryID);
     if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
       sortOrder = req.query.sortOrder;
     if (
@@ -1075,6 +1094,13 @@ async function getAllCourses(req, res) {
         {
           model: User,
         },
+        {
+          model: CourseCategory,
+          as: "categories",
+          attributes: ["id", "name"],
+          order: [["name", "ASC"]],
+          where: categoryWhere,
+        },
       ],
     });
     const coursesToSendBack = [];
@@ -1089,6 +1115,7 @@ async function getAllCourses(req, res) {
           lastName: course.Users[0].lastName,
           id: course.Users[0].id,
         },
+        categories: course.categories
       });
     }
     res.send(coursesToSendBack).end();
@@ -2131,7 +2158,8 @@ async function editFullCourse(req, res) {
       date,
       sections,
       nonBlocking,
-      deleted
+      deleted,
+      categories
     } = JSON.parse(req.body.json);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -2217,6 +2245,23 @@ async function editFullCourse(req, res) {
         {
           CourseId: course.id,
           prequisiteId: Number(prequisiteId),
+        },
+        { transaction: t }
+      );
+    }
+    // remove old categories
+    await CategoryOfCourse.destroy({
+      where: {
+        CourseId: course.id,
+      },
+      transaction: t,
+    });
+    // edit prequeistes
+    for (let categoryID of categories) {
+      await CategoryOfCourse.create(
+        {
+          CourseId: course.id,
+          CourseCategoryId: Number(categoryID),
         },
         { transaction: t }
       );
