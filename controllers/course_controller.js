@@ -72,6 +72,7 @@ async function getEnrolledCoursesByUser(req, res) {
         ageMin: course.ageMin,
         ageMax: course.ageMax,
         private: course.private,
+        CourseCategories: course.CourseCategories
       });
     }
     res.status(200).send(coursesToSendBack).end();
@@ -191,6 +192,7 @@ async function getCoursesCreatedByuser(req, res) {
         ageMin: course.ageMin,
         ageMax: course.ageMax,
         private: course.private,
+        CourseCategories: course.CourseCategories
       });
     }
     res.status(200).send(coursesToSendBack).end();
