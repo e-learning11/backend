@@ -204,12 +204,23 @@ async function getUserFullInfo(req, res) {
 async function deleteUser(req, res) {
   try {
     const userId = Number(req.query.userId);
+    const coursesCreated = await UserCourse.findAll({
+      where: {
+        UserId: userId,
+        type: CONSTANTS.CREATED,
+      },
+    });
     await User.destroy({
       where: {
         id: userId,
       },
     });
-
+    for (let course of coursesCreated)
+      await Course.destroy({
+        where: {
+          id: course.CourseId,
+        },
+      });
     res.status(200).send('deleted user').end();
   } catch (ex) {
     errorHandler(req, res, ex);

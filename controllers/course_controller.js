@@ -1098,6 +1098,7 @@ async function getAllCourses(req, res) {
           attributes: ["id", "name"],
           order: [["name", "ASC"]],
           where: categoryWhere,
+          required: false
         },
       ],
     });
@@ -1113,7 +1114,7 @@ async function getAllCourses(req, res) {
           lastName: course.Users[0].lastName,
           id: course.Users[0].id,
         },
-        categories: course.categories
+        CourseCategories: course.CourseCategories ? CourseCategories : []
       });
     }
     res.send(coursesToSendBack).end();
