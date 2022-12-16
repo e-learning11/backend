@@ -1,25 +1,25 @@
-const sequelize = require("../database/connection").sequelize;
-const { Op } = require("sequelize");
-const User = require("../models/user");
-const Course = require("../models/courses");
-const CourseSection = require("../models/course_section");
-const CourseSectionComponent = require("../models/course_section_component");
-const UserCourse = require("../models/user_course");
-const errorHandler = require("../utils/error");
-const CONSTANTS = require("../utils/const");
-const Question = require("../models/question");
-const Answer = require("../models/answer");
-const Prequisite = require("../models/course_prequisite");
-const UserTestGrade = require("../models/user_grades");
-const CourseURL = require("../models/course_url");
-const CourseAssignment = require("../models/course_assignment");
-const CourseEssay = require("../models/course_essay");
-const UserCourseComponent = require("../models/user_course_component");
-const UserQuestions = require("../models/user_questions");
-const CourseCategory = require("../models/course_category");
+const sequelize = require('../database/connection').sequelize;
+const { Op } = require('sequelize');
+const User = require('../models/user');
+const Course = require('../models/courses');
+const CourseSection = require('../models/course_section');
+const CourseSectionComponent = require('../models/course_section_component');
+const UserCourse = require('../models/user_course');
+const errorHandler = require('../utils/error');
+const CONSTANTS = require('../utils/const');
+const Question = require('../models/question');
+const Answer = require('../models/answer');
+const Prequisite = require('../models/course_prequisite');
+const UserTestGrade = require('../models/user_grades');
+const CourseURL = require('../models/course_url');
+const CourseAssignment = require('../models/course_assignment');
+const CourseEssay = require('../models/course_essay');
+const UserCourseComponent = require('../models/user_course_component');
+const UserQuestions = require('../models/user_questions');
+const CourseCategory = require('../models/course_category');
 const CategoryOfCourse = require('../models/category_of_course');
-const authenticationModule = require("../utils/authentication");
-const imageHelper = require("../utils/image");
+const authenticationModule = require('../utils/authentication');
+const imageHelper = require('../utils/image');
 /**
  * getEnrolledCoursesByUser
  * @param {Request} req
@@ -33,14 +33,14 @@ async function getEnrolledCoursesByUser(req, res) {
     if (!limit)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add limit in query parameter" }],
-        })
+          errors: [{ message: 'please add limit in query parameter' }],
+        }),
       );
     if (!offset)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add offset in query parameter" }],
-        })
+          errors: [{ message: 'please add offset in query parameter' }],
+        }),
       );
     const userCourses = await Course.findAll({
       limit: Number(limit),
@@ -89,14 +89,14 @@ async function getFinishedCoursesByUser(req, res) {
     if (!limit)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add limit in query parameter" }],
-        })
+          errors: [{ message: 'please add limit in query parameter' }],
+        }),
       );
     if (!offset)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add offset in query parameter" }],
-        })
+          errors: [{ message: 'please add offset in query parameter' }],
+        }),
       );
     const userCourses = await Course.findAll({
       limit: Number(limit),
@@ -145,16 +145,16 @@ async function getCoursesCreatedByuser(req, res) {
     if (!limit)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add limit in query parameter" }],
-        })
+          errors: [{ message: 'please add limit in query parameter' }],
+        }),
       );
     if (!offset)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add offset in query parameter" }],
-        })
+          errors: [{ message: 'please add offset in query parameter' }],
+        }),
       );
-    if (approved) where.approved = approved == "true" ? true : false;
+    if (approved) where.approved = approved == 'true' ? true : false;
     const userCourses = await Course.findAll({
       limit: Number(limit),
       offset: Number(offset),
@@ -204,7 +204,7 @@ async function getRandomCourses(req, res) {
         private: false,
         approved: true,
       },
-      order: sequelize.literal('rand()')
+      order: sequelize.literal('rand()'),
     });
     const coursesToSendBack = [];
     for (let course of courses) {
@@ -245,8 +245,8 @@ async function createCourse(req, res) {
     if (user.type != CONSTANTS.TEACHER && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "not a teacher" }],
-        })
+          errors: [{ message: 'not a teacher' }],
+        }),
       );
 
     const {
@@ -262,7 +262,7 @@ async function createCourse(req, res) {
       private,
       url,
       nonBlocking,
-      CourseCategories
+      CourseCategories,
     } = JSON.parse(req.body.json);
     // check that url is unique
     if (url) {
@@ -274,20 +274,20 @@ async function createCourse(req, res) {
       if (urlCourse) {
         throw new Error(
           JSON.stringify({
-            errors: [{ message: "this url already exists please try another" }],
-          })
+            errors: [{ message: 'this url already exists please try another' }],
+          }),
         );
       }
     }
 
-    let imageReq = req.files["image"];
+    let imageReq = req.files['image'];
     //console.log(imageReq);
-    if (imageReq && req.files["image"][0] && req.files["image"][0].buffer)
-      imageReq = req.files["image"][0].buffer;
+    if (imageReq && req.files['image'][0] && req.files['image'][0].buffer)
+      imageReq = req.files['image'][0].buffer;
     else imageReq = null;
     imageReq = await imageHelper.modifyImage(
       imageReq,
-      CONSTANTS.COURSE_IMAGE_OPTIONS
+      CONSTANTS.COURSE_IMAGE_OPTIONS,
     );
     let courseObj = await Course.create(
       {
@@ -304,7 +304,7 @@ async function createCourse(req, res) {
         private: private,
         nonBlocking: nonBlocking,
       },
-      { transaction: t }
+      { transaction: t },
     );
     if (url)
       await CourseURL.create(
@@ -314,7 +314,7 @@ async function createCourse(req, res) {
         },
         {
           transaction: t,
-        }
+        },
       );
     for (let prequisiteId of prerequisites) {
       await Prequisite.create(
@@ -322,7 +322,7 @@ async function createCourse(req, res) {
           CourseId: courseObj.id,
           prequisiteId: Number(prequisiteId),
         },
-        { transaction: t }
+        { transaction: t },
       );
     }
     for (let categoryID of CourseCategories) {
@@ -331,7 +331,7 @@ async function createCourse(req, res) {
           CourseId: courseObj.id,
           CourseCategoryId: Number(categoryID),
         },
-        { transaction: t }
+        { transaction: t },
       );
     }
     await UserCourse.create(
@@ -340,7 +340,7 @@ async function createCourse(req, res) {
         UserId: userId,
         type: CONSTANTS.CREATED,
       },
-      { transaction: t }
+      { transaction: t },
     );
     let videoFileIndex = 0;
     let assignmentFileIndex = 0;
@@ -352,23 +352,23 @@ async function createCourse(req, res) {
           end: section.end,
           CourseId: courseObj.id,
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       for (let component of section.components) {
         let file = null;
-        let contentType = "";
+        let contentType = '';
         if (
           (!component.File && component.type == CONSTANTS.ASSIGNMENT) ||
           (component.type == CONSTANTS.ASSIGNMENT &&
-            !req.files["assignmentFile"][assignmentFileIndex])
+            !req.files['assignmentFile'][assignmentFileIndex])
         ) {
           throw new Error(
             JSON.stringify({
               errors: [
-                { message: "every assignment must have a file attached to it" },
+                { message: 'every assignment must have a file attached to it' },
               ],
-            })
+            }),
           );
         }
         if (
@@ -377,13 +377,13 @@ async function createCourse(req, res) {
             component.type == CONSTANTS.ASSIGNMENT)
         ) {
           if (component.type == CONSTANTS.VIDEO) {
-            file = req.files["vidoeFile"][videoFileIndex].buffer;
-            contentType = req.files["vidoeFile"][videoFileIndex].mimetype;
+            file = req.files['vidoeFile'][videoFileIndex].buffer;
+            contentType = req.files['vidoeFile'][videoFileIndex].mimetype;
             videoFileIndex++;
           } else {
-            file = req.files["assignmentFile"][assignmentFileIndex].buffer;
+            file = req.files['assignmentFile'][assignmentFileIndex].buffer;
             contentType =
-              req.files["assignmentFile"][assignmentFileIndex].mimetype;
+              req.files['assignmentFile'][assignmentFileIndex].mimetype;
 
             assignmentFileIndex++;
           }
@@ -401,7 +401,7 @@ async function createCourse(req, res) {
             contentType: contentType,
             description: component.description,
           },
-          { transaction: t }
+          { transaction: t },
         );
         if (component.test) {
           for (let question of component.test) {
@@ -419,7 +419,7 @@ async function createCourse(req, res) {
                 type: question.type,
                 correctAnswer: correctAnswer,
               },
-              { transaction: t }
+              { transaction: t },
             );
             if (question.A) {
               for (let answer of question.A) {
@@ -428,7 +428,7 @@ async function createCourse(req, res) {
                     A: answer,
                     QuestionId: questionObj.id,
                   },
-                  { transaction: t }
+                  { transaction: t },
                 );
               }
             }
@@ -467,7 +467,7 @@ async function getCourseFullInfo(req, res) {
       });
       if (!courseFromURL)
         throw new Error(
-          JSON.stringify({ errors: [{ message: "no course with this url" }] })
+          JSON.stringify({ errors: [{ message: 'no course with this url' }] }),
         );
       where.id = courseFromURL.CourseId;
     } else {
@@ -476,54 +476,54 @@ async function getCourseFullInfo(req, res) {
           errors: [
             {
               message:
-                "please check that you specified correct query parameters",
+                'please check that you specified correct query parameters',
             },
           ],
-        })
+        }),
       );
     }
 
     const course = await Course.findOne({
       where: where,
       attributes: [
-        "id",
-        "name",
-        "summary",
-        "description",
-        "language",
-        "date",
-        "approved",
-        "private",
-        "gender",
-        "ageMin",
-        "nonBlocking",
-        "ageMax",
+        'id',
+        'name',
+        'summary',
+        'description',
+        'language',
+        'date',
+        'approved',
+        'private',
+        'gender',
+        'ageMin',
+        'nonBlocking',
+        'ageMax',
       ],
       include: [
         {
           model: CourseSection,
-          order: [["id", "ASC"]],
+          order: [['id', 'ASC']],
           separate: true,
           include: [
             {
               model: CourseSectionComponent,
               attributes: [
-                "number",
-                "name",
-                "videoID",
-                "type",
-                "passingGrade",
-                "id",
-                "hasFile",
-                "description",
+                'number',
+                'name',
+                'videoID',
+                'type',
+                'passingGrade',
+                'id',
+                'hasFile',
+                'description',
               ],
               include: [
                 {
                   separate: true,
                   model: Question,
-                  attributes: ["id", "Q", "type"],
+                  attributes: ['id', 'Q', 'type'],
                   include: [{ model: Answer }],
-                  order: [["id", "ASC"]],
+                  order: [['id', 'ASC']],
                 },
               ],
             },
@@ -537,33 +537,33 @@ async function getCourseFullInfo(req, res) {
           include: {
             model: User,
             attributes: [
-              "id",
-              "firstName",
-              "lastName",
-              "email",
-              "phone",
-              "gender",
-              "age",
-              "type",
+              'id',
+              'firstName',
+              'lastName',
+              'email',
+              'phone',
+              'gender',
+              'age',
+              'type',
             ],
           },
         },
         {
           model: Course,
-          as: "prequisites",
-          attributes: ["id", "name", "summary"],
-          order: [["id", "ASC"]],
+          as: 'prequisites',
+          attributes: ['id', 'name', 'summary'],
+          order: [['id', 'ASC']],
         },
         {
           model: CourseCategory,
-          attributes: ["id", "name"],
-          order: [["name", "ASC"]],
+          attributes: ['id', 'name'],
+          order: [['name', 'ASC']],
         },
       ],
     });
     if (!course)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no course with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no course with this id' }] }),
       );
 
     // if course approved is false then return only to admin or teacher who created the course
@@ -576,10 +576,10 @@ async function getCourseFullInfo(req, res) {
             errors: [
               {
                 message:
-                  "this course is not approved yet and only the teacher who created it or the admin can view it",
+                  'this course is not approved yet and only the teacher who created it or the admin can view it',
               },
             ],
-          })
+          }),
         );
       const user = await User.findOne({
         where: {
@@ -599,10 +599,10 @@ async function getCourseFullInfo(req, res) {
             errors: [
               {
                 message:
-                  "this course is not approved yet and only the teacher who created it or the admin can view it",
+                  'this course is not approved yet and only the teacher who created it or the admin can view it',
               },
             ],
-          })
+          }),
         );
     }
     // add component status if user is enrolled in course
@@ -663,8 +663,8 @@ async function getUserCourseState(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in query parameter" }],
-        })
+          errors: [{ message: 'please add courseId in query parameter' }],
+        }),
       );
 
     const course = await UserCourse.findOne({
@@ -707,16 +707,16 @@ async function enrollUserInCourse(req, res) {
     });
     if (user.type != CONSTANTS.STUDENT)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "must be a student" }] })
+        JSON.stringify({ errors: [{ message: 'must be a student' }] }),
       );
     if (course.gender != CONSTANTS.BOTH && course.gender != user.gender)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "gender difference" }] })
+        JSON.stringify({ errors: [{ message: 'gender difference' }] }),
       );
     //console.log(user.id, course.ageMin, user.age, course.ageMax);
     if (!(user.age >= course.ageMin && user.age <= course.ageMax))
       throw new Error(
-        JSON.stringify({ errors: [{ message: "age difference" }] })
+        JSON.stringify({ errors: [{ message: 'age difference' }] }),
       );
     // check if user meets the required prequisites
     const coursePrequisites = await Prequisite.findAll({
@@ -740,8 +740,8 @@ async function enrollUserInCourse(req, res) {
       if (!found)
         throw new Error(
           JSON.stringify({
-            errors: [{ message: "doesnt match course requirements" }],
-          })
+            errors: [{ message: 'doesnt match course requirements' }],
+          }),
         );
     }
     const enrolledCourseState = await UserCourse.create({
@@ -783,9 +783,9 @@ async function autoGradeTest(req, res) {
         throw new Error(
           JSON.stringify({
             errors: [
-              { message: "no question with this id" + answer.questionId },
+              { message: 'no question with this id' + answer.questionId },
             ],
-          })
+          }),
         );
       if (!CONSTANTS.AUTOGRADE_TYPE.includes(question.type)) {
         isFinished = false;
@@ -808,7 +808,7 @@ async function autoGradeTest(req, res) {
               text: answer.answer,
               testId: Number(testId),
             },
-            { transaction: t }
+            { transaction: t },
           );
         else {
           userEssay.isGraded = false;
@@ -840,7 +840,7 @@ async function autoGradeTest(req, res) {
           lastTimeSubmit: Date.now(),
           isDone: isFinished ? CONSTANTS.TEST_GRADED : CONSTANTS.TEST_UNGRADED,
         },
-        { transaction: t }
+        { transaction: t },
       );
     } else {
       userGrade.lastTimeSubmit = Date.now();
@@ -893,7 +893,7 @@ async function getTestState(req, res) {
     });
     if (!courseSectionComponent)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no test with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no test with this id' }] }),
       );
     let noOfGradedEssays = 0;
     let noOfUnGradedEssays = 0;
@@ -1010,8 +1010,8 @@ async function getTestGrade(req, res) {
     if (!userAutoGrade)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "no test submitted with this id" }],
-        })
+          errors: [{ message: 'no test submitted with this id' }],
+        }),
       );
     const autoGrade = userAutoGrade.grade;
     let essayGrades = 0;
@@ -1047,29 +1047,34 @@ async function getAllCourses(req, res) {
     if (!offset)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add offset in query parameter" }],
-        })
+          errors: [{ message: 'please add offset in query parameter' }],
+        }),
       );
     if (!limit)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add limit in query parameter" }],
-        })
+          errors: [{ message: 'please add limit in query parameter' }],
+        }),
       );
     // check for filters
     const where = {
       private: false,
       approved: true,
     };
+    const categoryWhere = {};
+    let categoryRequired = false;
     const order = [];
-    let sortOrder = "DESC";
+    let sortOrder = 'DESC';
     if (req.query.language) where.language = req.query.language;
     if (req.query.name) where.name = req.query.name;
     if (req.query.date) where.date = req.query.date;
     if (req.query.gender) where.gender = Number(req.query.gender);
     if (req.query.courseId) where.id = Number(req.query.courseId);
-    if (req.query.categoryID) where['$CourseCategories.id$'] = Number(req.query.categoryID);
-    if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
+    if (req.query.categoryID) {
+      categoryWhere.id = Number(req.query.categoryID);
+      categoryRequired = true;
+    }
+    if (req.query.sortOrder && ['DESC', 'ASC'].includes(req.query.sortOrder))
       sortOrder = req.query.sortOrder;
     if (
       req.query.sort &&
@@ -1094,9 +1099,10 @@ async function getAllCourses(req, res) {
         },
         {
           model: CourseCategory,
-          attributes: ["id", "name"],
-          order: [["name", "ASC"]],
-          required: false
+          attributes: ['id', 'name'],
+          order: [['name', 'ASC']],
+          where: categoryWhere,
+          required: categoryRequired,
         },
       ],
     });
@@ -1112,7 +1118,9 @@ async function getAllCourses(req, res) {
           lastName: course.Users[0].lastName,
           id: course.Users[0].id,
         },
-        CourseCategories: course.CourseCategories ? course.CourseCategories : []
+        CourseCategories: course.CourseCategories
+          ? course.CourseCategories
+          : [],
       });
     }
     res.send(coursesToSendBack).end();
@@ -1153,14 +1161,14 @@ async function markComponentAsDone(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in query parameter" }],
-        })
+          errors: [{ message: 'please add courseId in query parameter' }],
+        }),
       );
     if (!componentId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add componentId in query parameter" }],
-        })
+          errors: [{ message: 'please add componentId in query parameter' }],
+        }),
       );
     const userCourse = await UserCourse.findOne({
       where: {
@@ -1172,8 +1180,8 @@ async function markComponentAsDone(req, res) {
     if (!userCourse)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "user is not enrolled in this course" }],
-        })
+          errors: [{ message: 'user is not enrolled in this course' }],
+        }),
       );
     const courseComponent = await CourseSectionComponent.findOne({
       where: {
@@ -1183,8 +1191,8 @@ async function markComponentAsDone(req, res) {
     if (!courseComponent)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "no compoent with this id" }],
-        })
+          errors: [{ message: 'no compoent with this id' }],
+        }),
       );
 
     // check if this compoent is test
@@ -1212,7 +1220,7 @@ async function markComponentAsDone(req, res) {
           throw new Error(
             JSON.stringify({
               errors: [{ message: "user didn't pass the test" }],
-            })
+            }),
           );
       }
       if (
@@ -1222,7 +1230,7 @@ async function markComponentAsDone(req, res) {
         throw new Error(
           JSON.stringify({
             errors: [{ message: "user didn't pass the test" }],
-          })
+          }),
         );
     } else if (courseComponent.type == CONSTANTS.ASSIGNMENT) {
       const userGrade = await CourseAssignment.findOne({
@@ -1236,7 +1244,7 @@ async function markComponentAsDone(req, res) {
         throw new Error(
           JSON.stringify({
             errors: [{ message: "user didn't pass the assignment" }],
-          })
+          }),
         );
     }
 
@@ -1246,18 +1254,18 @@ async function markComponentAsDone(req, res) {
       where: {
         id: courseId,
       },
-      attributes: ["id", "approved", "private", "nonBlocking"],
+      attributes: ['id', 'approved', 'private', 'nonBlocking'],
       include: [
         {
           model: CourseSection,
           include: [
             {
               model: CourseSectionComponent,
-              attributes: ["number", "id"],
+              attributes: ['number', 'id'],
               include: [
                 {
                   model: Question,
-                  attributes: ["id"],
+                  attributes: ['id'],
                   include: [{ model: Answer }],
                 },
               ],
@@ -1266,12 +1274,12 @@ async function markComponentAsDone(req, res) {
         },
         {
           model: User,
-          attributes: ["id"],
+          attributes: ['id'],
         },
         {
           model: Course,
-          as: "prequisites",
-          attributes: ["id"],
+          as: 'prequisites',
+          attributes: ['id'],
         },
       ],
     });
@@ -1287,11 +1295,11 @@ async function markComponentAsDone(req, res) {
         where: {
           id: courseId,
         },
-        attributes: ["id"],
+        attributes: ['id'],
         include: [
           {
             model: CourseSection,
-            attributes: ["id"],
+            attributes: ['id'],
             include: [
               {
                 model: CourseSectionComponent,
@@ -1311,10 +1319,10 @@ async function markComponentAsDone(req, res) {
             errors: [
               {
                 message:
-                  "please check that you sent the right query parameters and the correct ids",
+                  'please check that you sent the right query parameters and the correct ids',
               },
             ],
-          })
+          }),
         );
       const courseUserComponent = await UserCourseComponent.findOne({
         where: {
@@ -1331,7 +1339,7 @@ async function markComponentAsDone(req, res) {
                   "cannot mark this component as complete as user didn't finish the previus component",
               },
             ],
-          })
+          }),
         );
 
       userCourse.currentComponent = courseComponent.number + 1;
@@ -1351,7 +1359,7 @@ async function markComponentAsDone(req, res) {
           CourseSectionComponentId: componentId,
           isDone: true,
         },
-        { transaction: t }
+        { transaction: t },
       );
     } else {
       userCourseSectionCompoent.isDone = true;
@@ -1403,14 +1411,14 @@ async function getCompoentStatus(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in query parameter" }],
-        })
+          errors: [{ message: 'please add courseId in query parameter' }],
+        }),
       );
     if (!componentId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add componentId in query parameter" }],
-        })
+          errors: [{ message: 'please add componentId in query parameter' }],
+        }),
       );
     const userCourse = await UserCourse.findOne({
       where: {
@@ -1422,8 +1430,8 @@ async function getCompoentStatus(req, res) {
     if (!userCourse)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "user is not enrolled in this course" }],
-        })
+          errors: [{ message: 'user is not enrolled in this course' }],
+        }),
       );
     const isDone = await UserCourseComponent.findOne({
       where: {
@@ -1451,8 +1459,8 @@ async function markCourseAsComplete(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in query parameter" }],
-        })
+          errors: [{ message: 'please add courseId in query parameter' }],
+        }),
       );
 
     const userCourse = await UserCourse.findOne({
@@ -1467,18 +1475,18 @@ async function markCourseAsComplete(req, res) {
       where: {
         id: courseId,
       },
-      attributes: ["id", "approved", "private"],
+      attributes: ['id', 'approved', 'private'],
       include: [
         {
           model: CourseSection,
           include: [
             {
               model: CourseSectionComponent,
-              attributes: ["number", "id"],
+              attributes: ['number', 'id'],
               include: [
                 {
                   model: Question,
-                  attributes: ["id"],
+                  attributes: ['id'],
                   include: [{ model: Answer }],
                 },
               ],
@@ -1487,18 +1495,18 @@ async function markCourseAsComplete(req, res) {
         },
         {
           model: User,
-          attributes: ["id"],
+          attributes: ['id'],
         },
         {
           model: Course,
-          as: "prequisites",
-          attributes: ["id"],
+          as: 'prequisites',
+          attributes: ['id'],
         },
       ],
     });
     if (!course)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no course with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no course with this id' }] }),
       );
     let isDone = true;
     for (let courseSection of course.CourseSections) {
@@ -1520,14 +1528,14 @@ async function markCourseAsComplete(req, res) {
           errors: [
             {
               message:
-                "please finish all course components in order to mark course as finished",
+                'please finish all course components in order to mark course as finished',
             },
           ],
-        })
+        }),
       );
     userCourse.type = CONSTANTS.FINISHED;
     await userCourse.save();
-    res.status(200).send("done").end();
+    res.status(200).send('done').end();
   } catch (ex) {
     console.log(ex);
     errorHandler(req, res, ex);
@@ -1545,8 +1553,8 @@ async function getCourseOverview(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in query parameter" }],
-        })
+          errors: [{ message: 'please add courseId in query parameter' }],
+        }),
       );
     const course = await Course.findOne({
       where: {
@@ -1560,12 +1568,12 @@ async function getCourseOverview(req, res) {
             {
               model: User,
               attributes: [
-                "id",
-                "firstName",
-                "lastName",
-                "email",
-                "gender",
-                "age",
+                'id',
+                'firstName',
+                'lastName',
+                'email',
+                'gender',
+                'age',
               ],
             },
           ],
@@ -1582,7 +1590,7 @@ async function getCourseOverview(req, res) {
     });
     if (!course)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no course with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no course with this id' }] }),
       );
     course.image = null;
 
@@ -1625,7 +1633,8 @@ async function getCourseOverview(req, res) {
         isGraded: false,
       },
     });
-    courseToSendBack.noOfUngradedAssignmentSubmits = noOfUngradedAssignmentSubmits;
+    courseToSendBack.noOfUngradedAssignmentSubmits =
+      noOfUngradedAssignmentSubmits;
     // get number of d=forum question for course
     const noOfForumQuestions = await UserQuestions.count({
       where: {
@@ -1651,14 +1660,14 @@ async function submitAssignmentAnswer(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in body" }],
-        })
+          errors: [{ message: 'please add courseId in body' }],
+        }),
       );
     if (!assignmentId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add assignmentId in body" }],
-        })
+          errors: [{ message: 'please add assignmentId in body' }],
+        }),
       );
     // check that user is enrolled in course
     const userCourse = await UserCourse.findOne({
@@ -1670,13 +1679,15 @@ async function submitAssignmentAnswer(req, res) {
     });
     if (!userCourse)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not enrolled in course" }] })
+        JSON.stringify({
+          errors: [{ message: 'user not enrolled in course' }],
+        }),
       );
     let file = null;
     if (req.file && req.file.buffer) file = req.file.buffer;
     if (!file)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "must upload file" }] })
+        JSON.stringify({ errors: [{ message: 'must upload file' }] }),
       );
     // chekc if answer is laready found or not
     let answer = await CourseAssignment.findOne({
@@ -1731,9 +1742,9 @@ async function getCourseAssignmentsSubmits(req, res) {
     if (courseSectionComponentId)
       where.CourseSectionComponentId = Number(courseSectionComponentId);
     if (enrolledUerId) where.UserId = Number(enrolledUerId);
-    if (isGraded) where.isGraded = isGraded == "true" ? true : false;
-    if (!(sortOrder && ["DESC", "ASC"].includes(sortOrder))) sortOrder = "DESC";
-    if (sort && ["grade", "createdAt", "updatedAt"].includes(sort))
+    if (isGraded) where.isGraded = isGraded == 'true' ? true : false;
+    if (!(sortOrder && ['DESC', 'ASC'].includes(sortOrder))) sortOrder = 'DESC';
+    if (sort && ['grade', 'createdAt', 'updatedAt'].includes(sort))
       order.push([[sort, sortOrder]]);
     where.CourseId = Number(courseId);
     // check that the user is owner of course
@@ -1751,7 +1762,7 @@ async function getCourseAssignmentsSubmits(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const coursesAssignmentsSubmits = await CourseAssignment.findAll({
       where: where,
@@ -1777,16 +1788,16 @@ async function gradeAssignmentSubmission(req, res) {
     if (!assignmentSubmissionId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add assignmentSubmissionId" }],
-        })
+          errors: [{ message: 'please add assignmentSubmissionId' }],
+        }),
       );
     if (!courseId)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "please add courseId" }] })
+        JSON.stringify({ errors: [{ message: 'please add courseId' }] }),
       );
     if (!grade)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "please add grade" }] })
+        JSON.stringify({ errors: [{ message: 'please add grade' }] }),
       );
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -1803,7 +1814,7 @@ async function gradeAssignmentSubmission(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const assignmentSubmission = await CourseAssignment.findOne({
       where: {
@@ -1813,7 +1824,7 @@ async function gradeAssignmentSubmission(req, res) {
     });
     if (!assignmentSubmission)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no assignment with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no assignment with this id' }] }),
       );
     assignmentSubmission.grade = Number(grade);
     assignmentSubmission.isGraded = true;
@@ -1838,26 +1849,26 @@ async function submitEssayAnswer(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId in body" }],
-        })
+          errors: [{ message: 'please add courseId in body' }],
+        }),
       );
     if (!questionId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add questionId in body" }],
-        })
+          errors: [{ message: 'please add questionId in body' }],
+        }),
       );
     if (!testId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add testId in body" }],
-        })
+          errors: [{ message: 'please add testId in body' }],
+        }),
       );
     if (!text)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add text in body" }],
-        })
+          errors: [{ message: 'please add text in body' }],
+        }),
       );
 
     // check that user is enrolled in course
@@ -1870,7 +1881,9 @@ async function submitEssayAnswer(req, res) {
     });
     if (!userCourse)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not enrolled in course" }] })
+        JSON.stringify({
+          errors: [{ message: 'user not enrolled in course' }],
+        }),
       );
     const answer = await CourseEssay.create({
       UserId: userId,
@@ -1910,9 +1923,9 @@ async function getCourseEssaysSubmits(req, res) {
     if (questionId) where.QuestionId = Number(questionId);
     if (enrolledUerId) where.UserId = Number(enrolledUerId);
     if (testId) where.testId = Number(testId);
-    if (isGraded) where.isGraded = isGraded == "true" ? true : false;
-    if (!(sortOrder && ["DESC", "ASC"].includes(sortOrder))) sortOrder = "DESC";
-    if (sort && ["grade", "createdAt", "updatedAt"].includes(sort))
+    if (isGraded) where.isGraded = isGraded == 'true' ? true : false;
+    if (!(sortOrder && ['DESC', 'ASC'].includes(sortOrder))) sortOrder = 'DESC';
+    if (sort && ['grade', 'createdAt', 'updatedAt'].includes(sort))
       order.push([[sort, sortOrder]]);
     where.CourseId = Number(courseId);
     // check that the user is owner of course
@@ -1930,7 +1943,7 @@ async function getCourseEssaysSubmits(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const coursesEssaysSubmits = await CourseEssay.findAll({
       where: where,
@@ -1957,16 +1970,16 @@ async function gradeEssaySubmission(req, res) {
     if (!essaySubmissionId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add essaySubmissionId" }],
-        })
+          errors: [{ message: 'please add essaySubmissionId' }],
+        }),
       );
     if (!courseId)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "please add courseId" }] })
+        JSON.stringify({ errors: [{ message: 'please add courseId' }] }),
       );
     if (!grade)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "please add grade" }] })
+        JSON.stringify({ errors: [{ message: 'please add grade' }] }),
       );
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -1983,7 +1996,7 @@ async function gradeEssaySubmission(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const essaySubmission = await CourseEssay.findOne({
       where: {
@@ -1993,7 +2006,7 @@ async function gradeEssaySubmission(req, res) {
     });
     if (!essaySubmission)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no essay with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no essay with this id' }] }),
       );
     essaySubmission.grade = Number(grade);
     essaySubmission.isGraded = true;
@@ -2043,7 +2056,7 @@ async function editCourseBasicInfo(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const course = await Course.findOne({
       where: {
@@ -2053,7 +2066,7 @@ async function editCourseBasicInfo(req, res) {
     let imageFile = req.file?.buffer;
     imageFile = await imageHelper.modifyImage(
       imageFile,
-      CONSTANTS.COURSE_IMAGE_OPTIONS
+      CONSTANTS.COURSE_IMAGE_OPTIONS,
     );
     course.name = name || course.name;
     course.summary = summary || course.summary;
@@ -2065,7 +2078,7 @@ async function editCourseBasicInfo(req, res) {
     course.image = imageFile ? imageFile : course.image;
     course.nonBlocking = nonBlocking != null ? nonBlocking : course.nonBlocking;
 
-    if (String(private) == "true") {
+    if (String(private) == 'true') {
       if (url) {
         const urlCourse = await CourseURL.findOne({
           where: {
@@ -2076,9 +2089,9 @@ async function editCourseBasicInfo(req, res) {
           throw new Error(
             JSON.stringify({
               errors: [
-                { message: "this url already exists please try another" },
+                { message: 'this url already exists please try another' },
               ],
-            })
+            }),
           );
         }
         const courseURL = await CourseURL.findOne({
@@ -2093,7 +2106,7 @@ async function editCourseBasicInfo(req, res) {
           },
           {
             transaction: t,
-          }
+          },
         );
 
         if (courseURL)
@@ -2156,7 +2169,7 @@ async function editFullCourse(req, res) {
       sections,
       nonBlocking,
       deleted,
-      CourseCategories
+      CourseCategories,
     } = JSON.parse(req.body.json);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -2173,7 +2186,7 @@ async function editFullCourse(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const course = await Course.findOne({
       where: {
@@ -2182,7 +2195,7 @@ async function editFullCourse(req, res) {
     });
     if (!course)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no course exist with id" }] })
+        JSON.stringify({ errors: [{ message: 'no course exist with id' }] }),
       );
     course.approved = false;
     course.name = name;
@@ -2198,14 +2211,14 @@ async function editFullCourse(req, res) {
     // check if url exist before
     const courseURL = url
       ? await CourseURL.findOne({
-        where: {
-          url: url,
-        },
-      })
+          where: {
+            url: url,
+          },
+        })
       : null;
     if (courseURL && courseURL.CourseId != Number(courseId))
       throw new Error(
-        JSON.stringify({ errors: [{ message: "the url is not valid" }] })
+        JSON.stringify({ errors: [{ message: 'the url is not valid' }] }),
       );
 
     await CourseURL.destroy({
@@ -2218,14 +2231,14 @@ async function editFullCourse(req, res) {
     // check if image changed
     let imageFile = null;
     if (
-      req.files["image"] &&
-      req.files["image"][0] &&
-      req.files["image"][0].buffer
+      req.files['image'] &&
+      req.files['image'][0] &&
+      req.files['image'][0].buffer
     )
-      imageFile = req.files["image"][0].buffer;
+      imageFile = req.files['image'][0].buffer;
     imageFile = await imageHelper.modifyImage(
       imageFile,
-      CONSTANTS.COURSE_IMAGE_OPTIONS
+      CONSTANTS.COURSE_IMAGE_OPTIONS,
     );
     course.image = imageFile ? imageFile : course.image;
     await course.save({ transaction: t });
@@ -2243,7 +2256,7 @@ async function editFullCourse(req, res) {
           CourseId: course.id,
           prequisiteId: Number(prequisiteId),
         },
-        { transaction: t }
+        { transaction: t },
       );
     }
     // remove old categories
@@ -2260,7 +2273,7 @@ async function editFullCourse(req, res) {
           CourseId: course.id,
           CourseCategoryId: Number(categoryID),
         },
-        { transaction: t }
+        { transaction: t },
       );
     }
     // edit new sections
@@ -2289,7 +2302,7 @@ async function editFullCourse(req, res) {
             end: section.end,
             CourseId: course.id,
           },
-          { transaction: t }
+          { transaction: t },
         );
         sectionId = sectionDB.id;
       }
@@ -2316,10 +2329,10 @@ async function editFullCourse(req, res) {
             component.type == CONSTANTS.ASSIGNMENT)
         ) {
           if (component.type == CONSTANTS.VIDEO) {
-            file = req.files["vidoeFile"][videoFileIndex].buffer;
+            file = req.files['vidoeFile'][videoFileIndex].buffer;
             videoFileIndex++;
           } else {
-            file = req.files["assignmentFile"][assignmentFileIndex].buffer;
+            file = req.files['assignmentFile'][assignmentFileIndex].buffer;
             assignmentFileIndex++;
           }
         }
@@ -2352,9 +2365,9 @@ async function editFullCourse(req, res) {
               CourseSectionId: sectionId,
               file: file,
               passingGrade: component.passingGrade,
-              hasFile: component.File ? true : false
+              hasFile: component.File ? true : false,
             },
-            { transaction: t }
+            { transaction: t },
           );
           componentId = componentDB.id;
         }
@@ -2390,7 +2403,7 @@ async function editFullCourse(req, res) {
                   type: question.type,
                   correctAnswer: correctAnswer,
                 },
-                { transaction: t }
+                { transaction: t },
               );
               questionId = questionDB.id;
             }
@@ -2409,7 +2422,7 @@ async function editFullCourse(req, res) {
                     A: answer,
                     QuestionId: questionId,
                   },
-                  { transaction: t }
+                  { transaction: t },
                 );
               }
             }
@@ -2418,30 +2431,30 @@ async function editFullCourse(req, res) {
       }
     }
 
-    // delete componenrt/sections/questions from course 
+    // delete componenrt/sections/questions from course
     if (deleted) {
       for (let deleteItem of deleted) {
         if (deleteItem.type == CONSTANTS.COURSE_SECTION) {
           await CourseSection.destroy({
             where: {
-              id: deleteItem.id
+              id: deleteItem.id,
             },
-            transaction: t
-          })
+            transaction: t,
+          });
         } else if (deleteItem.type == CONSTANTS.COURSE_COMPONENT) {
           await CourseSectionComponent.destroy({
             where: {
-              id: deleteItem.id
+              id: deleteItem.id,
             },
-            transaction: t
-          })
+            transaction: t,
+          });
         } else if (deleteItem.type == CONSTANTS.COURSE_QUESTION) {
           await Question.destroy({
             where: {
-              id: deleteItem.id
+              id: deleteItem.id,
             },
-            transaction: t
-          })
+            transaction: t,
+          });
         }
       }
     }
@@ -2470,9 +2483,9 @@ async function getComponentFile(req, res) {
     });
     if (!component)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "no component with this id" }] })
+        JSON.stringify({ errors: [{ message: 'no component with this id' }] }),
       );
-    res.header("Content-Type", component.contentType);
+    res.header('Content-Type', component.contentType);
     res.status(200).send(component.file).end();
   } catch (ex) {
     console.log(ex);
@@ -2492,14 +2505,14 @@ async function getUserAutoTestGrade(req, res) {
     if (!userId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add userId as a query parameter" }],
-        })
+          errors: [{ message: 'please add userId as a query parameter' }],
+        }),
       );
     if (!testId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add testId as a query parameter" }],
-        })
+          errors: [{ message: 'please add testId as a query parameter' }],
+        }),
       );
     const grade = await UserTestGrade.findOne({
       where: {
@@ -2511,8 +2524,8 @@ async function getUserAutoTestGrade(req, res) {
     if (!grade)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "no auto grade for this test with this user" }],
-        })
+          errors: [{ message: 'no auto grade for this test with this user' }],
+        }),
       );
     res.status(200).send(grade).end();
   } catch (ex) {
@@ -2532,14 +2545,14 @@ async function getUserEssayGrade(req, res) {
     if (!userId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add userId as a query parameter" }],
-        })
+          errors: [{ message: 'please add userId as a query parameter' }],
+        }),
       );
     if (!questionId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add questionId as a query parameter" }],
-        })
+          errors: [{ message: 'please add questionId as a query parameter' }],
+        }),
       );
 
     const grade = await CourseEssay.findOne({
@@ -2553,9 +2566,9 @@ async function getUserEssayGrade(req, res) {
       throw new Error(
         JSON.stringify({
           errors: [
-            { message: "no essay grade for this question with this user" },
+            { message: 'no essay grade for this question with this user' },
           ],
-        })
+        }),
       );
     res.status(200).send(grade).end();
   } catch (ex) {
@@ -2576,8 +2589,8 @@ async function deleteCourse(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId as a query parameter" }],
-        })
+          errors: [{ message: 'please add courseId as a query parameter' }],
+        }),
       );
     const userCourse = await UserCourse.findOne({
       where: {
@@ -2589,8 +2602,8 @@ async function deleteCourse(req, res) {
     if (!userCourse)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "user is not owner of course" }],
-        })
+          errors: [{ message: 'user is not owner of course' }],
+        }),
       );
     const course = await Course.findOne({
       where: {
@@ -2599,7 +2612,7 @@ async function deleteCourse(req, res) {
     });
     course.deleteRequest = true;
     await course.save();
-    res.status(200).send("issued delete request to admins").end();
+    res.status(200).send('issued delete request to admins').end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
@@ -2616,20 +2629,20 @@ async function getCourseEnrolledUsers(req, res) {
     if (!limit)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add limit as query option" }],
-        })
+          errors: [{ message: 'please add limit as query option' }],
+        }),
       );
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId as query option" }],
-        })
+          errors: [{ message: 'please add courseId as query option' }],
+        }),
       );
     if (!offset)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add offset as query option" }],
-        })
+          errors: [{ message: 'please add offset as query option' }],
+        }),
       );
 
     // check that the user is owner of course
@@ -2647,7 +2660,7 @@ async function getCourseEnrolledUsers(req, res) {
     });
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
-        JSON.stringify({ errors: [{ message: "user not owner of course" }] })
+        JSON.stringify({ errors: [{ message: 'user not owner of course' }] }),
       );
     const enrolledUsers = await UserCourse.findAll({
       limit: Number(limit),
@@ -2655,7 +2668,7 @@ async function getCourseEnrolledUsers(req, res) {
       include: [
         {
           model: User,
-          attributes: ["id", "firstName", "lastName", "email", "gender", "age"],
+          attributes: ['id', 'firstName', 'lastName', 'email', 'gender', 'age'],
         },
       ],
       where: {
@@ -2688,8 +2701,8 @@ async function assignTeacherToCourse(req, res) {
     if (!courseId || !teacherId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add  courseId and teacherId to body" }],
-        })
+          errors: [{ message: 'please add  courseId and teacherId to body' }],
+        }),
       );
     const user = await User.findOne({
       where: {
@@ -2706,8 +2719,8 @@ async function assignTeacherToCourse(req, res) {
     if (!userCourse && user.type != CONSTANTS.ADMIN)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "user not course owner" }],
-        })
+          errors: [{ message: 'user not course owner' }],
+        }),
       );
     const teacher = await User.findOne({
       where: {
@@ -2717,8 +2730,8 @@ async function assignTeacherToCourse(req, res) {
     if (!teacher || teacher.type != CONSTANTS.TEACHER)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "no teacher with this teacherId" }],
-        })
+          errors: [{ message: 'no teacher with this teacherId' }],
+        }),
       );
     const course = await Course.findOne({
       where: {
@@ -2728,15 +2741,15 @@ async function assignTeacherToCourse(req, res) {
     if (!course)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "no course with this courseId" }],
-        })
+          errors: [{ message: 'no course with this courseId' }],
+        }),
       );
     await UserCourse.create({
       type: CONSTANTS.CREATED,
       UserId: Number(teacherId),
       CourseId: Number(courseId),
     });
-    res.status(200).send("added successfully").end();
+    res.status(200).send('added successfully').end();
   } catch (ex) {
     errorHandler(req, res, ex);
   }
@@ -2754,8 +2767,8 @@ async function getUserFinishedCourseComponents(req, res) {
     if (!courseId)
       throw new Error(
         JSON.stringify({
-          errors: [{ message: "please add courseId as query parameter" }],
-        })
+          errors: [{ message: 'please add courseId as query parameter' }],
+        }),
       );
 
     const userFinishedComponents = await UserCourseComponent.findAll({
@@ -2765,11 +2778,11 @@ async function getUserFinishedCourseComponents(req, res) {
       include: [
         {
           model: CourseSectionComponent,
-          attributes: ["id", "number"],
+          attributes: ['id', 'number'],
           include: [
             {
               model: CourseSection,
-              attributes: ["id", "CourseId"],
+              attributes: ['id', 'CourseId'],
               where: {
                 CourseId: courseId,
               },
