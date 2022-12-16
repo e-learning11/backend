@@ -1061,7 +1061,6 @@ async function getAllCourses(req, res) {
       private: false,
       approved: true,
     };
-    const categoryWhere = {};
     const order = [];
     let sortOrder = "DESC";
     if (req.query.language) where.language = req.query.language;
@@ -1069,7 +1068,7 @@ async function getAllCourses(req, res) {
     if (req.query.date) where.date = req.query.date;
     if (req.query.gender) where.gender = Number(req.query.gender);
     if (req.query.courseId) where.id = Number(req.query.courseId);
-    if (req.query.categoryID) categoryWhere.id = Number(req.query.categoryID);
+    if (req.query.categoryID) where['$CourseCategory.id$'] = Number(req.query.categoryID);
     if (req.query.sortOrder && ["DESC", "ASC"].includes(req.query.sortOrder))
       sortOrder = req.query.sortOrder;
     if (
@@ -1097,7 +1096,6 @@ async function getAllCourses(req, res) {
           model: CourseCategory,
           attributes: ["id", "name"],
           order: [["name", "ASC"]],
-          where: categoryWhere,
           required: false
         },
       ],
