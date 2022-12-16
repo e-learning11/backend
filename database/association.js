@@ -6,7 +6,6 @@ const UserCourse = require('../models/user_course');
 const Question = require('../models/question');
 const Answer = require('../models/answer');
 const Prequisite = require('../models/course_prequisite');
-const CategoryOfCourse = require('../models/category_of_course');
 const UserTestGrade = require('../models/user_grades');
 const UserQuestions = require('../models/user_questions');
 const UserQuestionsReplies = require('../models/user_question_replies');
@@ -19,6 +18,7 @@ const UserCourseComponent = require('../models/user_course_component');
 const UserQuestionsComment = require('../models/user_questions_comments');
 const NewsPost = require('../models/news_post');
 const CourseCategory = require('../models/course_category');
+const CategoryOfCourse = require('../models/category_of_course');
 
 CourseSection.hasMany(CourseSectionComponent, { onDelete: 'CASCADE' });
 CourseSectionComponent.belongsTo(CourseSection);

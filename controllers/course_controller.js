@@ -556,7 +556,8 @@ async function getCourseFullInfo(req, res) {
         },
         {
           model: CourseCategory,
-          as: "categories",
+          attributes: ["id", "name"],
+          order: [["name", "ASC"]],
         },
       ],
     });
@@ -1094,7 +1095,6 @@ async function getAllCourses(req, res) {
         },
         {
           model: CourseCategory,
-          as: "categories",
           attributes: ["id", "name"],
           order: [["name", "ASC"]],
           where: categoryWhere,
