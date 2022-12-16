@@ -262,7 +262,7 @@ async function createCourse(req, res) {
       private,
       url,
       nonBlocking,
-      categories
+      CourseCategories
     } = JSON.parse(req.body.json);
     // check that url is unique
     if (url) {
@@ -325,7 +325,7 @@ async function createCourse(req, res) {
         { transaction: t }
       );
     }
-    for (let categoryID of categories) {
+    for (let categoryID of CourseCategories) {
       await CategoryOfCourse.create(
         {
           CourseId: courseObj.id,
@@ -2158,7 +2158,7 @@ async function editFullCourse(req, res) {
       sections,
       nonBlocking,
       deleted,
-      categories
+      CourseCategories
     } = JSON.parse(req.body.json);
     // check that the user is owner of course
     const userCourse = await UserCourse.findOne({
@@ -2256,7 +2256,7 @@ async function editFullCourse(req, res) {
       transaction: t,
     });
     // edit prequeistes
-    for (let categoryID of categories) {
+    for (let categoryID of CourseCategories) {
       await CategoryOfCourse.create(
         {
           CourseId: course.id,
