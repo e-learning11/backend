@@ -1114,7 +1114,7 @@ async function getAllCourses(req, res) {
           lastName: course.Users[0].lastName,
           id: course.Users[0].id,
         },
-        CourseCategories: course.CourseCategories ? CourseCategories : []
+        CourseCategories: course.CourseCategories ? course.CourseCategories : []
       });
     }
     res.send(coursesToSendBack).end();
