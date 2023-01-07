@@ -34,7 +34,7 @@ jobs:
         env:
           remote_host: ${{ secrets.IP_PROD }}
           remote_user: ${{ secrets.USER_PROD }}
-          remote_key: ${{ secrets.SSH_PRIVATE_KEY_CD_JANANCO }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY_CD_PROD }}
           remote_dir: "/var/www/learning-backend/"
         run: |
           mkdir ~/.ssh
