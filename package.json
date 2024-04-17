@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js" ,
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "keywords": [],
@@ -29,5 +29,8 @@
     "sequelize": "^6.5.0",
     "sharp": "^0.27.2",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
