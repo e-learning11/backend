@@ -19,6 +19,9 @@ const statsRouter = require("./routes/stats_routes");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.get('/test' , (req ,res) => {
+  res.send('hello from test')
+})
 app.use("/api", userRouter);
 app.use("/api", courseRouter);
 app.use("/api", imageRouter);
