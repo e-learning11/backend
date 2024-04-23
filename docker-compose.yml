@@ -9,7 +9,7 @@ services:
       - MYSQL_DATABASE=e-learning-dev
       - MYSQL_ROOT_PASSWORD=12345678
     ports:
-      - '3306:3306'
+      - '8088:3306'
     volumes:
       - db:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -27,7 +27,7 @@ services:
     environment:
       NODE_ENV: development
       DB_HOST: db
-      DB_PORT: 3306
+      DB_PORT: 8088
       DB_USER: root
       DB_PASSWORD: 12345678
       DB_NAME: e-learning-dev
