@@ -13,8 +13,6 @@ services:
     volumes:
       - db:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - mynet
 
   api:
     container_name: e-learning-api-test
@@ -24,14 +22,13 @@ services:
   #   image: e-learning-api
     depends_on:
       - db
-    networks:
-      - mynet
+    restart: unless-stopped
     ports:
       - 8091:3000
     environment:
       NODE_ENV: development
       DB_HOST: db
-      DB_PORT: 3307
+      DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: 12345678
       DB_NAME: e-learning-dev
@@ -40,10 +37,7 @@ services:
     # volumes:
     #   - ./:/app
 
-networks:
-  mynet:
-    driver: bridge
-          
+            
 volumes:
   db:
     driver: local
