@@ -32,5 +32,7 @@ app.use("/api", statsRouter);
 require("./utils/add_admin")();
 
 server.listen(process.env.PORT || 3000, () => {
+  console.log('database port ' , process.env.DB_PORT)
+  console.log('admin email ' , process.env.ADMIN_EMAIL)
   console.log(`application is running on port ${process.env.PORT || 3000}`);
 });
