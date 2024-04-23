@@ -27,7 +27,7 @@ services:
     environment:
       NODE_ENV: development
       DB_HOST: db
-      DB_PORT: 8088
+      DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: 12345678
       DB_NAME: e-learning-dev
